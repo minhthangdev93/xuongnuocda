@@ -517,6 +517,34 @@ add_action('admin_init', function () {
         }
     }
 });
+
+/**
+ * Tin tức: đổi "Continue Reading" / link bình luận đóng thành "Xem chi tiết".
+ */
+function nuocda_168_post_continue_reading( $text ) {
+	return 'Xem chi tiết';
+}
+add_filter( 'ocean_post_continue_reading', 'nuocda_168_post_continue_reading' );
+
+function nuocda_168_remove_blog_comments_meta( $sections ) {
+	if ( ! is_array( $sections ) ) {
+		return $sections;
+	}
+
+	return array_values( array_diff( $sections, array( 'comments' ) ) );
+}
+add_filter( 'ocean_blog_entry_meta', 'nuocda_168_remove_blog_comments_meta' );
+add_filter( 'ocean_blog_single_meta', 'nuocda_168_remove_blog_comments_meta' );
+
+function nuocda_168_remove_single_comments_section( $sections ) {
+	if ( ! is_array( $sections ) ) {
+		return $sections;
+	}
+
+	return array_values( array_diff( $sections, array( 'single_comments' ) ) );
+}
+add_filter( 'ocean_blog_single_elements_positioning', 'nuocda_168_remove_single_comments_section' );
+
 /**
  * PHẦN 2: BẢO MẬT WEBSITE (SECURITY)
  * Các thiết lập an toàn cơ bản chống tấn công tự động
