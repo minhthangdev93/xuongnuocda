@@ -1,0 +1,169 @@
+/**
+ * Page header & breadcrumbs — Nước Đá 168
+ */
+
+.h168-page-header {
+	position: relative;
+	background: linear-gradient(180deg, var(--bg-light) 0%, #eef4f9 100%);
+	border-bottom: 1px solid var(--border-light);
+	padding: 14px 0 16px !important;
+	text-align: left;
+}
+
+/* Ghi đè padding lớn khi header trong suốt (OceanWP parent) */
+.has-transparent-header .h168-page-header {
+	padding-top: 14px !important;
+	padding-bottom: 16px !important;
+}
+
+.h168-page-header::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 3px;
+	background: linear-gradient(90deg, var(--accent-color) 0%, var(--main-color) 100%);
+	opacity: 0.85;
+}
+
+.h168-page-header .container,
+.h168-page-header .h168-page-header__inner {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: var(--container-default);
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: var(--space-md);
+	padding-right: var(--space-md);
+	box-sizing: border-box;
+	text-align: left;
+}
+
+.h168-page-header .page-header-title {
+	display: block;
+	max-width: 100% !important;
+	margin: 0 0 6px;
+	font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+	font-weight: 800;
+	line-height: 1.25;
+	color: var(--main-color);
+}
+
+.h168-page-header .page-subheading {
+	margin: 0 0 6px;
+	font-size: var(--font-size-sm);
+	color: var(--text-muted);
+	line-height: 1.5;
+}
+
+.h168-page-header .site-breadcrumbs,
+.h168-page-header .woocommerce-breadcrumb {
+	margin: 0;
+	font-size: var(--font-size-xs);
+	line-height: 1.4;
+	color: var(--text-muted);
+}
+
+.h168-page-header .site-breadcrumbs ul,
+.h168-page-header .site-breadcrumbs ol,
+.h168-page-header .woocommerce-breadcrumb {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.h168-page-header .site-breadcrumbs li,
+.h168-page-header .woocommerce-breadcrumb {
+	display: inline-flex;
+	align-items: center;
+}
+
+.h168-page-header .site-breadcrumbs a,
+.h168-page-header .woocommerce-breadcrumb a {
+	color: var(--main-color);
+	font-weight: 600;
+	text-decoration: none;
+	transition: color var(--transition-base);
+}
+
+.h168-page-header .site-breadcrumbs a:hover,
+.h168-page-header .woocommerce-breadcrumb a:hover {
+	color: var(--accent-hover);
+}
+
+.h168-page-header .site-breadcrumbs a .owp-icon use {
+	stroke: var(--main-color);
+}
+
+.h168-page-header .site-breadcrumbs a:hover .owp-icon use {
+	stroke: var(--accent-hover);
+}
+
+.h168-page-header .site-breadcrumbs .breadcrumb-sep,
+.h168-page-header .woocommerce-breadcrumb .breadcrumb-sep {
+	color: var(--accent-color);
+	font-weight: 700;
+	margin: 0 2px;
+}
+
+.h168-page-header .site-breadcrumbs li.breadcrumb-trail-end,
+.h168-page-header .site-breadcrumbs li.breadcrumb-trail-item.trail-end,
+.h168-page-header .woocommerce-breadcrumb .breadcrumb_last {
+	color: var(--text-muted);
+	font-weight: 500;
+}
+
+/* Featured image header (nếu bật trong Customizer) */
+.h168-page-header.background-image-page-header {
+	min-height: clamp(140px, 22vw, 200px);
+	display: flex;
+	align-items: flex-end;
+	background-size: cover;
+	background-position: center;
+	padding: 18px 0 20px !important;
+}
+
+.h168-page-header.background-image-page-header::after {
+	opacity: 1;
+}
+
+.h168-page-header.background-image-page-header .page-header-title,
+.h168-page-header.background-image-page-header .site-breadcrumbs,
+.h168-page-header.background-image-page-header .site-breadcrumbs a,
+.h168-page-header.background-image-page-header .site-breadcrumbs .breadcrumb-sep {
+	color: var(--white);
+}
+
+.h168-page-header.background-image-page-header .site-breadcrumbs li.breadcrumb-trail-end,
+.h168-page-header.background-image-page-header .site-breadcrumbs li.breadcrumb-trail-item.trail-end {
+	color: rgba(255, 255, 255, 0.82);
+}
+
+.h168-page-header.background-image-page-header .site-breadcrumbs a:hover {
+	color: var(--accent-soft);
+}
+
+@media (max-width: 768px) {
+	.h168-page-header,
+	.has-transparent-header .h168-page-header {
+		padding: 12px 0 14px !important;
+	}
+
+	.h168-page-header .container,
+	.h168-page-header .h168-page-header__inner {
+		max-width: 100%;
+		padding-left: max(20px, env(safe-area-inset-left, 0px));
+		padding-right: max(20px, env(safe-area-inset-right, 0px));
+	}
+
+	.h168-page-header .page-header-title {
+		margin-bottom: 4px;
+		font-size: 1.25rem;
+	}
+}

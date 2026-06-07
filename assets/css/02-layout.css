@@ -1,0 +1,82 @@
+/**
+ * Layout — containers và page wrappers
+ */
+
+.container-168 {
+	max-width: var(--container-default);
+	margin: 0 auto;
+	padding: 0 var(--space-md);
+}
+
+.section-168 {
+	padding: var(--space-md) 0;
+}
+
+/* Trang chủ */
+.landing-168-wrapper,
+.landing-168-wrapper * {
+	box-sizing: border-box;
+}
+
+.landing-168-wrapper {
+	color: var(--text-color);
+	line-height: var(--line-height-base);
+	background-color: var(--white);
+	width: 100%;
+	overflow-x: hidden;
+}
+
+/* Trang giới thiệu */
+.a168-page,
+.gt-about-page-wrapper {
+	color: var(--text-color);
+	line-height: var(--line-height-base);
+	width: 100%;
+	overflow-x: hidden;
+}
+
+.gt-section {
+	padding: var(--space-3xl) 0 !important;
+	box-sizing: border-box;
+}
+
+.gt-section * {
+	box-sizing: border-box;
+}
+
+.gt-container {
+	max-width: var(--container-default);
+	margin: 0 auto !important;
+	padding: 0 var(--space-md) !important;
+}
+
+/* Trang liên hệ */
+.c168-page,
+.contact-page-wrapper {
+	color: var(--text-color);
+	line-height: var(--line-height-base);
+	background-color: var(--white);
+	width: 100%;
+	overflow-x: hidden;
+}
+
+.contact-page-wrapper * {
+	box-sizing: border-box;
+}
+
+.contact-container {
+	max-width: var(--container-contact);
+	margin: 0 auto !important;
+	padding: 0 var(--space-md) !important;
+}
+
+/* Grid helpers */
+body .grid-2-col {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+	width: 100% !important;
+	margin: 0 auto !important;
+	gap: 0 !important;
+}

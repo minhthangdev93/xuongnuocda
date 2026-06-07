@@ -1,0 +1,94 @@
+/**
+ * Nước Đá 168 — Design System
+ * Tokens, reset cơ bản và utility classes dùng chung toàn site.
+ */
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+:root {
+	/* Brand colors */
+	--main-color: #021b42;
+	--accent-color: #00c3ff;
+	--accent-hover: #009acd;
+	--accent-soft: #aaddff;
+	--text-color: #333333;
+	--text-muted: #666666;
+	--text-light: #555555;
+	--bg-light: #f4f8fb;
+	--white: #ffffff;
+	--border-light: #e0e6ed;
+	--border-input: #dddddd;
+	--overlay-main: rgba(2, 27, 66, 0.9);
+	--overlay-main-soft: rgba(2, 27, 66, 0.6);
+	--overlay-mission: rgba(2, 27, 66, 0.85);
+
+	/* Typography — scale 17px/18px base */
+	--font-size-xs: 1rem;
+	--font-size-sm: 1.0625rem;
+	--font-size-base: 1.125rem;
+	--font-size-md: 1.375rem;
+	--font-size-lg: 1.625rem;
+	--font-size-xl: 2rem;
+	--font-size-2xl: 2.5rem;
+	--font-size-3xl: 2.875rem;
+	--font-size-4xl: 3.5rem;
+	--font-size-hero: 4rem;
+	--line-height-base: 1.65;
+	--line-height-tight: 1.3;
+	--letter-spacing-wide: 2px;
+
+	/* Touch & spacing */
+	--btn-min-height: 52px;
+	--btn-min-height-sm: 46px;
+
+	/* Spacing */
+	--space-xs: 12px;
+	--space-sm: 18px;
+	--space-md: 24px;
+	--space-lg: 36px;
+	--space-xl: 48px;
+	--space-2xl: 72px;
+	--space-3xl: 96px;
+
+	/* Layout */
+	--container-default: 1280px;
+	--container-contact: 1100px;
+
+	/* Border radius */
+	--radius-sm: 8px;
+	--radius-md: 10px;
+	--radius-lg: 15px;
+	--radius-pill: 50px;
+
+	/* Shadows */
+	--shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.04);
+	--shadow-md: 0 5px 15px rgba(0, 0, 0, 0.05);
+	--shadow-lg: 0 15px 40px rgba(0, 0, 0, 0.1);
+	--shadow-accent: 0 4px 15px rgba(0, 195, 255, 0.3);
+	--shadow-card-hover: 0 15px 30px rgba(0, 195, 255, 0.15);
+
+	/* Transitions */
+	--transition-base: 0.3s ease;
+
+	/* Breakpoints (reference — dùng trực tiếp trong @media) */
+	/* sm: 600px | md: 768px | lg: 992px */
+}
+
+/* Utility classes */
+.text-center {
+	text-align: center;
+}
+
+.mt-4 {
+	margin-top: var(--space-xl) !important;
+}
+
+.text-highlight {
+	color: var(--accent-color);
+}
