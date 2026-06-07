@@ -9,15 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$contact = nuocda_168_get_contact();
-$company = nuocda_168_get_company();
-$stores  = nuocda_168_get_stores();
-$uploads = content_url( 'uploads/2026/06' );
+$s           = nuocda_168_get_landing_settings( 'contact' );
+$contact     = nuocda_168_get_contact();
+$company     = nuocda_168_get_company();
+$stores      = nuocda_168_get_stores();
 
-$hero_bg     = $uploads . '/hinh-anh-nha-may-nuoc-da-168-6.jpg';
+$hero_bg     = $s['hero']['bg'];
 $hotline_fmt = '0348 226 455';
-$map_embed   = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6705608821915!2d106.6669894!3d10.7719445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f1e2f7c7b8f%3A0x678a1f879d7d1e8c!2zSOG6m10gMTY4LzkgTMOuIEJpbmggS-G6o24gQywgUGjGsOG7nW5nIDQsIFF14bqtbiA4LCBUaMOgbmggcGjhu5EgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1701358823652!5m2!1svi!2s';
+$map_embed   = $s['map']['embed'];
 $map_dir     = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode( $company['address'] );
+$service_areas = $s['areas']['tags'];
+$faqs          = $s['faq']['items'];
 
 $quick_channels = array(
 	array(
@@ -58,12 +60,6 @@ $quick_channels = array(
 	),
 );
 
-$service_areas = array(
-	'Quận 1', 'Quận 2', 'Quận 3', 'Quận 4', 'Quận 5', 'Quận 6',
-	'Quận 7', 'Quận 8', 'Quận 9', 'Tân Bình', 'Tân Phú',
-	'Bình Thạnh', 'Gò Vấp', 'Bình Tân', 'Các khu vực lân cận',
-);
-
 $customer_types = array(
 	'ca-nhan'     => 'Cá nhân',
 	'cafe'        => 'Quán cafe',
@@ -90,7 +86,6 @@ $order_steps = array(
 	array( 'icon' => 'fa-truck', 'title' => 'Giao nước đá tận nơi', 'desc' => 'Giao đúng địa chỉ, đúng thời gian đã xác nhận.' ),
 );
 
-$faqs = nuocda_168_get_contact_faqs();
 ?>
 
 <div class="landing-168-wrapper c168-page h168-page">
@@ -100,9 +95,9 @@ $faqs = nuocda_168_get_contact_faqs();
 	<div class="c168-hero__overlay"></div>
 	<div class="container-168 c168-hero__inner">
 		<div class="c168-hero__content">
-			<span class="h168-badge"><i class="fas fa-headset" aria-hidden="true"></i> Liên hệ Nước Đá Sạch 168</span>
-			<h1 class="c168-hero__title">Liên hệ đặt nước đá sạch &amp; nhận báo giá nhanh</h1>
-			<p class="c168-hero__desc">Nước Đá Sạch 168 sẵn sàng hỗ trợ đặt hàng, báo giá nước đá sạch, điều phối giao hàng và tư vấn hợp tác đại lý tại TP.HCM.</p>
+			<span class="h168-badge"><i class="fas fa-headset" aria-hidden="true"></i> <?php echo esc_html( $s['hero']['badge'] ); ?></span>
+			<h1 class="c168-hero__title"><?php echo esc_html( $s['hero']['title'] ); ?></h1>
+			<p class="c168-hero__desc"><?php echo esc_html( $s['hero']['desc'] ); ?></p>
 			<div class="c168-hero__actions">
 				<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi ngay: <?php echo esc_html( $hotline_fmt ); ?></a>
 				<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>
@@ -139,13 +134,13 @@ $faqs = nuocda_168_get_contact_faqs();
 	<div class="container-168">
 		<div class="c168-form-layout">
 			<div class="c168-form-intro">
-				<span class="h168-label">Đặt hàng &amp; báo giá</span>
-				<h2 class="h168-heading">Gửi yêu cầu đặt nước đá / nhận báo giá</h2>
-				<p class="h168-section-desc">Vui lòng để lại thông tin, đội ngũ Nước Đá Sạch 168 sẽ liên hệ lại để xác nhận loại đá, số lượng, địa chỉ giao và thời gian giao phù hợp.</p>
+				<span class="h168-label"><?php echo esc_html( $s['form']['label'] ); ?></span>
+				<h2 class="h168-heading"><?php echo esc_html( $s['form']['heading'] ); ?></h2>
+				<p class="h168-section-desc"><?php echo esc_html( $s['form']['desc'] ); ?></p>
 				<ul class="c168-form-intro__list">
-					<li><i class="fas fa-check-circle" aria-hidden="true"></i> Phục vụ nhà hàng, cafe, khách sạn, sự kiện, đại lý</li>
-					<li><i class="fas fa-check-circle" aria-hidden="true"></i> Giao hàng &amp; hỗ trợ 24/7 tại TP.HCM</li>
-					<li><i class="fas fa-check-circle" aria-hidden="true"></i> Đá mi, đá viên bốn, đá tám, đá xay nhuyễn…</li>
+					<?php foreach ( $s['form']['bullets'] as $bullet ) : ?>
+					<li><i class="fas fa-check-circle" aria-hidden="true"></i> <?php echo esc_html( $bullet ); ?></li>
+					<?php endforeach; ?>
 				</ul>
 				<div class="c168-form-intro__cta">
 					<p>Ưu tiên gọi nhanh:</p>
@@ -230,9 +225,9 @@ $faqs = nuocda_168_get_contact_faqs();
 	<div class="container-168">
 		<div class="c168-areas__inner">
 			<div class="c168-areas__content">
-				<span class="h168-label">Phục vụ</span>
-				<h2 class="h168-heading">Khu vực giao nước đá tại TP.HCM</h2>
-				<p class="h168-section-desc">Nếu khu vực của bạn chưa có trong danh sách, vui lòng liên hệ hotline để được kiểm tra điểm giao gần nhất.</p>
+				<span class="h168-label"><?php echo esc_html( $s['areas']['label'] ); ?></span>
+				<h2 class="h168-heading"><?php echo esc_html( $s['areas']['heading'] ); ?></h2>
+				<p class="h168-section-desc"><?php echo esc_html( $s['areas']['desc'] ); ?></p>
 				<a class="h168-btn h168-btn--outline h168-btn--sm" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-map-marked-alt" aria-hidden="true"></i> Kiểm tra khu vực giao hàng</a>
 			</div>
 			<div class="c168-areas__tags">
@@ -248,9 +243,9 @@ $faqs = nuocda_168_get_contact_faqs();
 <section class="h168-section h168-section--alt c168-stores">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Hệ thống</span>
-			<h2 class="h168-heading">Hệ thống cửa hàng &amp; điểm phân phối</h2>
-			<p class="h168-section-desc">12 điểm phục vụ tại TP.HCM — liên hệ điểm gần nhất để đặt nước đá nhanh.</p>
+			<span class="h168-label"><?php echo esc_html( $s['stores']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['stores']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['stores']['desc'] ); ?></p>
 		</div>
 		<div class="c168-stores__grid">
 			<?php foreach ( $stores as $store ) :
@@ -277,9 +272,9 @@ $faqs = nuocda_168_get_contact_faqs();
 	<div class="container-168">
 		<div class="c168-map__grid">
 			<div class="c168-map__content">
-				<span class="h168-label">Vị trí</span>
-				<h2 class="h168-heading">Bản đồ hệ thống phân phối</h2>
-				<p class="h168-section-desc">Nước Đá Sạch 168 phục vụ nhiều khu vực tại TP.HCM và các vùng lân cận.</p>
+				<span class="h168-label"><?php echo esc_html( $s['map']['label'] ); ?></span>
+				<h2 class="h168-heading"><?php echo esc_html( $s['map']['heading'] ); ?></h2>
+				<p class="h168-section-desc"><?php echo esc_html( $s['map']['desc'] ); ?></p>
 				<p class="c168-map__address"><i class="fas fa-building" aria-hidden="true"></i> Trụ sở: <?php echo esc_html( $company['address'] ); ?></p>
 				<div class="c168-map__actions">
 					<a class="h168-btn h168-btn--primary h168-btn--sm" href="<?php echo esc_url( $map_dir ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-directions" aria-hidden="true"></i> Xem chỉ đường</a>
@@ -317,8 +312,8 @@ $faqs = nuocda_168_get_contact_faqs();
 <section class="h168-section c168-faq">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Hỏi đáp</span>
-			<h2 class="h168-heading">Câu hỏi thường gặp khi liên hệ</h2>
+			<span class="h168-label"><?php echo esc_html( $s['faq']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['faq']['heading'] ); ?></h2>
 		</div>
 		<div class="c168-faq__list">
 			<?php foreach ( $faqs as $faq ) : ?>
@@ -335,8 +330,8 @@ $faqs = nuocda_168_get_contact_faqs();
 <section class="h168-section h168-cta c168-cta" style="--h168-cta-bg: url('<?php echo esc_url( $hero_bg ); ?>')">
 	<div class="h168-cta__overlay"></div>
 	<div class="container-168 h168-cta__inner">
-		<h2 class="h168-cta__title">Cần nước đá sạch giao nhanh hôm nay?</h2>
-		<p class="h168-cta__desc">Gọi ngay Nước Đá Sạch 168 để được tư vấn loại đá phù hợp, báo giá nhanh và điều phối giao hàng theo khu vực.</p>
+		<h2 class="h168-cta__title"><?php echo esc_html( $s['cta']['title'] ); ?></h2>
+		<p class="h168-cta__desc"><?php echo esc_html( $s['cta']['desc'] ); ?></p>
 		<div class="h168-cta__actions">
 			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi ngay: <?php echo esc_html( $hotline_fmt ); ?></a>
 			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>

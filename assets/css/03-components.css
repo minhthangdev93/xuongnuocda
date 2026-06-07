@@ -426,17 +426,36 @@
 .h168-link {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 10px;
+	min-height: var(--btn-min-height-sm);
+	padding: 12px 28px;
+	border-radius: var(--radius-pill);
 	color: var(--main-color);
 	font-weight: 700;
 	font-size: var(--font-size-base);
 	text-decoration: none;
-	border-bottom: 2px solid var(--accent-color);
-	padding-bottom: 3px;
+	background: var(--white);
+	border: 2px solid rgba(2, 27, 66, 0.12);
+	box-shadow: 0 4px 14px rgba(2, 27, 66, 0.06);
+	transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base), color var(--transition-base), background var(--transition-base);
 }
 
 .h168-link:hover {
 	color: var(--accent-color);
+	border-color: var(--accent-color);
+	background: rgba(0, 195, 255, 0.06);
+	box-shadow: 0 8px 22px rgba(0, 195, 255, 0.16);
+	transform: translateY(-2px);
+}
+
+.h168-link i {
+	font-size: 0.9em;
+	transition: transform var(--transition-base);
+}
+
+.h168-link:hover i {
+	transform: translateX(4px);
 }
 
 .h168-cta {

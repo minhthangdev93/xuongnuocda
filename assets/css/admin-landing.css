@@ -1,0 +1,72 @@
+.nuocda-landing-admin .nav-tab-wrapper {
+	margin: 20px 0 0;
+}
+
+.nuocda-landing-form {
+	max-width: 920px;
+	margin-top: 16px;
+}
+
+.nuocda-admin-section {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	padding: 20px 24px;
+	margin-bottom: 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.nuocda-admin-section h2 {
+	margin: 0 0 16px;
+	padding: 0 0 12px;
+	border-bottom: 1px solid #eee;
+	font-size: 1.1rem;
+}
+
+.nuocda-admin-section h3 {
+	margin: 16px 0 10px;
+	font-size: 0.95rem;
+}
+
+.nuocda-field {
+	margin: 0 0 14px;
+}
+
+.nuocda-field label {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.nuocda-image-field {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.nuocda-image-preview {
+	display: block;
+	max-width: 220px;
+	max-height: 140px;
+	margin-top: 10px;
+	border-radius: 6px;
+	border: 1px solid #ddd;
+	object-fit: cover;
+}
+
+.nuocda-repeater__row {
+	padding: 14px;
+	margin-bottom: 12px;
+	background: #f6f7f7;
+	border-radius: 6px;
+	border: 1px solid #e2e4e7;
+}
+
+.nuocda-repeater__row--card {
+	background: #f9fbfd;
+}
+
+.nuocda-repeater-remove {
+	color: #b32d2e;
+	margin-top: 4px;
+}

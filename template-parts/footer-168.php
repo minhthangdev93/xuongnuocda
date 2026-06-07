@@ -9,10 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$contact = nuocda_168_get_contact();
-$company = nuocda_168_get_company();
+$s       = nuocda_168_get_landing_settings( 'footer' );
 $stores  = nuocda_168_get_stores();
 $logo    = get_custom_logo();
+
+$copyright = $s['bottom']['copyright'] ?: $s['company']['name'];
+$subtitle  = $s['bottom']['subtitle'] ?: $s['company']['trade_name'];
 ?>
 
 <footer class="footer-168" id="footer-168">
@@ -29,86 +31,85 @@ $logo    = get_custom_logo();
 				<?php if ( $logo ) : ?>
 					<div class="footer-168__logo"><?php echo wp_kses_post( $logo ); ?></div>
 				<?php else : ?>
-					<a class="footer-168__logo-text" href="<?php echo esc_url( home_url( '/' ) ); ?>">Nước Đá Sạch 168</a>
+					<a class="footer-168__logo-text" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php echo esc_html( $s['brand']['fallback_name'] ); ?></a>
 				<?php endif; ?>
-				<p class="footer-168__tagline">Cung cấp nước đá sạch, tinh khiết tại TP.HCM — giao hàng 24/7 cho nhà hàng, quán cafe, khách sạn và đại lý.</p>
+				<p class="footer-168__tagline"><?php echo esc_html( $s['brand']['tagline'] ); ?></p>
 				<div class="footer-168__chips">
-					<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>" class="footer-168__chip footer-168__chip--phone">
+					<a href="tel:<?php echo esc_attr( $s['contact']['hotline'] ); ?>" class="footer-168__chip footer-168__chip--phone">
 						<i class="fas fa-phone-alt" aria-hidden="true"></i>
-						<span>Hotline <?php echo esc_html( $contact['hotline'] ); ?></span>
+						<span>Hotline <?php echo esc_html( $s['contact']['hotline'] ); ?></span>
 					</a>
-					<a href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer" class="footer-168__chip footer-168__chip--zalo">
+					<a href="<?php echo esc_url( $s['contact']['zalo_url'] ); ?>" target="_blank" rel="noopener noreferrer" class="footer-168__chip footer-168__chip--zalo">
 						<i class="fas fa-comment-dots" aria-hidden="true"></i>
-						<span>Nhắn Zalo</span>
+						<span><?php echo esc_html( $s['contact']['zalo_label'] ); ?></span>
 					</a>
 				</div>
-				<h4 class="footer-168__title footer-168__title--sub">Liên kết nhanh</h4>
+				<h4 class="footer-168__title footer-168__title--sub"><?php echo esc_html( $s['links']['title'] ); ?></h4>
 				<ul class="footer-168__menu footer-168__menu--grid">
-					<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Trang chủ</a></li>
-					<li><a href="<?php echo esc_url( home_url( '/about-us/' ) ); ?>">Giới thiệu</a></li>
-					<li><a href="<?php echo esc_url( home_url( '/#xem-san-pham' ) ); ?>">Sản phẩm</a></li>
-					<li><a href="<?php echo esc_url( home_url( '/lien-he/' ) ); ?>">Liên hệ</a></li>
+					<?php foreach ( $s['links']['items'] as $link ) : ?>
+					<li><a href="<?php echo esc_url( $link['url'] ); ?>"><?php echo esc_html( $link['label'] ); ?></a></li>
+					<?php endforeach; ?>
 				</ul>
 			</div>
 
 			<div class="footer-168__col footer-168__legal">
-				<h4 class="footer-168__title">Thông tin doanh nghiệp</h4>
+				<h4 class="footer-168__title"><?php echo esc_html( $s['company']['title'] ); ?></h4>
 				<dl class="footer-168__legal-list">
 					<div class="footer-168__legal-row">
 						<dt>Tên công ty</dt>
-						<dd><?php echo esc_html( $company['name'] ); ?></dd>
+						<dd><?php echo esc_html( $s['company']['name'] ); ?></dd>
 					</div>
 					<div class="footer-168__legal-row">
 						<dt>Tên giao dịch</dt>
-						<dd><?php echo esc_html( $company['trade_name'] ); ?></dd>
+						<dd><?php echo esc_html( $s['company']['trade_name'] ); ?></dd>
 					</div>
-					<?php if ( ! empty( $company['tax_code'] ) ) : ?>
+					<?php if ( ! empty( $s['company']['tax_code'] ) ) : ?>
 					<div class="footer-168__legal-row">
 						<dt>Mã số thuế</dt>
-						<dd><?php echo esc_html( $company['tax_code'] ); ?></dd>
+						<dd><?php echo esc_html( $s['company']['tax_code'] ); ?></dd>
 					</div>
 					<?php endif; ?>
 					<div class="footer-168__legal-row">
 						<dt>Trụ sở</dt>
-						<dd><?php echo esc_html( $company['address'] ); ?></dd>
+						<dd><?php echo esc_html( $s['company']['address'] ); ?></dd>
 					</div>
 					<div class="footer-168__legal-row">
 						<dt>Đại diện pháp luật</dt>
-						<dd><?php echo esc_html( $company['representative'] ); ?></dd>
+						<dd><?php echo esc_html( $s['company']['representative'] ); ?></dd>
 					</div>
 					<div class="footer-168__legal-row">
 						<dt>Ngày cấp GPKD</dt>
-						<dd><?php echo esc_html( $company['license_date'] ); ?></dd>
+						<dd><?php echo esc_html( $s['company']['license_date'] ); ?></dd>
 					</div>
 				</dl>
 			</div>
 
 			<div class="footer-168__col footer-168__contact">
-				<h4 class="footer-168__title">Liên hệ &amp; giờ làm việc</h4>
+				<h4 class="footer-168__title"><?php echo esc_html( $s['contact']['title'] ); ?></h4>
 				<ul class="footer-168__list">
 					<li>
 						<i class="fas fa-envelope" aria-hidden="true"></i>
-						<a href="mailto:<?php echo esc_attr( $contact['email'] ); ?>"><?php echo esc_html( $contact['email'] ); ?></a>
+						<a href="mailto:<?php echo esc_attr( $s['contact']['email'] ); ?>"><?php echo esc_html( $s['contact']['email'] ); ?></a>
 					</li>
 					<li>
 						<i class="fas fa-phone-alt" aria-hidden="true"></i>
-						<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>">Hotline 24/7: <?php echo esc_html( $contact['hotline'] ); ?></a>
+						<a href="tel:<?php echo esc_attr( $s['contact']['hotline'] ); ?>"><?php echo esc_html( $s['contact']['hotline_label'] ); ?>: <?php echo esc_html( $s['contact']['hotline'] ); ?></a>
 					</li>
 					<li>
 						<i class="fas fa-comment-dots" aria-hidden="true"></i>
-						<a href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer">Nhắn Zalo</a>
+						<a href="<?php echo esc_url( $s['contact']['zalo_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $s['contact']['zalo_label'] ); ?></a>
 					</li>
 				</ul>
 				<div class="footer-168__hours">
-					<p><strong>Giờ mở cửa:</strong> Thứ 2 – Chủ Nhật, 5:00 – 20:00</p>
-					<p class="footer-168__hours-note">Giao ngoài giờ — vui lòng gọi trước</p>
+					<p><strong><?php echo esc_html( $s['contact']['hours_title'] ); ?></strong> <?php echo esc_html( $s['contact']['hours'] ); ?></p>
+					<p class="footer-168__hours-note"><?php echo esc_html( $s['contact']['hours_note'] ); ?></p>
 				</div>
 			</div>
 
 			<div class="footer-168__col footer-168__quote">
 				<div class="footer-168__quote-card">
-					<h4 class="footer-168__title">Nhận báo giá</h4>
-					<p>Để lại số điện thoại, chúng tôi tư vấn nhanh trong 15 phút.</p>
+					<h4 class="footer-168__title"><?php echo esc_html( $s['quote']['title'] ); ?></h4>
+					<p><?php echo esc_html( $s['quote']['desc'] ); ?></p>
 					<form class="footer-168__form" method="post" novalidate>
 						<div class="nuocda-form-hp" aria-hidden="true">
 							<label for="footer-quote-hp">Website</label>
@@ -117,25 +118,25 @@ $logo    = get_custom_logo();
 						<input
 							type="tel"
 							name="phone"
-							placeholder="Số điện thoại (VD: 0348226455)"
+							placeholder="<?php echo esc_attr( $s['quote']['placeholder'] ); ?>"
 							inputmode="numeric"
 							autocomplete="tel"
 							maxlength="15"
 							pattern="^(0|\+?84)(3|5|7|8|9)[0-9]{8}$"
 							required
 						/>
-						<button type="submit">Gửi yêu cầu</button>
+						<button type="submit"><?php echo esc_html( $s['quote']['button'] ); ?></button>
 					</form>
 				</div>
 			</div>
 
 		</div>
 
-		<!-- Hàng 2: 12 cửa hàng bắt buộc -->
+		<!-- Hàng 2: Cửa hàng -->
 		<div class="footer-168__stores">
 			<div class="footer-168__stores-head">
-				<h4 class="footer-168__title">Hệ thống cửa hàng &amp; đại lý</h4>
-				<p>12 điểm phục vụ tại TP.HCM — giao nước đá nhanh theo khu vực.</p>
+				<h4 class="footer-168__title"><?php echo esc_html( $s['stores']['heading'] ); ?></h4>
+				<p><?php echo esc_html( $s['stores']['desc'] ); ?></p>
 			</div>
 			<div class="footer-168__stores-grid">
 				<?php foreach ( $stores as $store ) : ?>
@@ -152,8 +153,8 @@ $logo    = get_custom_logo();
 
 		<!-- Hàng 3: Bản quyền -->
 		<div class="footer-168__bottom">
-			<p>&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php echo esc_html( $company['name'] ); ?>. All rights reserved.</p>
-			<p class="footer-168__bottom-sub"><?php echo esc_html( $company['trade_name'] ); ?></p>
+			<p>&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php echo esc_html( $copyright ); ?>. All rights reserved.</p>
+			<p class="footer-168__bottom-sub"><?php echo esc_html( $subtitle ); ?></p>
 		</div>
 
 	</div>

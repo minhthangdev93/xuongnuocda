@@ -9,65 +9,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$uploads   = content_url( 'uploads/2025/12' );
-$hero_bg   = 'https://xuongnuocda.com/wp-content/uploads/2025/12/nha-may-san-xuat-nuoc-da-168_yyTfY0SS.webp';
-$cta_bg    = 'https://xuongnuocda.com/wp-content/uploads/2025/12/nha-may-san-xuat-nuoc-da-168_HFBGDQjw.webp';
-$zalo_url  = 'https://zalo.me/0348226455';
-$hotline   = '0348226455';
+$s       = nuocda_168_get_landing_settings( 'home' );
+$contact = nuocda_168_get_contact();
+$zalo_url  = $contact['zalo'];
+$hotline   = $contact['hotline'];
 
-$products = array(
-	array(
-		'name'  => 'Đá Mi (Đá Nhỏ)',
-		'desc'  => 'Lý tưởng cho trà sữa, cafe, nước ngọt.',
-		'img'   => $uploads . '/Untitled-design-1.jpg',
-		'link'  => home_url( '/nuoc-da-mi/' ),
-	),
-	array(
-		'name'  => 'Đá Viên Bốn',
-		'desc'  => 'Phù hợp nhà hàng, quán bia, giải khát.',
-		'img'   => $uploads . '/Da-tam-tai-lang-168.jpg',
-		'link'  => home_url( '/nuoc-da-bon/' ),
-	),
-	array(
-		'name'  => 'Đá Tám (Đá Lớn)',
-		'desc'  => 'Tan chậm, ướp lạnh hoặc uống bia.',
-		'img'   => $uploads . '/Da-tam-tai-Lang-168-1.jpg',
-		'link'  => home_url( '/nuoc-da-tam/' ),
-	),
-	array(
-		'name'  => 'Đá Xay Nhuyễn',
-		'desc'  => 'Ướp hải sản, sinh tố, đá bào chuyên nghiệp.',
-		'img'   => $uploads . '/Da-xay-nhuyen-tai-lang-168-3.jpg',
-		'link'  => home_url( '/nuoc-da-xay/' ),
-	),
-);
-
-$why_us = array(
-	array( 'icon' => 'fa-shield-alt', 'title' => 'Chuẩn an toàn', 'desc' => 'ISO 9001:2015 & HACCP Codex 2020 — quy trình sản xuất đạt chuẩn vệ sinh thực phẩm.' ),
-	array( 'icon' => 'fa-truck', 'title' => 'Giao hàng 24/7', 'desc' => 'Xe tải lạnh GPS, giao nước đá nhanh khắp TP.HCM và vùng lân cận.' ),
-	array( 'icon' => 'fa-industry', 'title' => 'Công nghệ hiện đại', 'desc' => 'Dây chuyền tự động, lọc RO — Ozone — UV, đóng gói khép kín.' ),
-	array( 'icon' => 'fa-store', 'title' => 'Mạng lưới rộng', 'desc' => 'Hệ thống cửa hàng & đại lý phủ sóng, đáp ứng đơn hàng ổn định.' ),
-);
-
-$stats = array(
-	array( 'num' => '30.000+', 'label' => 'Khách hàng tin dùng' ),
-	array( 'num' => '100%', 'label' => 'Nước tinh khiết' ),
-	array( 'num' => '24/7', 'label' => 'Hỗ trợ & giao hàng' ),
-	array( 'num' => '10+', 'label' => 'Năm kinh nghiệm' ),
-);
-
-$stores = nuocda_168_get_stores();
-
-$testimonials = array(
-	array( 'stars' => 5, 'text' => 'Đá trong, tan chậm, giao đúng giờ mở quán. Team hỗ trợ Zalo phản hồi rất nhanh.', 'author' => 'Quán Cafe — Quận 3' ),
-	array( 'stars' => 5, 'text' => 'Nhà hàng dùng đá viên bốn ổn định cả tháng, không lo thiếu hàng cuối tuần.', 'author' => 'Nhà Hàng — Quận 7' ),
-	array( 'stars' => 5, 'text' => 'Hợp tác đại lý được hỗ trợ nguồn hàng và giá tốt, khách quay lại nhiều.', 'author' => 'Đại Lý — Bình Thạnh' ),
-);
+$hero_bg   = $s['hero']['bg'];
+$cta_bg    = $s['cta']['bg'];
+$products  = $s['products']['items'];
+$why_us    = $s['why']['items'];
+$stats     = $s['stats'];
+$stores    = nuocda_168_get_stores();
+$testimonials = $s['reviews']['items'];
 
 $factory_images = nuocda_168_get_factory_images();
 $cert_images    = nuocda_168_get_cert_images();
-
-$faqs = nuocda_168_get_home_faqs();
+$faqs           = $s['faq']['items'];
 ?>
 
 <div class="landing-168-wrapper h168-page">
@@ -87,20 +44,20 @@ $faqs = nuocda_168_get_home_faqs();
 	<div class="h168-hero__overlay"></div>
 	<div class="container-168 h168-hero__inner">
 		<div class="h168-hero__content">
-			<span class="h168-badge"><i class="fas fa-certificate" aria-hidden="true"></i> HACCP &amp; ISO 9001:2015</span>
+			<span class="h168-badge"><i class="fas fa-certificate" aria-hidden="true"></i> <?php echo esc_html( $s['hero']['badge'] ); ?></span>
 			<h1 class="h168-hero__title">
-				Nước Đá Sạch — Tinh Khiết
-				<span class="h168-hero__title-accent">Giao TP.HCM 24/7</span>
+				<span class="h168-hero__title-main"><?php echo esc_html( $s['hero']['title'] ); ?></span>
+				<span class="h168-hero__title-accent"><?php echo esc_html( $s['hero']['title_accent'] ); ?></span>
 			</h1>
-			<p class="h168-hero__desc">Cung cấp nước đá sạch cho nhà hàng, quán cafe, quán ăn, khách sạn và đại lý. Sản xuất khép kín, giao nhanh, đúng hẹn.</p>
+			<p class="h168-hero__desc"><?php echo esc_html( $s['hero']['desc'] ); ?></p>
 			<div class="h168-hero__actions">
 				<a class="h168-btn h168-btn--primary" href="<?php echo esc_url( $zalo_url ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-shopping-bag" aria-hidden="true"></i> Đặt hàng ngay</a>
 				<a class="h168-btn h168-btn--ghost" href="#xem-san-pham"><i class="fas fa-cubes" aria-hidden="true"></i> Xem sản phẩm</a>
 			</div>
 			<div class="h168-hero__stats">
-				<div class="h168-hero__stat"><strong>10+</strong><span>Năm kinh nghiệm</span></div>
-				<div class="h168-hero__stat"><strong>30.000+</strong><span>Khách hàng</span></div>
-				<div class="h168-hero__stat"><strong>24/7</strong><span>Giao hàng</span></div>
+				<?php foreach ( $s['hero']['stats'] as $stat ) : ?>
+				<div class="h168-hero__stat"><strong><?php echo esc_html( $stat['num'] ); ?></strong><span><?php echo esc_html( $stat['label'] ); ?></span></div>
+				<?php endforeach; ?>
 			</div>
 		</div>
 	</div>
@@ -113,19 +70,19 @@ $faqs = nuocda_168_get_home_faqs();
 <section class="h168-section h168-about">
 	<div class="container-168 h168-about__grid">
 		<div class="h168-about__media">
-			<img src="<?php echo esc_url( $uploads . '/1-1.jpg' ); ?>" alt="Nhà máy Nước Đá Sạch 168" loading="lazy" />
-			<div class="h168-about__badge"><span class="h168-about__badge-num">10+</span><span class="h168-about__badge-text">Năm kinh nghiệm</span></div>
+			<img src="<?php echo esc_url( $s['about_quick']['image'] ); ?>" alt="Nhà máy Nước Đá Sạch 168" loading="lazy" />
+			<div class="h168-about__badge"><span class="h168-about__badge-num"><?php echo esc_html( $s['about_quick']['badge_num'] ); ?></span><span class="h168-about__badge-text"><?php echo esc_html( $s['about_quick']['badge_text'] ); ?></span></div>
 		</div>
 		<div class="h168-about__content">
-			<span class="h168-label">Về Nước Đá Sạch 168</span>
-			<h2 class="h168-heading">Chất lượng khẳng định thương hiệu nước đá sạch</h2>
-			<p class="h168-lead">Tiên phong công nghệ lọc R.O và dây chuyền tự động hóa. Sản phẩm đạt chuẩn quốc tế, an toàn tuyệt đối cho người tiêu dùng.</p>
+			<span class="h168-label"><?php echo esc_html( $s['about_quick']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['about_quick']['heading'] ); ?></h2>
+			<p class="h168-lead"><?php echo esc_html( $s['about_quick']['lead'] ); ?></p>
 			<ul class="h168-commit-list">
 				<li><i class="fas fa-tint" aria-hidden="true"></i><div><strong>Nước tinh khiết</strong><span>Nguồn nước xử lý kỹ, đá trong và sạch.</span></div></li>
 				<li><i class="fas fa-box-open" aria-hidden="true"></i><div><strong>Đóng gói khép kín</strong><span>Không tiếp xúc tay trần, đạt chuẩn VSATTP.</span></div></li>
 				<li><i class="fas fa-clock" aria-hidden="true"></i><div><strong>Giao hàng đúng hẹn</strong><span>Xe lạnh GPS, cam kết thời gian giao.</span></div></li>
 			</ul>
-			<a class="h168-link" href="<?php echo esc_url( home_url( '/about-us/' ) ); ?>">Tìm hiểu thêm <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+			<a class="h168-link" href="<?php echo esc_url( $s['about_quick']['link_url'] ); ?>"><?php echo esc_html( $s['about_quick']['link_text'] ); ?> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 		</div>
 	</div>
 </section>
@@ -134,9 +91,9 @@ $faqs = nuocda_168_get_home_faqs();
 <section id="xem-san-pham" class="h168-section h168-section--alt h168-products">
 	<div class="container-168">
 		<div class="h168-section-head">
-			<span class="h168-label">Sản phẩm</span>
-			<h2 class="h168-heading">Nước đá cho mọi nhu cầu</h2>
-			<p class="h168-section-desc">Đa dạng quy cách — sẵn sàng mở rộng thêm đá bi, đá tấm theo yêu cầu.</p>
+			<span class="h168-label"><?php echo esc_html( $s['products']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['products']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['products']['desc'] ); ?></p>
 		</div>
 		<div class="h168-products__grid">
 			<?php foreach ( $products as $product ) : ?>
@@ -159,8 +116,8 @@ $faqs = nuocda_168_get_home_faqs();
 <section class="h168-section h168-why">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Lợi thế</span>
-			<h2 class="h168-heading">Tại sao chọn chúng tôi?</h2>
+			<span class="h168-label"><?php echo esc_html( $s['why']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['why']['heading'] ); ?></h2>
 		</div>
 		<div class="h168-why__grid">
 			<?php foreach ( $why_us as $item ) : ?>
@@ -192,8 +149,8 @@ $faqs = nuocda_168_get_home_faqs();
 <section class="h168-section h168-cta" style="--h168-cta-bg: url('<?php echo esc_url( $cta_bg ); ?>')">
 	<div class="h168-cta__overlay"></div>
 	<div class="container-168 h168-cta__inner">
-		<h2 class="h168-cta__title">Bạn cần nguồn cung cấp nước đá ổn định?</h2>
-		<p class="h168-cta__desc">Nước Đá Sạch 168 cam kết chất lượng, giao nhanh và hỗ trợ 24/7 cho F&amp;B, khách sạn, đại lý.</p>
+		<h2 class="h168-cta__title"><?php echo esc_html( $s['cta']['title'] ); ?></h2>
+		<p class="h168-cta__desc"><?php echo esc_html( $s['cta']['desc'] ); ?></p>
 		<div class="h168-cta__actions">
 			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $hotline ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi 0348 226 455</a>
 			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $zalo_url ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>
@@ -205,9 +162,9 @@ $faqs = nuocda_168_get_home_faqs();
 <section id="danh-sach-cua-hang" class="h168-section h168-section--alt h168-stores">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Hệ thống</span>
-			<h2 class="h168-heading">Danh sách cửa hàng</h2>
-			<p class="h168-section-desc">12 điểm phục vụ tại TP.HCM — tìm cửa hàng gần bạn nhất.</p>
+			<span class="h168-label"><?php echo esc_html( $s['stores']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['stores']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['stores']['desc'] ); ?></p>
 		</div>
 		<div class="h168-stores__grid">
 			<?php foreach ( $stores as $index => $store ) : ?>
@@ -225,13 +182,13 @@ $faqs = nuocda_168_get_home_faqs();
 <section class="h168-section h168-map">
 	<div class="container-168">
 		<div class="h168-section-head">
-			<span class="h168-label">Phân phối</span>
-			<h2 class="h168-heading">Bản đồ hệ thống phân phối</h2>
-			<p class="h168-section-desc">Mạng lưới sản xuất và giao hàng phủ khắp TP.HCM, mở rộng đại lý toàn quốc.</p>
+			<span class="h168-label"><?php echo esc_html( $s['map']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['map']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['map']['desc'] ); ?></p>
 		</div>
 		<div class="h168-map__embed">
 			<iframe
-				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6705608821915!2d106.6669894!3d10.7719445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f1e2f7c7b8f%3A0x678a1f879d7d1e8c!2zSOG6m10gMTY4LzkgTMOuIEJpbmggS-G6o24gQywgUGjGsOG7nW5nIDQsIFF14bqtbiA4LCBUaMOgbmggcGjhu5EgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1701358823652!5m2!1svi!2s"
+				src="<?php echo esc_url( $s['map']['embed'] ); ?>"
 				width="100%" height="420" style="border:0;" allowfullscreen="" loading="lazy"
 				referrerpolicy="no-referrer-when-downgrade"
 				title="Bản đồ Nước Đá Sạch 168"></iframe>
@@ -243,8 +200,8 @@ $faqs = nuocda_168_get_home_faqs();
 <section class="h168-section h168-section--alt h168-reviews">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Khách hàng</span>
-			<h2 class="h168-heading">Khách hàng nói gì về Nước Đá Sạch 168</h2>
+			<span class="h168-label"><?php echo esc_html( $s['reviews']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['reviews']['heading'] ); ?></h2>
 		</div>
 		<div class="h168-reviews__grid">
 			<?php foreach ( $testimonials as $review ) : ?>
@@ -264,9 +221,9 @@ $faqs = nuocda_168_get_home_faqs();
 <section class="h168-section h168-media" id="hinh-anh-nha-may">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Minh bạch &amp; tin cậy</span>
-			<h2 class="h168-heading">Hình ảnh nhà máy &amp; chứng nhận</h2>
-			<p class="h168-section-desc">Nước Đá Sạch 168 đầu tư hệ thống sản xuất hiện đại, quy trình kiểm soát chất lượng rõ ràng và đầy đủ hồ sơ chứng nhận liên quan.</p>
+			<span class="h168-label"><?php echo esc_html( $s['media']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['media']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['media']['desc'] ); ?></p>
 		</div>
 
 		<div class="h168-media__tabs" role="tablist" aria-label="Hình ảnh nhà máy và chứng nhận">
@@ -318,8 +275,8 @@ $faqs = nuocda_168_get_home_faqs();
 <section class="h168-section h168-section--alt h168-faq">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Hỏi đáp</span>
-			<h2 class="h168-heading">Câu hỏi thường gặp</h2>
+			<span class="h168-label"><?php echo esc_html( $s['faq']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['faq']['heading'] ); ?></h2>
 		</div>
 		<div class="h168-faq__list">
 			<?php foreach ( $faqs as $faq ) : ?>

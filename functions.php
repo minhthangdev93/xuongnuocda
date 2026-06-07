@@ -15,6 +15,11 @@
  */
 
 require_once get_stylesheet_directory() . '/inc/site-data.php';
+require_once get_stylesheet_directory() . '/inc/landing-settings.php';
+
+if ( is_admin() ) {
+	require_once get_stylesheet_directory() . '/inc/admin/landing-settings-admin.php';
+}
 require_once get_stylesheet_directory() . '/inc/security.php';
 require_once get_stylesheet_directory() . '/inc/schema.php';
 require_once get_stylesheet_directory() . '/inc/form-helpers.php';

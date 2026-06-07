@@ -44,6 +44,13 @@ function nuocda_168_format_phone_e164( $phone ) {
  * FAQ trang chủ — dùng chung template + schema
  */
 function nuocda_168_get_home_faqs() {
+	if ( function_exists( 'nuocda_168_get_landing_settings' ) ) {
+		$items = nuocda_168_get_landing_settings( 'home' )['faq']['items'] ?? array();
+		if ( ! empty( $items ) ) {
+			return $items;
+		}
+	}
+
 	return array(
 		array(
 			'q' => 'Nước đá Nước Đá Sạch 168 có sạch không?',
@@ -76,6 +83,13 @@ function nuocda_168_get_home_faqs() {
  * FAQ trang liên hệ — dùng chung template + schema
  */
 function nuocda_168_get_contact_faqs() {
+	if ( function_exists( 'nuocda_168_get_landing_settings' ) ) {
+		$items = nuocda_168_get_landing_settings( 'contact' )['faq']['items'] ?? array();
+		if ( ! empty( $items ) ) {
+			return $items;
+		}
+	}
+
 	$contact     = nuocda_168_get_contact();
 	$hotline_fmt = '0348 226 455';
 
