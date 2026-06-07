@@ -4,7 +4,7 @@
 (function () {
 	'use strict';
 
-	document.addEventListener('DOMContentLoaded', function () {
+	function initStickyHeader() {
 		var header = document.getElementById('site-header');
 
 		if (!header) {
@@ -34,5 +34,11 @@
 			},
 			{ passive: true }
 		);
-	});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initStickyHeader);
+	} else {
+		initStickyHeader();
+	}
 })();

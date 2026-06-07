@@ -15,6 +15,7 @@ $zalo_url  = $contact['zalo'];
 $hotline   = $contact['hotline'];
 
 $hero_bg   = $s['hero']['bg'];
+$hero_img  = nuocda_168_get_hero_image_data( $hero_bg );
 $cta_bg    = $s['cta']['bg'];
 $products  = $s['products']['items'];
 $why_us    = $s['why']['items'];
@@ -33,13 +34,17 @@ $faqs           = $s['faq']['items'];
 <section class="h168-hero">
 	<img
 		class="h168-hero__bg"
-		src="<?php echo esc_url( $hero_bg ); ?>"
+		src="<?php echo esc_url( $hero_img['src'] ); ?>"
+		<?php if ( ! empty( $hero_img['srcset'] ) ) : ?>
+		srcset="<?php echo esc_attr( $hero_img['srcset'] ); ?>"
+		sizes="<?php echo esc_attr( $hero_img['sizes'] ); ?>"
+		<?php endif; ?>
 		alt=""
-		width="1920"
-		height="1080"
+		width="<?php echo (int) $hero_img['width']; ?>"
+		height="<?php echo (int) $hero_img['height']; ?>"
 		fetchpriority="high"
 		loading="eager"
-		decoding="async"
+		decoding="sync"
 	>
 	<div class="h168-hero__overlay"></div>
 	<div class="container-168 h168-hero__inner">

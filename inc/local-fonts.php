@@ -76,14 +76,18 @@ function nuocda_168_preload_local_fonts() {
 		return;
 	}
 
-	$base = get_stylesheet_directory_uri() . '/assets/fonts/inter/';
-	$files = array(
-		$base . 'inter-400-vietnamese.woff2',
-		$base . 'inter-400-latin.woff2',
-	);
+	$base  = get_stylesheet_directory_uri() . '/assets/fonts/';
+	$files = array();
+
+	// Trang chủ: ưu tiên font heading (H1 LCP), không preload Inter để nhường băng thông cho ảnh hero.
+	if ( function_exists( 'nuocda_168_is_home_landing' ) && nuocda_168_is_home_landing() ) {
+		$files[] = $base . 'montserrat/montserrat-400-vietnamese.woff2';
+	} else {
+		$files[] = $base . 'inter/inter-400-vietnamese.woff2';
+	}
 
 	foreach ( $files as $file ) {
 		echo '<link rel="preload" as="font" type="font/woff2" href="' . esc_url( $file ) . '" crossorigin>' . "\n";
 	}
 }
-add_action( 'wp_head', 'nuocda_168_preload_local_fonts', 2 );
+add_action( 'wp_head', 'nuocda_168_preload_local_fonts', 1 );

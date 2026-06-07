@@ -285,6 +285,7 @@ function nuocda_168_defer_scripts( $tag, $handle, $src ) {
 		'nuocda-h168-lightbox',
 		'nuocda-home-media-tabs',
 		'nuocda-sticky-header',
+		'nuocda-mobile-menu-lite',
 		'imagesloaded',
 		'ow-flickity',
 		'oceanwp-slider',
@@ -328,11 +329,7 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 		return $html;
 	}
 
-	$blocking_handles = array();
-
-	if ( is_front_page() || is_page_template( 'templates/page-trang-chu-168.php' ) ) {
-		$blocking_handles[] = 'nuocda-home';
-	}
+	$blocking_handles = array( 'nuocda-header-lite', 'nuocda-local-fonts', 'nuocda-design-system' );
 
 	if ( is_page_template( 'templates/page-gioi-thieu-168.php' ) ) {
 		$blocking_handles[] = 'nuocda-about';
@@ -370,6 +367,10 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 		'elementor-global',
 	);
 
+	if ( function_exists( 'nuocda_168_is_home_landing' ) && nuocda_168_is_home_landing() ) {
+		$async_handles[] = 'nuocda-global';
+	}
+
 	if ( ! in_array( $handle, $async_handles, true ) && 0 !== strpos( $handle, 'oceanwp-google-font-' ) ) {
 		return $html;
 	}
@@ -389,18 +390,28 @@ function nuocda_168_critical_css() {
 		return;
 	}
 
-	$is_home = is_front_page() || is_page_template( 'templates/page-trang-chu-168.php' );
+	$is_home = function_exists( 'nuocda_168_is_home_landing' ) && nuocda_168_is_home_landing();
 	?>
 	<style id="nuocda-critical-css">
+		:root{--main-color:#021b42;--accent-color:#00c3ff;--accent-hover:#009acd;--white:#fff;--radius-pill:50px;--btn-min-height:52px;--shadow-accent:0 4px 14px rgba(0,195,255,.35)}
 		body{margin:0;background:#fff;color:#333;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
 		#site-header,.oceanwp-mobile-menu-icon,#site-navigation-wrap{visibility:visible}
 		.container-168{box-sizing:border-box;width:100%;max-width:1280px;margin:0 auto;padding-left:clamp(18px,4.5vw,28px);padding-right:clamp(18px,4.5vw,28px)}
 		<?php if ( $is_home ) : ?>
 		.h168-hero{position:relative;min-height:clamp(520px,88vh,760px);display:flex;align-items:center;background:#021b42;overflow:hidden}
-		.h168-hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+		.h168-hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
 		.h168-hero__overlay{position:absolute;inset:0;background:linear-gradient(115deg,rgba(2,27,66,.92),rgba(2,27,66,.72) 45%,rgba(0,80,130,.55));z-index:1}
 		.h168-hero__inner{position:relative;z-index:2;width:100%;padding:40px 0 80px}
-		.h168-hero__title{font-size:clamp(1.5rem,3.2vw,2.5rem);font-weight:800;line-height:1.15;color:#fff;margin:0 0 20px}
+		.h168-hero__content{max-width:720px}
+		.h168-hero__title{font-family:"Montserrat",system-ui,sans-serif;font-size:clamp(1.5rem,3.2vw,2.5rem);font-weight:800;line-height:1.15;color:#fff;margin:0 0 20px}
+		.h168-hero__title-main{display:block;white-space:nowrap}
+		.h168-hero__title-accent{display:block;color:#00c3ff;font-size:.92em;margin-top:6px}
+		.h168-hero__desc{font-size:clamp(1.0625rem,2.5vw,1.35rem);color:rgba(255,255,255,.9);line-height:1.75;margin:0 0 32px;max-width:580px}
+		.h168-hero__actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
+		.h168-badge{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:50px;background:rgba(0,195,255,.15);border:1px solid rgba(0,195,255,.35);color:#b8ecff;font-size:.875rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:24px}
+		.h168-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;border:2px solid transparent}
+		.h168-btn--primary{background:#00c3ff;color:#fff;box-shadow:0 4px 14px rgba(0,195,255,.35)}
+		.h168-btn--ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.45)}
 		<?php endif; ?>
 	</style>
 	<?php
@@ -451,24 +462,34 @@ function nuocda_168_resource_hints( $urls, $relation_type ) {
 add_filter( 'wp_resource_hints', 'nuocda_168_resource_hints', 10, 2 );
 
 /**
- * Preload LCP — ảnh hero trang chủ
+ * Preload LCP — ảnh hero mobile/desktop (ưu tiên cao nhất)
  */
 function nuocda_168_preload_lcp_image() {
-	if ( ! is_front_page() && ! is_page_template( 'templates/page-trang-chu-168.php' ) ) {
+	if ( ! function_exists( 'nuocda_168_is_home_landing' ) || ! nuocda_168_is_home_landing() ) {
 		return;
 	}
 
 	$settings = nuocda_168_get_landing_settings( 'home' );
-	$hero     = ! empty( $settings['hero']['bg'] ) ? $settings['hero']['bg'] : '';
+	$hero_url = ! empty( $settings['hero']['bg'] ) ? $settings['hero']['bg'] : '';
 
-	if ( ! $hero ) {
+	if ( ! $hero_url || ! function_exists( 'nuocda_168_get_hero_image_data' ) ) {
 		return;
 	}
 
-	$type = false !== strpos( $hero, '.webp' ) ? 'image/webp' : 'image/jpeg';
-	echo '<link rel="preload" as="image" href="' . esc_url( $hero ) . '" fetchpriority="high" type="' . esc_attr( $type ) . '">' . "\n";
+	$hero = nuocda_168_get_hero_image_data( $hero_url );
+	$type = $hero['type'];
+
+	if ( ! empty( $hero['mobile'] ) ) {
+		echo '<link rel="preload" as="image" href="' . esc_url( $hero['mobile'] ) . '" fetchpriority="high" media="(max-width: 767px)" type="' . esc_attr( $type ) . '">' . "\n";
+	}
+
+	if ( ! empty( $hero['desktop'] ) && $hero['desktop'] !== $hero['mobile'] ) {
+		echo '<link rel="preload" as="image" href="' . esc_url( $hero['desktop'] ) . '" fetchpriority="high" media="(min-width: 768px)" type="' . esc_attr( $type ) . '">' . "\n";
+	} elseif ( ! empty( $hero['mobile'] ) ) {
+		echo '<link rel="preload" as="image" href="' . esc_url( $hero['mobile'] ) . '" fetchpriority="high" media="(min-width: 768px)" type="' . esc_attr( $type ) . '">' . "\n";
+	}
 }
-add_action( 'wp_head', 'nuocda_168_preload_lcp_image', 2 );
+add_action( 'wp_head', 'nuocda_168_preload_lcp_image', 0 );
 
 /**
  * Ảnh: decoding async; lazy cho ảnh không phải LCP
@@ -533,13 +554,17 @@ function nuocda_168_deferred_analytics() {
 			})(window,document,'script','dataLayer','GTM-TDG62HNV');
 		}
 
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(loadAnalytics, { timeout: 5000 });
-		} else {
-			window.addEventListener('load', function () {
-				setTimeout(loadAnalytics, 4000);
+		var events = ['scroll', 'click', 'keydown', 'touchstart'];
+		function onFirstInteraction() {
+			loadAnalytics();
+			events.forEach(function (name) {
+				document.removeEventListener(name, onFirstInteraction, { passive: true });
 			});
 		}
+		events.forEach(function (name) {
+			document.addEventListener(name, onFirstInteraction, { passive: true, once: false });
+		});
+		setTimeout(loadAnalytics, 8000);
 	})();
 	</script>
 	<?php
@@ -557,7 +582,7 @@ function nuocda_168_enqueue_sticky_header() {
 	$theme   = wp_get_theme();
 	$version = $theme->get( 'Version' );
 
-	wp_register_script(
+	wp_enqueue_script(
 		'nuocda-sticky-header',
 		get_stylesheet_directory_uri() . '/js/sticky-header.js',
 		array(),
@@ -576,9 +601,6 @@ function nuocda_168_deferred_frontend_scripts() {
 	}
 
 	$theme_version = wp_get_theme()->get( 'Version' );
-	$scripts       = array(
-		get_stylesheet_directory_uri() . '/js/sticky-header.js?ver=' . rawurlencode( $theme_version ),
-	);
 
 	$contact_config = wp_json_encode(
 		array(
@@ -597,22 +619,14 @@ function nuocda_168_deferred_frontend_scripts() {
 	?>
 	<script>
 	(function () {
-		var deferredScripts = <?php echo wp_json_encode( $scripts ); ?>;
 		var contactSrc = <?php echo wp_json_encode( $contact_src ); ?>;
 		var contactLoaded = false;
-		var idleScriptsLoaded = false;
 
 		function loadScript(src) {
 			var s = document.createElement('script');
 			s.src = src;
 			s.defer = true;
 			document.body.appendChild(s);
-		}
-
-		function loadIdleScripts() {
-			if (idleScriptsLoaded) return;
-			idleScriptsLoaded = true;
-			deferredScripts.forEach(loadScript);
 		}
 
 		function loadContactScript() {
@@ -645,24 +659,10 @@ function nuocda_168_deferred_frontend_scripts() {
 			});
 		}
 
-		function scheduleIdleScripts() {
-			if ('requestIdleCallback' in window) {
-				requestIdleCallback(loadIdleScripts, { timeout: 2500 });
-			} else {
-				window.addEventListener('load', function () {
-					setTimeout(loadIdleScripts, 1500);
-				});
-			}
-		}
-
 		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', function () {
-				watchContactForms();
-				scheduleIdleScripts();
-			});
+			document.addEventListener('DOMContentLoaded', watchContactForms);
 		} else {
 			watchContactForms();
-			scheduleIdleScripts();
 		}
 	})();
 	</script>
