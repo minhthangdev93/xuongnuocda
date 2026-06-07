@@ -128,6 +128,33 @@ add_filter( 'ocean_display_scroll_up_button', function ( $show ) {
 } );
 
 /**
+ * Gỡ style theo URL (wc-blocks, widgets.css…)
+ */
+function nuocda_168_dequeue_styles_by_src_fragment( $fragments ) {
+	global $wp_styles;
+
+	if ( ! isset( $wp_styles->queue ) ) {
+		return;
+	}
+
+	foreach ( $wp_styles->queue as $handle ) {
+		if ( empty( $wp_styles->registered[ $handle ]->src ) ) {
+			continue;
+		}
+
+		$src = $wp_styles->registered[ $handle ]->src;
+
+		foreach ( $fragments as $fragment ) {
+			if ( false !== strpos( $src, $fragment ) ) {
+				wp_dequeue_style( $handle );
+				wp_deregister_style( $handle );
+				break;
+			}
+		}
+	}
+}
+
+/**
  * Gỡ CSS/JS không cần trên frontend
  */
 function nuocda_168_dequeue_bloat() {
@@ -140,6 +167,11 @@ function nuocda_168_dequeue_bloat() {
 	wp_dequeue_style( 'classic-theme-styles' );
 	wp_dequeue_style( 'wc-blocks-style' );
 	wp_dequeue_style( 'wc-blocks-vendors-style' );
+	wp_deregister_style( 'wc-blocks-style' );
+	wp_deregister_style( 'wc-blocks-vendors-style' );
+	wp_dequeue_style( 'widgets' );
+	wp_dequeue_style( 'wp-widgets' );
+	wp_deregister_style( 'widgets' );
 	wp_dequeue_style( 'oceanwp-blog-headers' );
 	wp_dequeue_style( 'simple-line-icons' );
 
@@ -167,9 +199,20 @@ function nuocda_168_dequeue_bloat() {
 		wp_dequeue_style( 'woocommerce-general' );
 		wp_dequeue_style( 'woocommerce-layout' );
 		wp_dequeue_style( 'woocommerce-smallscreen' );
+		wp_dequeue_style( 'oceanwp-woocommerce' );
+		wp_dequeue_style( 'oceanwp-woocommerce-rtl' );
+		wp_dequeue_style( 'oceanwp-woo-star-font' );
 		wp_dequeue_script( 'woocommerce' );
 		wp_dequeue_script( 'oceanwp-woocommerce-custom-features' );
 	}
+
+	nuocda_168_dequeue_styles_by_src_fragment(
+		array(
+			'/wc-blocks.css',
+			'/wc-blocks-vendors',
+			'/widgets.css',
+		)
+	);
 
 	if ( nuocda_168_is_custom_landing_template() ) {
 		global $wp_styles, $wp_scripts;
@@ -196,6 +239,20 @@ function nuocda_168_dequeue_bloat() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'nuocda_168_dequeue_bloat', 9999 );
+add_action( 'wp_enqueue_scripts', 'nuocda_168_dequeue_bloat', 100000 );
+
+/**
+ * jQuery xuống footer + defer — không chặn render
+ */
+function nuocda_168_optimize_jquery() {
+	if ( is_admin() || ! wp_script_is( 'jquery', 'registered' ) ) {
+		return;
+	}
+
+	wp_scripts()->add_data( 'jquery', 'group', 1 );
+	wp_scripts()->add_data( 'jquery-core', 'group', 1 );
+}
+add_action( 'wp_enqueue_scripts', 'nuocda_168_optimize_jquery', 1 );
 
 /**
  * Bỏ jquery-migrate — giảm blocking JS
@@ -222,6 +279,8 @@ function nuocda_168_defer_scripts( $tag, $handle, $src ) {
 	}
 
 	$defer_exact = array(
+		'jquery',
+		'jquery-core',
 		'nuocda-168-contact-js',
 		'nuocda-h168-lightbox',
 		'nuocda-home-media-tabs',
@@ -266,24 +325,30 @@ add_filter( 'script_loader_tag', 'nuocda_168_defer_scripts', 10, 3 );
  */
 function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 	$async_handles = array(
+		'oceanwp-style',
 		'font-awesome',
 		'simple-line-icons',
 		'nuocda-layout',
+		'nuocda-components',
 		'nuocda-footer',
 		'nuocda-sticky-header',
+		'nuocda-home',
 		'nuocda-about',
 		'nuocda-contact',
 		'nuocda-woocommerce',
 		'nuocda-page-header',
+		'child-style',
 		'woocommerce-general',
 		'woocommerce-layout',
 		'woocommerce-smallscreen',
+		'oceanwp-woocommerce',
+		'oceanwp-woo-star-font',
 		'oceanwp-woo-mini-cart',
 		'elementor-frontend',
 		'elementor-global',
 	);
 
-	if ( ! in_array( $handle, $async_handles, true ) ) {
+	if ( ! in_array( $handle, $async_handles, true ) && 0 !== strpos( $handle, 'oceanwp-google-font-' ) ) {
 		return $html;
 	}
 
@@ -293,6 +358,23 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 	return $async;
 }
 add_filter( 'style_loader_tag', 'nuocda_168_async_styles', 10, 4 );
+
+/**
+ * CSS critical tối thiểu — header/layout khi oceanwp-style async
+ */
+function nuocda_168_critical_css() {
+	if ( is_admin() ) {
+		return;
+	}
+	?>
+	<style id="nuocda-critical-css">
+		body{margin:0;background:#fff;color:#333}
+		#site-header,.oceanwp-mobile-menu-icon,#site-navigation-wrap{visibility:visible}
+		.container-168{max-width:1280px;margin:0 auto;padding:0 24px}
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'nuocda_168_critical_css', 1 );
 
 /**
  * Gỡ emoji, embed, heartbeat frontend

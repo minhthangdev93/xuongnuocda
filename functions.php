@@ -100,12 +100,31 @@ add_filter( 'theme_mod_ocean_woo_menu_icon_visibility', function () {
 	return 'disabled';
 } );
 
+/**
+ * Tắt mini cart sidebar OceanWP (không hiện "Cart" ở chân trang)
+ */
+add_filter( 'theme_mod_ocean_woo_add_mobile_mini_cart', '__return_false' );
+
+add_action( 'wp_loaded', function () {
+	if ( class_exists( 'OceanWP_WooCommerce_Config' ) ) {
+		remove_action( 'wp_footer', array( OceanWP_WooCommerce_Config::instance(), 'get_mini_cart_sidebar' ) );
+	}
+}, 20 );
+
 add_action( 'after_setup_theme', function () {
 	remove_action( 'ocean_before_mobile_icon_inner', 'oceanwp_mobile_cart_icon_medium_header', 10 );
 	remove_action( 'ocean_before_mobile_icon_inner', 'oceanwp_mobile_cart_icon_not_medium_header', 10 );
 	remove_action( 'ocean_header_inner_left_content', 'oceanwp_mobile_cart_icon', 1 );
 	remove_action( 'ocean_header_inner_right_content', 'oceanwp_mobile_cart_icon', 99 );
 }, 99 );
+
+/**
+ * CSS dự phòng — ẩn cart sidebar/overlay nếu còn sót HTML
+ */
+add_action( 'wp_enqueue_scripts', function () {
+	$css = '#oceanwp-cart-sidebar-wrap,.owp-cart-overlay,.current-shop-items-dropdown{display:none!important;visibility:hidden!important;}';
+	wp_add_inline_style( 'nuocda-design-system', $css );
+}, 30 );
 
 /**
  * Bỏ mô tả mặc định trên trang /san-pham/
