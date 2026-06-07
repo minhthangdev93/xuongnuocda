@@ -94,6 +94,20 @@ add_filter( 'theme_mod_ocean_woo_display_floating_bar', function () {
 } );
 
 /**
+ * Ẩn icon giỏ hàng trong header (desktop + mobile + dropdown)
+ */
+add_filter( 'theme_mod_ocean_woo_menu_icon_visibility', function () {
+	return 'disabled';
+} );
+
+add_action( 'after_setup_theme', function () {
+	remove_action( 'ocean_before_mobile_icon_inner', 'oceanwp_mobile_cart_icon_medium_header', 10 );
+	remove_action( 'ocean_before_mobile_icon_inner', 'oceanwp_mobile_cart_icon_not_medium_header', 10 );
+	remove_action( 'ocean_header_inner_left_content', 'oceanwp_mobile_cart_icon', 1 );
+	remove_action( 'ocean_header_inner_right_content', 'oceanwp_mobile_cart_icon', 99 );
+}, 99 );
+
+/**
  * Bỏ mô tả mặc định trên trang /san-pham/
  */
 add_action( 'init', function () {

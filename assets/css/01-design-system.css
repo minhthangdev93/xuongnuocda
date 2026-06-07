@@ -4,14 +4,26 @@
  */
 
 html {
+	font-size: 15px;
 	-webkit-text-size-adjust: 100%;
 }
 
-body {
-	font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+@media (min-width: 768px) {
+	html {
+		font-size: 16px;
+	}
+}
+
+body,
+#main #content,
+.entry-content {
+	font-size: 1rem;
+	line-height: var(--line-height-base);
+	color: var(--text-color);
 }
 
 :root {
+	--font-sans-fallback: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 	/* Brand colors */
 	--main-color: #021b42;
 	--accent-color: #00c3ff;
@@ -28,11 +40,11 @@ body {
 	--overlay-main-soft: rgba(2, 27, 66, 0.6);
 	--overlay-mission: rgba(2, 27, 66, 0.85);
 
-	/* Typography — scale 17px/18px base */
-	--font-size-xs: 1rem;
-	--font-size-sm: 1.0625rem;
-	--font-size-base: 1.125rem;
-	--font-size-md: 1.375rem;
+	/* Typography — root 15–16px; body dùng 1rem */
+	--font-size-xs: 0.875rem;
+	--font-size-sm: 0.9375rem;
+	--font-size-base: 1rem;
+	--font-size-md: 1.25rem;
 	--font-size-lg: 1.625rem;
 	--font-size-xl: 2rem;
 	--font-size-2xl: 2.5rem;
@@ -59,6 +71,7 @@ body {
 	/* Layout */
 	--container-default: 1280px;
 	--container-contact: 1100px;
+	--h168-section-pad: clamp(64px, 9vw, 108px);
 
 	/* Border radius */
 	--radius-sm: 8px;

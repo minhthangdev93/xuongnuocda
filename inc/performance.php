@@ -86,9 +86,27 @@ function nuocda_168_enqueue_conditional_styles() {
 add_action( 'wp_enqueue_scripts', 'nuocda_168_enqueue_conditional_styles', 20 );
 
 /**
- * Tắt Google Fonts — dùng system font (giảm ~800ms mobile)
+ * Font fallback — tránh rơi về serif khi Google Font chưa tải xong
  */
-add_filter( 'theme_mod_ocean_enable_google_fonts', '__return_false' );
+function nuocda_168_typography_fallback() {
+	$fallback = 'var(--font-sans-fallback)';
+	$body     = get_theme_mod( 'body_typography', array() );
+	$headings = get_theme_mod( 'headings_typography', array() );
+
+	$body_font = ! empty( $body['font-family'] ) ? $body['font-family'] : '';
+	$head_font = ! empty( $headings['font-family'] ) ? $headings['font-family'] : $body_font;
+
+	$css  = 'body, .c168-page, .h168-page, .a168-page, .footer-168, .nuocda-page-header { font-family: ';
+	$css .= $body_font ? '"' . esc_attr( $body_font ) . '", ' . $fallback : $fallback;
+	$css .= '; }';
+
+	$css .= 'h1, h2, h3, h4, h5, h6 { font-family: ';
+	$css .= $head_font ? '"' . esc_attr( $head_font ) . '", ' . $fallback : 'inherit';
+	$css .= '; }';
+
+	wp_add_inline_style( 'nuocda-design-system', $css );
+}
+add_action( 'wp_enqueue_scripts', 'nuocda_168_typography_fallback', 25 );
 
 /**
  * Tắt tính năng OceanWP không dùng trên landing pages
@@ -136,11 +154,13 @@ function nuocda_168_dequeue_bloat() {
 	wp_dequeue_script( 'oceanwp-select' );
 	wp_dequeue_script( 'oceanwp-scroll-top' );
 
+	wp_dequeue_script( 'oceanwp-woo-mini-cart' );
+	wp_dequeue_style( 'oceanwp-woo-mini-cart' );
+	wp_dequeue_style( 'oceanwp-woo-mini-cart-rtl' );
+	wp_dequeue_script( 'wc-cart-fragments' );
+
 	if ( nuocda_168_is_custom_landing_template() ) {
 		wp_dequeue_script( 'oceanwp-woocommerce-custom-features' );
-		wp_dequeue_script( 'oceanwp-woo-mini-cart' );
-		wp_dequeue_style( 'oceanwp-woo-mini-cart' );
-		wp_dequeue_style( 'oceanwp-woo-mini-cart-rtl' );
 	}
 
 	if ( ! nuocda_168_needs_woocommerce_assets() ) {
@@ -148,11 +168,7 @@ function nuocda_168_dequeue_bloat() {
 		wp_dequeue_style( 'woocommerce-layout' );
 		wp_dequeue_style( 'woocommerce-smallscreen' );
 		wp_dequeue_script( 'woocommerce' );
-		wp_dequeue_script( 'wc-cart-fragments' );
 		wp_dequeue_script( 'oceanwp-woocommerce-custom-features' );
-		wp_dequeue_script( 'oceanwp-woo-mini-cart' );
-		wp_dequeue_style( 'oceanwp-woo-mini-cart' );
-		wp_dequeue_style( 'oceanwp-woo-mini-cart-rtl' );
 	}
 
 	if ( nuocda_168_is_custom_landing_template() ) {
@@ -253,7 +269,6 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 		'font-awesome',
 		'simple-line-icons',
 		'nuocda-layout',
-		'nuocda-components',
 		'nuocda-footer',
 		'nuocda-sticky-header',
 		'nuocda-about',
@@ -313,7 +328,19 @@ remove_action( 'wp_head', 'wp_shortlink_wp_head', 10 );
  * Resource hints — preconnect / dns-prefetch
  */
 function nuocda_168_resource_hints( $urls, $relation_type ) {
+	if ( 'preconnect' === $relation_type ) {
+		$urls[] = array(
+			'href' => 'https://fonts.googleapis.com',
+		);
+		$urls[] = array(
+			'href'        => 'https://fonts.gstatic.com',
+			'crossorigin' => 'anonymous',
+		);
+	}
+
 	if ( 'dns-prefetch' === $relation_type ) {
+		$urls[] = 'https://fonts.googleapis.com';
+		$urls[] = 'https://fonts.gstatic.com';
 		$urls[] = 'https://www.googletagmanager.com';
 		$urls[] = 'https://www.google-analytics.com';
 	}

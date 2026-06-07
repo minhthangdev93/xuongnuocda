@@ -26,6 +26,13 @@
 	overflow-x: hidden;
 }
 
+/* Landing pages — kế thừa font-size từ html */
+.h168-page,
+.a168-page,
+.c168-page {
+	line-height: var(--line-height-base);
+}
+
 /* Trang giới thiệu */
 .a168-page,
 .gt-about-page-wrapper {

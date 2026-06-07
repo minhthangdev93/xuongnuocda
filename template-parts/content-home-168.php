@@ -64,27 +64,8 @@ $testimonials = array(
 	array( 'stars' => 5, 'text' => 'Hợp tác đại lý được hỗ trợ nguồn hàng và giá tốt, khách quay lại nhiều.', 'author' => 'Đại Lý — Bình Thạnh' ),
 );
 
-$uploads_2026 = content_url( 'uploads/2026/06' );
-
-$factory_images = array();
-for ( $i = 1; $i <= 12; $i++ ) {
-	$factory_images[] = array(
-		'src' => $uploads_2026 . '/hinh-anh-nha-may-nuoc-da-168-' . $i . '.jpg',
-		'alt' => sprintf( 'Hình ảnh nhà máy Nước Đá Sạch 168 — %d', $i ),
-	);
-}
-
-$cert_images = array(
-	array( 'src' => $uploads_2026 . '/chung-nhan-efc.jpg', 'caption' => 'Chứng nhận EFC' ),
-	array( 'src' => $uploads_2026 . '/efc-international-certification.jpg', 'caption' => 'EFC International Certification' ),
-	array( 'src' => $uploads_2026 . '/haccp-codex-2020.jpg', 'caption' => 'HACCP Codex 2020' ),
-	array( 'src' => $uploads_2026 . '/ho-so-cong-bo-1.jpg', 'caption' => 'Hồ sơ công bố 1' ),
-	array( 'src' => $uploads_2026 . '/ho-so-cong-bo-2.jpg', 'caption' => 'Hồ sơ công bố 2' ),
-	array( 'src' => $uploads_2026 . '/ho-so-cong-bo-3.jpg', 'caption' => 'Hồ sơ công bố 3' ),
-	array( 'src' => $uploads_2026 . '/khac-dau.jpg', 'caption' => 'Khắc dấu' ),
-	array( 'src' => $uploads_2026 . '/sai-gon-stc.jpg', 'caption' => 'Sài Gòn STC' ),
-	array( 'src' => $uploads_2026 . '/thong-bao-quan-ly-thue.jpg', 'caption' => 'Thông báo quản lý thuế' ),
-);
+$factory_images = nuocda_168_get_factory_images();
+$cert_images    = nuocda_168_get_cert_images();
 
 $faqs = array(
 	array( 'q' => 'Nước đá Nước Đá Sạch 168 có sạch không?', 'a' => 'Có. Nguồn nước qua lọc RO, Ozone, UV và đóng gói khép kín, kiểm soát chất lượng theo HACCP.' ),

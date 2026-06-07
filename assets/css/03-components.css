@@ -283,6 +283,216 @@
 	}
 }
 
+/* ── H168 shared — section, nút, CTA (trang chủ / giới thiệu / liên hệ) ── */
+.h168-section {
+	padding: var(--h168-section-pad) 0;
+}
+
+.h168-section--alt {
+	background: var(--bg-light);
+}
+
+.h168-section-head {
+	margin-bottom: clamp(32px, 5vw, 48px);
+	max-width: 680px;
+}
+
+.h168-section-head--center {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.h168-label {
+	display: inline-block;
+	font-size: 0.875rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--accent-color);
+	margin-bottom: 14px;
+}
+
+.h168-heading {
+	font-size: clamp(1.875rem, 4vw, 2.75rem);
+	font-weight: 800;
+	line-height: 1.25;
+	color: var(--main-color);
+	margin: 0 0 16px;
+}
+
+.h168-section-desc,
+.h168-lead {
+	color: var(--text-muted);
+	font-size: var(--font-size-base);
+	line-height: 1.75;
+	margin: 0;
+}
+
+.h168-lead {
+	margin-bottom: 28px;
+}
+
+.h168-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 18px;
+	border-radius: var(--radius-pill);
+	background: rgba(0, 195, 255, 0.15);
+	border: 1px solid rgba(0, 195, 255, 0.35);
+	color: #b8ecff;
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	margin-bottom: 24px;
+}
+
+.h168-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	min-height: var(--btn-min-height);
+	padding: 16px 32px;
+	border-radius: var(--radius-pill);
+	font-weight: 700;
+	font-size: var(--font-size-base);
+	text-decoration: none;
+	border: 2px solid transparent;
+	transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
+	cursor: pointer;
+}
+
+.h168-btn--primary {
+	background: var(--accent-color);
+	color: var(--white);
+	box-shadow: var(--shadow-accent);
+}
+
+.h168-btn--primary:hover {
+	background: var(--accent-hover);
+	transform: translateY(-2px);
+	color: var(--white);
+}
+
+.h168-btn--ghost {
+	background: rgba(255, 255, 255, 0.12);
+	color: var(--white);
+	border-color: rgba(255, 255, 255, 0.45);
+	backdrop-filter: blur(4px);
+}
+
+.h168-btn--ghost:hover {
+	background: var(--white);
+	color: var(--main-color);
+}
+
+.h168-btn--outline {
+	background: var(--white);
+	color: var(--main-color);
+	border-color: rgba(2, 27, 66, 0.12);
+}
+
+.h168-btn--outline:hover {
+	border-color: var(--accent-color);
+	color: var(--accent-color);
+}
+
+.h168-btn--zalo {
+	background: #0068ff;
+	color: var(--white);
+}
+
+.h168-btn--zalo:hover {
+	background: #0052cc;
+	color: var(--white);
+}
+
+.h168-btn--sm {
+	min-height: var(--btn-min-height-sm);
+	padding: 12px 24px;
+	font-size: var(--font-size-sm);
+}
+
+.h168-btn--lg {
+	min-height: 56px;
+	padding: 18px 36px;
+	font-size: var(--font-size-base);
+	min-width: 220px;
+}
+
+.h168-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--main-color);
+	font-weight: 700;
+	font-size: var(--font-size-base);
+	text-decoration: none;
+	border-bottom: 2px solid var(--accent-color);
+	padding-bottom: 3px;
+}
+
+.h168-link:hover {
+	color: var(--accent-color);
+}
+
+.h168-cta {
+	position: relative;
+	background: var(--main-color) var(--h168-cta-bg) center/cover no-repeat;
+	text-align: center;
+	overflow: hidden;
+}
+
+.h168-cta__overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(135deg, rgba(2, 27, 66, 0.88), rgba(0, 95, 158, 0.82));
+	z-index: 1;
+}
+
+.h168-cta__inner {
+	position: relative;
+	z-index: 2;
+	max-width: 720px;
+	margin: 0 auto;
+}
+
+.h168-cta__title {
+	font-size: clamp(1.75rem, 4vw, 2.5rem);
+	font-weight: 800;
+	color: var(--white);
+	margin: 0 0 16px;
+}
+
+.h168-cta__desc {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: var(--font-size-base);
+	line-height: 1.7;
+	margin: 0 0 32px;
+}
+
+.h168-cta__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 14px;
+}
+
+@media (max-width: 768px) {
+	.h168-cta__actions {
+		flex-direction: column;
+	}
+
+	.h168-btn,
+	.h168-btn--lg {
+		width: 100%;
+		min-width: 0;
+	}
+}
+
 /* Bỏ viền ngoài khi click (OceanWP parent + trình duyệt mobile) */
 a:focus,
 a:focus-visible,
