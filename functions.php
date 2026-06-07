@@ -279,6 +279,13 @@ add_filter( 'oceanwp_single_post_header_template', function () {
 } );
 
 /**
+ * Minh Thắng Contact Bar đang bật (thay thanh Gọi ngay/Zalo cố định của theme).
+ */
+function nuocda_168_mt_contact_bar_active() {
+	return function_exists( 'mtcb_get_settings' ) && ! empty( mtcb_get_settings()['enabled'] );
+}
+
+/**
  * Landing pages — bỏ padding OceanWP, full-width giống trang chủ
  */
 add_filter( 'body_class', function ( $classes ) {
@@ -287,6 +294,10 @@ add_filter( 'body_class', function ( $classes ) {
 		|| is_page_template( 'templates/page-lien-he-168.php' ) ) {
 		$classes[] = 'landing-page';
 		$classes[] = 'no-margins';
+	}
+
+	if ( is_page_template( 'templates/page-lien-he-168.php' ) && nuocda_168_mt_contact_bar_active() ) {
+		$classes[] = 'nuocda-hide-contact-mobile-bar';
 	}
 
 	return $classes;

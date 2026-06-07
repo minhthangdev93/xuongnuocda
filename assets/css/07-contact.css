@@ -615,7 +615,11 @@
 	margin-bottom: 0;
 }
 
-/* ── Mobile sticky bar ── */
+/* ── Mobile sticky bar (tắt trên trang liên hệ khi Minh Thắng Contact Bar bật) ── */
+.nuocda-hide-contact-mobile-bar .c168-mobile-bar {
+	display: none !important;
+}
+
 .c168-mobile-bar {
 	display: none;
 	position: fixed;

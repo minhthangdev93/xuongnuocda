@@ -339,10 +339,12 @@ $order_steps = array(
 	</div>
 </section>
 
-<!-- Mobile sticky CTA -->
+<?php if ( ! function_exists( 'nuocda_168_mt_contact_bar_active' ) || ! nuocda_168_mt_contact_bar_active() ) : ?>
+<!-- Mobile sticky CTA (ẩn khi Minh Thắng Contact Bar đang bật) -->
 <div class="c168-mobile-bar" aria-label="Liên hệ nhanh">
 	<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>" class="c168-mobile-bar__call"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi ngay</a>
 	<a href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer" class="c168-mobile-bar__zalo"><i class="fas fa-comment-dots" aria-hidden="true"></i> Zalo</a>
 </div>
+<?php endif; ?>
 
 </div>
