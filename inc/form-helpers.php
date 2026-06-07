@@ -69,7 +69,7 @@ function nuocda_168_form_security_check( $rate_key, $limit = 5 ) {
 		return new WP_Error( 'spam_detected', 'Không thể gửi yêu cầu. Vui lòng thử lại.' );
 	}
 
-	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+	$ip = function_exists( 'nuocda_168_get_client_ip' ) ? nuocda_168_get_client_ip() : 'unknown';
 	$key  = 'nuocda_form_' . $rate_key . '_' . md5( $ip );
 	$count = (int) get_transient( $key );
 

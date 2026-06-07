@@ -17,6 +17,97 @@ function nuocda_168_get_site_email() {
 }
 
 /**
+ * Tên thương hiệu hiển thị
+ */
+function nuocda_168_get_brand_name() {
+	return 'Nước Đá Sạch 168';
+}
+
+/**
+ * Số điện thoại E.164 cho schema (vd. +84348226455)
+ */
+function nuocda_168_format_phone_e164( $phone ) {
+	$digits = preg_replace( '/\D+/', '', (string) $phone );
+
+	if ( preg_match( '/^84(\d{9})$/', $digits, $matches ) ) {
+		return '+84' . $matches[1];
+	}
+
+	if ( preg_match( '/^0(\d{9})$/', $digits, $matches ) ) {
+		return '+84' . $matches[1];
+	}
+
+	return '';
+}
+
+/**
+ * FAQ trang chủ — dùng chung template + schema
+ */
+function nuocda_168_get_home_faqs() {
+	return array(
+		array(
+			'q' => 'Nước đá Nước Đá Sạch 168 có sạch không?',
+			'a' => 'Có. Nguồn nước qua lọc RO, Ozone, UV và đóng gói khép kín, kiểm soát chất lượng theo HACCP.',
+		),
+		array(
+			'q' => 'Có giao hàng ban đêm không?',
+			'a' => 'Có. Hệ thống giao hàng hoạt động 24/7, kể cả ngoài giờ cao điểm.',
+		),
+		array(
+			'q' => 'Có nhận đơn số lượng lớn không?',
+			'a' => 'Có. Phục vụ chuỗi F&B, khách sạn, sự kiện với sản lượng lớn và ổn định.',
+		),
+		array(
+			'q' => 'Có hỗ trợ mở đại lý không?',
+			'a' => 'Có. Chúng tôi hỗ trợ nguồn hàng, quy trình vận hành và chính sách giá cho đối tác lâu dài.',
+		),
+		array(
+			'q' => 'Làm sao để đặt hàng nhanh nhất?',
+			'a' => 'Gọi hotline 0348 226 455 hoặc nhắn Zalo — đội ngũ sẽ điều phối điểm giao gần nhất.',
+		),
+		array(
+			'q' => 'Có giao toàn TP.HCM không?',
+			'a' => 'Có. Mạng lưới cửa hàng và xe giao phủ khắp TP.HCM, giao nhanh theo khu vực.',
+		),
+	);
+}
+
+/**
+ * FAQ trang liên hệ — dùng chung template + schema
+ */
+function nuocda_168_get_contact_faqs() {
+	$contact     = nuocda_168_get_contact();
+	$hotline_fmt = '0348 226 455';
+
+	return array(
+		array(
+			'q' => 'Tôi cần đặt nước đá gấp thì liên hệ kênh nào nhanh nhất?',
+			'a' => 'Gọi hotline ' . $hotline_fmt . ' hoặc nhắn Zalo — đội ngũ sẽ tiếp nhận và điều phối ngay.',
+		),
+		array(
+			'q' => 'Nước Đá Sạch 168 có giao ban đêm không?',
+			'a' => 'Có. Hệ thống giao hàng và hỗ trợ hoạt động 24/7, kể cả ngoài giờ cao điểm.',
+		),
+		array(
+			'q' => 'Tôi muốn lấy giá sỉ thì cần cung cấp thông tin gì?',
+			'a' => 'Vui lòng cung cấp số điện thoại, khu vực giao, loại đá, sản lượng dự kiến và loại hình kinh doanh (nhà hàng, cafe, đại lý…).',
+		),
+		array(
+			'q' => 'Có hỗ trợ giao cho nhà hàng, quán cafe hằng ngày không?',
+			'a' => 'Có. Chúng tôi phục vụ khách hàng cố định với nguồn cung ổn định và lịch giao linh hoạt.',
+		),
+		array(
+			'q' => 'Có nhận hợp tác đại lý nước đá không?',
+			'a' => 'Có. Liên hệ hotline hoặc gửi form — chúng tôi tư vấn chính sách nguồn hàng và hợp tác lâu dài.',
+		),
+		array(
+			'q' => 'Khu vực của tôi chưa có trong danh sách thì có giao không?',
+			'a' => 'Vui lòng gọi hotline để kiểm tra điểm giao gần nhất. Hệ thống phân phối đa điểm tại TP.HCM và vùng lân cận.',
+		),
+	);
+}
+
+/**
  * Thông tin liên hệ nhanh
  */
 function nuocda_168_get_contact() {

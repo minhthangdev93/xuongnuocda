@@ -67,14 +67,7 @@ $testimonials = array(
 $factory_images = nuocda_168_get_factory_images();
 $cert_images    = nuocda_168_get_cert_images();
 
-$faqs = array(
-	array( 'q' => 'Nước đá Nước Đá Sạch 168 có sạch không?', 'a' => 'Có. Nguồn nước qua lọc RO, Ozone, UV và đóng gói khép kín, kiểm soát chất lượng theo HACCP.' ),
-	array( 'q' => 'Có giao hàng ban đêm không?', 'a' => 'Có. Hệ thống giao hàng hoạt động 24/7, kể cả ngoài giờ cao điểm.' ),
-	array( 'q' => 'Có nhận đơn số lượng lớn không?', 'a' => 'Có. Phục vụ chuỗi F&B, khách sạn, sự kiện với sản lượng lớn và ổn định.' ),
-	array( 'q' => 'Có hỗ trợ mở đại lý không?', 'a' => 'Có. Chúng tôi hỗ trợ nguồn hàng, quy trình vận hành và chính sách giá cho đối tác lâu dài.' ),
-	array( 'q' => 'Làm sao để đặt hàng nhanh nhất?', 'a' => 'Gọi hotline 0348 226 455 hoặc nhắn Zalo — đội ngũ sẽ điều phối điểm giao gần nhất.' ),
-	array( 'q' => 'Có giao toàn TP.HCM không?', 'a' => 'Có. Mạng lưới cửa hàng và xe giao phủ khắp TP.HCM, giao nhanh theo khu vực.' ),
-);
+$faqs = nuocda_168_get_home_faqs();
 ?>
 
 <div class="landing-168-wrapper h168-page">

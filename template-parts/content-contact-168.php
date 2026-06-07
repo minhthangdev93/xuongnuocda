@@ -90,32 +90,7 @@ $order_steps = array(
 	array( 'icon' => 'fa-truck', 'title' => 'Giao nước đá tận nơi', 'desc' => 'Giao đúng địa chỉ, đúng thời gian đã xác nhận.' ),
 );
 
-$faqs = array(
-	array(
-		'q' => 'Tôi cần đặt nước đá gấp thì liên hệ kênh nào nhanh nhất?',
-		'a' => 'Gọi hotline ' . $hotline_fmt . ' hoặc nhắn Zalo — đội ngũ sẽ tiếp nhận và điều phối ngay.',
-	),
-	array(
-		'q' => 'Nước Đá Sạch 168 có giao ban đêm không?',
-		'a' => 'Có. Hệ thống giao hàng và hỗ trợ hoạt động 24/7, kể cả ngoài giờ cao điểm.',
-	),
-	array(
-		'q' => 'Tôi muốn lấy giá sỉ thì cần cung cấp thông tin gì?',
-		'a' => 'Vui lòng cung cấp số điện thoại, khu vực giao, loại đá, sản lượng dự kiến và loại hình kinh doanh (nhà hàng, cafe, đại lý…).',
-	),
-	array(
-		'q' => 'Có hỗ trợ giao cho nhà hàng, quán cafe hằng ngày không?',
-		'a' => 'Có. Chúng tôi phục vụ khách hàng cố định với nguồn cung ổn định và lịch giao linh hoạt.',
-	),
-	array(
-		'q' => 'Có nhận hợp tác đại lý nước đá không?',
-		'a' => 'Có. Liên hệ hotline hoặc gửi form — chúng tôi tư vấn chính sách nguồn hàng và hợp tác lâu dài.',
-	),
-	array(
-		'q' => 'Khu vực của tôi chưa có trong danh sách thì có giao không?',
-		'a' => 'Vui lòng gọi hotline để kiểm tra điểm giao gần nhất. Hệ thống phân phối đa điểm tại TP.HCM và vùng lân cận.',
-	),
-);
+$faqs = nuocda_168_get_contact_faqs();
 ?>
 
 <div class="landing-168-wrapper c168-page h168-page">

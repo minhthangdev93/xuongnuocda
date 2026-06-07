@@ -15,10 +15,13 @@
  */
 
 require_once get_stylesheet_directory() . '/inc/site-data.php';
+require_once get_stylesheet_directory() . '/inc/security.php';
+require_once get_stylesheet_directory() . '/inc/schema.php';
 require_once get_stylesheet_directory() . '/inc/form-helpers.php';
 require_once get_stylesheet_directory() . '/inc/review-spam.php';
 require_once get_stylesheet_directory() . '/inc/performance.php';
 require_once get_stylesheet_directory() . '/inc/product-cat-editor.php';
+require_once get_stylesheet_directory() . '/inc/product-cat-seo.php';
 require_once get_stylesheet_directory() . '/inc/product-cat-description-frontend.php';
 require_once get_stylesheet_directory() . '/inc/shop-toolbar.php';
 
@@ -722,32 +725,6 @@ function nuocda_168_blog_archive_full_width_meta( $meta ) {
 	return $meta;
 }
 add_filter( 'ocean_post_layout_meta_value', 'nuocda_168_blog_archive_full_width_meta' );
-
-/**
- * PHẦN 2: BẢO MẬT WEBSITE (SECURITY)
- * Các thiết lập an toàn cơ bản chống tấn công tự động
- */
-
-// 1. Tắt XML-RPC (Chống DDoS và Brute Force)
-add_filter('xmlrpc_enabled', '__return_false');
-remove_action('wp_head', 'rsd_link');
-
-// 2. Ẩn phiên bản WordPress khỏi mã nguồn (Chống lộ lỗ hổng)
-function annam_remove_version() {
-    return '';
-}
-add_filter('the_generator', 'annam_remove_version');
-
-// 3. Chặn hacker dò tìm tên đăng nhập (User Enumeration) qua link ?author=1
-function annam_block_user_enumeration($redirect, $request) {
-    // Nếu phát hiện đường dẫn có chứa ?author=...
-    if (preg_match('/\?author=([0-9]*)(\/*)/i', $request)) {
-        wp_redirect(home_url(), 301); // Chuyển hướng về trang chủ ngay lập tức
-        exit;
-    }
-    return $redirect;
-}
-add_filter('redirect_canonical', 'annam_block_user_enumeration', 10, 2);
 
 /* ==========================================================================
  * KẾT THÚC: CODE TÙY CHỈNH

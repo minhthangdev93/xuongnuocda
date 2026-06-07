@@ -24,9 +24,7 @@ function nuocda_168_is_product_review_submission() {
  * IP người gửi
  */
 function nuocda_168_review_get_client_ip() {
-	return isset( $_SERVER['REMOTE_ADDR'] )
-		? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) )
-		: 'unknown';
+	return function_exists( 'nuocda_168_get_client_ip' ) ? nuocda_168_get_client_ip() : 'unknown';
 }
 
 /**
