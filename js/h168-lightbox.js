@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		return;
 	}
 
+	// Đưa lightbox ra body để position:fixed hoạt động đúng trên mobile.
+	if (lightbox.parentElement !== document.body) {
+		document.body.appendChild(lightbox);
+	}
+
 	const lightboxImg = lightbox.querySelector('.h168-lightbox__img');
 
 	function openLightbox(src, alt) {
@@ -31,7 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	document.querySelectorAll('[data-lightbox-src]').forEach(function (trigger) {
-		trigger.addEventListener('click', function () {
+		trigger.addEventListener('click', function (e) {
+			e.preventDefault();
 			openLightbox(
 				trigger.getAttribute('data-lightbox-src'),
 				trigger.getAttribute('data-lightbox-alt')
