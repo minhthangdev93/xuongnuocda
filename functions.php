@@ -18,6 +18,9 @@ require_once get_stylesheet_directory() . '/inc/site-data.php';
 require_once get_stylesheet_directory() . '/inc/form-helpers.php';
 require_once get_stylesheet_directory() . '/inc/review-spam.php';
 require_once get_stylesheet_directory() . '/inc/performance.php';
+require_once get_stylesheet_directory() . '/inc/product-cat-editor.php';
+require_once get_stylesheet_directory() . '/inc/product-cat-description-frontend.php';
+require_once get_stylesheet_directory() . '/inc/shop-toolbar.php';
 
 /**
  * Script tab gallery trang chủ
@@ -119,6 +122,109 @@ add_action( 'after_setup_theme', function () {
 }, 99 );
 
 /**
+ * CTA Nhận báo giá (Zalo) — bên phải header desktop.
+ */
+function nuocda_168_render_header_quote_cta() {
+	if ( is_admin() || ! function_exists( 'nuocda_168_get_contact' ) ) {
+		return;
+	}
+
+	get_template_part( 'template-parts/header-cta-zalo' );
+}
+add_action( 'ocean_after_nav_inner', 'nuocda_168_render_header_quote_cta', 10 );
+
+/**
+ * CTA Nhận báo giá (Zalo) — cuối menu mobile.
+ */
+function nuocda_168_render_mobile_menu_cta() {
+	if ( is_admin() || ! function_exists( 'nuocda_168_get_contact' ) ) {
+		return;
+	}
+
+	get_template_part( 'partials/mobile/mobile-menu-cta' );
+}
+
+/**
+ * Menu args mobile — luôn lấy đúng menu Main (theo ID đã gán trong Giao diện → Menu).
+ */
+function nuocda_168_get_main_mobile_menu_args( $extra = array() ) {
+	$location  = apply_filters( 'ocean_main_menu_location', 'main_menu' );
+	$locations = get_nav_menu_locations();
+
+	$args = array(
+		'theme_location' => $location,
+		'container'      => false,
+		'fallback_cb'    => false,
+		'custom_output'  => 'mobile_menu',
+	);
+
+	if ( ! empty( $locations[ $location ] ) ) {
+		$args['menu'] = (int) $locations[ $location ];
+	}
+
+	if ( function_exists( 'oceanwp_header_custom_menu' ) ) {
+		$custom_menu = oceanwp_header_custom_menu();
+		if ( $custom_menu ) {
+			$args['menu'] = $custom_menu;
+		}
+	}
+
+	if ( class_exists( 'OceanWP_Custom_Nav_Walker' ) ) {
+		$args['walker'] = new OceanWP_Custom_Nav_Walker();
+	}
+
+	return array_merge( $args, $extra );
+}
+
+/**
+ * Kiểm tra có menu Main để render mobile.
+ */
+function nuocda_168_has_main_mobile_menu() {
+	$args = nuocda_168_get_main_mobile_menu_args();
+
+	return ! empty( $args['menu'] ) || has_nav_menu( $args['theme_location'] );
+}
+
+/**
+ * Mobile menu chỉ dùng menu Main — bỏ Mobile / Top Bar của OceanWP.
+ */
+add_filter( 'has_nav_menu', function ( $has_nav_menu, $location ) {
+	if ( 'mobile_menu' === $location ) {
+		return false;
+	}
+	return $has_nav_menu;
+}, 10, 2 );
+
+add_filter( 'ocean_mobile_menu_source', function ( $items ) {
+	$source = array();
+
+	if ( isset( $items['sidrclose'] ) ) {
+		$source['sidrclose'] = $items['sidrclose'];
+	}
+
+	$source['mobile-nav'] = '#mobile-nav';
+
+	if ( isset( $items['social'] ) ) {
+		$source['social'] = $items['social'];
+	}
+
+	return $source;
+}, 20 );
+
+/**
+ * Tắt ô tìm kiếm trong menu mobile (sidebar / dropdown / fullscreen).
+ */
+add_filter( 'theme_mod_ocean_mobile_menu_search', '__return_false' );
+
+add_filter( 'wp_nav_menu_args', function ( $args ) {
+	if ( empty( $args['custom_output'] ) || 'mobile_menu' !== $args['custom_output'] ) {
+		return $args;
+	}
+
+	return nuocda_168_get_main_mobile_menu_args( $args );
+} );
+
+/**
  * CSS dự phòng — ẩn cart sidebar/overlay nếu còn sót HTML
  */
 add_action( 'wp_enqueue_scripts', function () {
@@ -154,6 +260,20 @@ add_action( 'after_setup_theme', function () {
 
 add_filter( 'oceanwp_single_post_header_template', function () {
 	return 'partials/page-header';
+} );
+
+/**
+ * Landing pages — bỏ padding OceanWP, full-width giống trang chủ
+ */
+add_filter( 'body_class', function ( $classes ) {
+	if ( is_page_template( 'templates/page-trang-chu-168.php' )
+		|| is_page_template( 'templates/page-gioi-thieu-168.php' )
+		|| is_page_template( 'templates/page-lien-he-168.php' ) ) {
+		$classes[] = 'landing-page';
+		$classes[] = 'no-margins';
+	}
+
+	return $classes;
 } );
 
 /**
@@ -195,13 +315,17 @@ function nuocda_168_product_needs_zalo_quote( $product ) {
 	return '' === $price || null === $price || (float) $price <= 0;
 }
 
-function nuocda_168_get_zalo_quote_html() {
+function nuocda_168_get_zalo_quote_html( $context = 'default' ) {
 	$contact = nuocda_168_get_contact();
+	$label   = 'compact' === $context
+		? esc_html__( 'Báo giá Zalo', 'oceanwp' )
+		: esc_html__( 'Báo giá nhanh qua Zalo', 'oceanwp' );
 
 	return sprintf(
-		'<a href="%1$s" class="nuocda-zalo-price-cta" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> %2$s</a>',
+		'<a href="%1$s" class="nuocda-zalo-price-cta%3$s" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> %2$s</a>',
 		esc_url( $contact['zalo'] ),
-		esc_html__( 'Báo giá nhanh qua Zalo', 'oceanwp' )
+		$label,
+		'compact' === $context ? ' nuocda-zalo-price-cta--compact' : ''
 	);
 }
 
@@ -566,6 +690,20 @@ function nuocda_168_is_blog_archive_context() {
 		|| is_date()
 		|| is_author();
 }
+
+/**
+ * Trang danh sách tin tức — hiển thị 10 bài mỗi trang.
+ */
+function nuocda_168_blog_posts_per_page( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+
+	if ( nuocda_168_is_blog_archive_context() ) {
+		$query->set( 'posts_per_page', 10 );
+	}
+}
+add_action( 'pre_get_posts', 'nuocda_168_blog_posts_per_page' );
 
 function nuocda_168_blog_archive_full_width_layout( $class ) {
 	if ( nuocda_168_is_blog_archive_context() ) {

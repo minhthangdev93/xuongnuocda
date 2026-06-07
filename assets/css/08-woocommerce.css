@@ -51,7 +51,7 @@
 /* ── Grid card chung: /san-pham/ + sản phẩm tương tự ── */
 .woocommerce ul.products.nuocda-product-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: var(--space-md);
 	margin: 0;
 	padding: 0;
@@ -78,17 +78,18 @@
 	flex-direction: column;
 	flex: 1;
 	background: var(--white);
-	border-radius: var(--radius-lg);
+	border-radius: 16px;
 	overflow: hidden;
-	box-shadow: var(--shadow-md);
-	border: 1px solid rgba(2, 27, 66, 0.04);
+	box-shadow: 0 4px 24px rgba(2, 27, 66, 0.07);
+	border: 1px solid var(--border-light);
 	height: 100%;
-	transition: transform var(--transition-base), box-shadow var(--transition-base);
+	transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 }
 
 .woocommerce ul.products.nuocda-product-grid .product:hover .product-inner {
-	transform: translateY(-6px);
-	box-shadow: var(--shadow-card-hover);
+	transform: translateY(-4px);
+	box-shadow: 0 12px 32px rgba(2, 27, 66, 0.12);
+	border-color: rgba(0, 172, 205, 0.25);
 }
 
 .woocommerce ul.products.nuocda-product-grid .woo-entry-inner {
@@ -97,9 +98,9 @@
 	flex: 1;
 	height: 100%;
 	margin: 0;
-	padding: 0 0 20px;
+	padding: 0;
 	list-style: none;
-	gap: 10px;
+	gap: 0;
 }
 
 .woocommerce ul.products.nuocda-product-grid .woo-entry-inner > li {
@@ -112,6 +113,22 @@
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
+	background: var(--bg-light);
+}
+
+.woocommerce ul.products.nuocda-product-grid .image-wrap::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, transparent 55%, rgba(2, 27, 66, 0.04) 100%);
+	opacity: 0;
+	transition: opacity var(--transition-base);
+	pointer-events: none;
+	z-index: 3;
+}
+
+.woocommerce ul.products.nuocda-product-grid .product:hover .image-wrap::after {
+	opacity: 1;
 }
 
 .woocommerce ul.products.nuocda-product-grid .image-wrap .woo-entry-image,
@@ -119,7 +136,7 @@
 	position: relative;
 	display: block;
 	width: 100%;
-	aspect-ratio: 1 / 1;
+	aspect-ratio: 4 / 3;
 	height: auto;
 	overflow: hidden;
 }
@@ -137,7 +154,7 @@
 	height: 100%;
 	object-fit: cover;
 	object-position: center;
-	transition: transform 0.5s ease;
+	transition: transform 0.45s ease;
 }
 
 .woocommerce ul.products.nuocda-product-grid .image-wrap .woo-entry-image-swap .woo-entry-image-main,
@@ -159,33 +176,39 @@
 
 .woocommerce ul.products.nuocda-product-grid .product:hover .image-wrap .woo-entry-image img,
 .woocommerce ul.products.nuocda-product-grid .product:hover .image-wrap .woo-entry-image-swap .woo-entry-image-main img {
-	transform: scale(1.06);
+	transform: scale(1.04);
 }
 
 .woocommerce ul.products.nuocda-product-grid .image-wrap .onsale {
-	top: 14px;
-	left: 14px;
+	top: 12px;
+	left: 12px;
 	right: auto;
 	min-height: auto;
-	padding: 6px 12px;
-	border-radius: var(--radius-pill);
+	padding: 5px 11px;
+	border-radius: var(--radius-sm);
 	font-size: var(--font-size-xs);
 	font-weight: 700;
 	line-height: 1.2;
+	box-shadow: var(--shadow-sm);
 }
 
 .woocommerce ul.products.nuocda-product-grid .title {
 	margin: 0;
-	padding: 16px 18px 0;
-	text-align: center;
-	flex-shrink: 0;
+	padding: 18px 20px 0;
+	text-align: left;
+	flex: 1 1 auto;
 }
 
 .woocommerce ul.products.nuocda-product-grid .title h2 {
 	margin: 0;
-	font-size: var(--font-size-md);
+	font-size: 1.0625rem;
 	font-weight: 700;
-	line-height: var(--line-height-tight);
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	min-height: 2.8em;
 }
 
 .woocommerce ul.products.nuocda-product-grid .title h2 a {
@@ -201,11 +224,11 @@
 .woocommerce ul.products.nuocda-product-grid .price-wrap {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+	align-items: flex-start;
+	justify-content: flex-start;
 	margin: 0;
-	padding: 0 18px;
-	text-align: center;
+	padding: 0 20px;
+	text-align: left;
 	flex-shrink: 0;
 }
 
@@ -226,38 +249,100 @@
 	text-decoration: none;
 }
 
-.woocommerce ul.products.nuocda-product-grid .price-wrap .nuocda-zalo-price-cta {
-	padding: 8px 14px;
-	font-size: var(--font-size-xs);
-	white-space: normal;
+/* Hàng CTA: Zalo + Chi tiết */
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions {
+	display: flex;
+	align-items: stretch;
+	gap: 10px;
+	margin: 14px 0 0;
+	padding: 0 20px 20px;
+	flex-shrink: 0;
 }
 
-.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__footer {
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions .nuocda-zalo-price-cta--compact,
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions .nuocda-product-card__price {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions .nuocda-zalo-price-cta--compact {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	width: 100%;
+	min-height: 44px;
+	padding: 10px 14px;
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-xs);
+	font-weight: 700;
+	line-height: 1.25;
+	white-space: nowrap;
+	background: linear-gradient(135deg, #0068ff 0%, #0052cc 100%);
+	box-shadow: 0 4px 14px rgba(0, 104, 255, 0.22);
+}
+
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions .nuocda-zalo-price-cta--compact:hover {
+	background: linear-gradient(135deg, #0058e6 0%, #0044b3 100%);
+	box-shadow: 0 6px 18px rgba(0, 104, 255, 0.3);
+	transform: translateY(-1px);
+}
+
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions .nuocda-product-card__price {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
 	margin: 0;
-	padding: 0 18px;
-	text-align: center;
-	flex-shrink: 0;
+	padding: 0 4px;
+	font-size: var(--font-size-sm);
+	font-weight: 700;
+	color: var(--accent-hover);
 }
 
 .woocommerce ul.products.nuocda-product-grid .nuocda-product-card__link {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 42px;
-	padding: 0 20px;
-	border: 2px solid var(--main-color);
-	border-radius: var(--radius-pill);
+	gap: 6px;
+	flex: 0 0 auto;
+	min-width: 96px;
+	min-height: 44px;
+	padding: 0 16px;
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	background: var(--bg-light);
 	color: var(--main-color);
 	font-weight: 700;
-	font-size: var(--font-size-sm);
+	font-size: var(--font-size-xs);
 	text-decoration: none;
-	transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+	transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base), transform var(--transition-base);
+}
+
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__link i {
+	font-size: 0.75rem;
+	transition: transform var(--transition-base);
 }
 
 .woocommerce ul.products.nuocda-product-grid .nuocda-product-card__link:hover {
 	background: var(--main-color);
 	border-color: var(--main-color);
 	color: var(--white);
+	transform: translateY(-1px);
+}
+
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__link:hover i {
+	transform: translateX(2px);
+}
+
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions .nuocda-product-card__link:only-child {
+	flex: 1 1 100%;
+	width: 100%;
+}
+
+/* Legacy footer class — sidebar widgets */
+.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__footer {
+	margin: 0;
+	padding: 0 20px 20px;
 }
 
 /* Trang shop /san-pham/ */
@@ -271,6 +356,91 @@
 .woocommerce-shop .woocommerce-notices-wrapper,
 .tax-product_cat .woocommerce-notices-wrapper {
 	margin-bottom: var(--space-md);
+}
+
+/* Mô tả danh mục — dưới danh sách SP */
+.nuocda-cat-description {
+	margin-top: clamp(28px, 4vw, 40px);
+	padding-top: clamp(24px, 3vw, 32px);
+	border-top: 1px solid var(--border-light);
+}
+
+.nuocda-cat-description__inner {
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.nuocda-cat-description__content {
+	position: relative;
+	color: var(--text-muted);
+	font-size: var(--font-size-sm);
+	line-height: 1.7;
+}
+
+.nuocda-cat-description__content.is-collapsed {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5;
+	overflow: hidden;
+}
+
+.nuocda-cat-description__content.is-collapsed::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2.8em;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, var(--white) 88%);
+	pointer-events: none;
+}
+
+.nuocda-cat-description__content p {
+	margin: 0 0 0.85em;
+}
+
+.nuocda-cat-description__content p:last-child {
+	margin-bottom: 0;
+}
+
+.nuocda-cat-description__content h2,
+.nuocda-cat-description__content h3,
+.nuocda-cat-description__content h4 {
+	color: var(--main-color);
+	margin: 1.1em 0 0.5em;
+	font-size: var(--font-size-base);
+	line-height: 1.35;
+}
+
+.nuocda-cat-description__content h2:first-child,
+.nuocda-cat-description__content h3:first-child,
+.nuocda-cat-description__content h4:first-child {
+	margin-top: 0;
+}
+
+.nuocda-cat-description__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	margin: 18px auto 0;
+	padding: 10px 22px;
+	border: 1px solid rgba(2, 27, 66, 0.12);
+	border-radius: var(--radius-pill);
+	background: var(--white);
+	color: var(--main-color);
+	font-family: inherit;
+	font-size: var(--font-size-sm);
+	font-weight: 700;
+	line-height: 1.2;
+	cursor: pointer;
+	transition: border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.nuocda-cat-description__toggle:hover {
+	border-color: var(--accent-color);
+	color: var(--accent-color);
+	box-shadow: var(--shadow-sm);
 }
 
 /* Sản phẩm tương tự — section wrapper */
@@ -289,8 +459,28 @@
 
 @media (max-width: 768px) {
 	.woocommerce ul.products.nuocda-product-grid {
-		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: var(--space-sm);
+	}
+
+	.woocommerce ul.products.nuocda-product-grid .title {
+		padding: 14px 16px 0;
+	}
+
+	.woocommerce ul.products.nuocda-product-grid .title h2 {
+		font-size: 1rem;
+		min-height: 2.6em;
+	}
+
+	.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__actions {
+		flex-direction: column;
+		gap: 8px;
+		padding: 0 16px 16px;
+	}
+
+	.woocommerce ul.products.nuocda-product-grid .nuocda-product-card__link {
+		width: 100%;
+		min-width: 0;
 	}
 
 	.nuocda-related-products {

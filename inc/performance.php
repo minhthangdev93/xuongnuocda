@@ -398,7 +398,7 @@ function nuocda_168_critical_css() {
 	<style id="nuocda-critical-css">
 		body{margin:0;background:#fff;color:#333}
 		#site-header,.oceanwp-mobile-menu-icon,#site-navigation-wrap{visibility:visible}
-		.container-168{max-width:1280px;margin:0 auto;padding:0 24px}
+		.container-168{box-sizing:border-box;width:100%;max-width:1280px;margin:0 auto;padding-left:clamp(18px,4.5vw,28px);padding-right:clamp(18px,4.5vw,28px)}
 	</style>
 	<?php
 }

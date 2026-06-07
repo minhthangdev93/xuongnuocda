@@ -41,7 +41,11 @@
 .c168-hero__inner {
 	position: relative;
 	z-index: 1;
-	padding: clamp(96px, 11vw, 130px) 0 clamp(72px, 9vw, 96px);
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: clamp(88px, 11vw, 124px);
+	padding-bottom: clamp(72px, 9vw, 96px);
+	/* Không dùng padding shorthand — tránh ghi đè padding ngang của .container-168 */
 }
 
 .c168-hero__content {
@@ -107,7 +111,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	transition: transform var(--transition-base), box-shadow var(--transition-base);
+	transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 }
 
 .c168-channel-card:hover {
@@ -115,9 +119,18 @@
 	box-shadow: var(--shadow-card-hover);
 }
 
+.c168-channel-card__body {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	width: 100%;
+	min-width: 0;
+}
+
 .c168-channel-card__icon {
 	width: 50px;
 	height: 50px;
+	flex-shrink: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -154,11 +167,18 @@
 }
 
 .c168-channel-card__value {
-	font-size: var(--font-size-base);
-	font-weight: 700;
+	font-size: clamp(1rem, 2.2vw, 1.125rem);
+	font-weight: 800;
 	color: var(--main-color);
 	margin: 0 0 8px;
 	word-break: break-word;
+	letter-spacing: 0.02em;
+}
+
+.c168-channel-card--phone .c168-channel-card__value,
+.c168-channel-card--zalo .c168-channel-card__value {
+	font-size: clamp(1.0625rem, 2.4vw, 1.25rem);
+	letter-spacing: 0.04em;
 }
 
 .c168-channel-card__desc {
@@ -656,6 +676,14 @@
 }
 
 @media (max-width: 768px) {
+	.c168-hero {
+		min-height: auto;
+	}
+
+	.c168-hero__content {
+		max-width: 100%;
+	}
+
 	.c168-hero__actions {
 		flex-direction: column;
 	}
@@ -666,6 +694,70 @@
 
 	.c168-channels__grid {
 		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+
+	.c168-channel-card {
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 14px;
+		padding: 16px 18px;
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.c168-channel-card:hover {
+		transform: none;
+		box-shadow: var(--shadow-md);
+	}
+
+	.c168-channel-card--phone {
+		border-left: 3px solid var(--accent-color);
+	}
+
+	.c168-channel-card--zalo {
+		border-left: 3px solid #0068ff;
+	}
+
+	.c168-channel-card--email {
+		border-left: 3px solid var(--main-color);
+	}
+
+	.c168-channel-card--quote {
+		border-left: 3px solid #28a745;
+	}
+
+	.c168-channel-card__icon {
+		width: 44px;
+		height: 44px;
+		margin-bottom: 0;
+		align-self: center;
+		font-size: 1.05rem;
+	}
+
+	.c168-channel-card__body {
+		flex: 1;
+	}
+
+	.c168-channel-card__title {
+		margin: 0 0 4px;
+	}
+
+	.c168-channel-card__value {
+		margin: 0 0 6px;
+	}
+
+	.c168-channel-card__desc {
+		padding-bottom: 0;
+		margin: 0 0 12px;
+		flex: none;
+	}
+
+	.c168-channel-card__btn {
+		width: auto;
+		min-width: 120px;
+		margin-top: 0;
+		align-self: flex-start;
 	}
 
 	.c168-form__row {

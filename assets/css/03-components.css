@@ -691,10 +691,12 @@ aside.widget-area ul.products,
 #right-sidebar ul.products .woo-desc,
 #right-sidebar ul.products .rating,
 #right-sidebar ul.products .nuocda-product-card__footer,
+#right-sidebar ul.products .nuocda-product-card__actions,
 .sidebar-box ul.products .btn-wrap,
 .sidebar-box ul.products .woo-desc,
 .sidebar-box ul.products .rating,
-.sidebar-box ul.products .nuocda-product-card__footer {
+.sidebar-box ul.products .nuocda-product-card__footer,
+.sidebar-box ul.products .nuocda-product-card__actions {
 	display: none !important;
 }
 
@@ -744,6 +746,32 @@ aside.widget-area ul.products,
 	font-size: 13px;
 	font-weight: 700;
 	color: var(--accent-hover);
+}
+
+/* CTA cuối menu mobile */
+.nuocda-mobile-menu-cta {
+	padding: 16px 18px;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nuocda-mobile-menu-cta__btn {
+	width: 100%;
+	justify-content: center;
+	box-shadow: 0 4px 14px rgba(0, 104, 255, 0.28);
+}
+
+#mobile-dropdown .nuocda-mobile-menu-cta {
+	border-top-color: rgba(2, 27, 66, 0.08);
+}
+
+#mobile-fullscreen .nuocda-mobile-menu-cta {
+	padding: 20px 24px 28px;
+	border-top: none;
+}
+
+#mobile-fullscreen .nuocda-mobile-menu-cta__btn {
+	max-width: 320px;
+	margin: 0 auto;
 }
 
 /* Bỏ viền ngoài khi click (OceanWP parent + trình duyệt mobile) */

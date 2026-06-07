@@ -118,7 +118,7 @@ $faqs = array(
 );
 ?>
 
-<div class="c168-page h168-page">
+<div class="landing-168-wrapper c168-page h168-page">
 
 <!-- 1. Hero -->
 <section class="c168-hero" style="--c168-hero-bg: url('<?php echo esc_url( $hero_bg ); ?>')">
@@ -147,10 +147,12 @@ $faqs = array(
 			<?php foreach ( $quick_channels as $channel ) : ?>
 			<article class="c168-channel-card <?php echo esc_attr( $channel['class'] ); ?>">
 				<div class="c168-channel-card__icon"><i class="fas <?php echo esc_attr( $channel['icon'] ); ?>" aria-hidden="true"></i></div>
-				<h2 class="c168-channel-card__title"><?php echo esc_html( $channel['title'] ); ?></h2>
-				<p class="c168-channel-card__value"><?php echo esc_html( $channel['value'] ); ?></p>
-				<p class="c168-channel-card__desc"><?php echo esc_html( $channel['desc'] ); ?></p>
-				<a class="h168-btn h168-btn--sm h168-btn--outline c168-channel-card__btn" href="<?php echo esc_url( $channel['url'] ); ?>" <?php echo ( strpos( $channel['url'], 'http' ) === 0 ) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo esc_html( $channel['btn'] ); ?></a>
+				<div class="c168-channel-card__body">
+					<h2 class="c168-channel-card__title"><?php echo esc_html( $channel['title'] ); ?></h2>
+					<p class="c168-channel-card__value"><?php echo esc_html( $channel['value'] ); ?></p>
+					<p class="c168-channel-card__desc"><?php echo esc_html( $channel['desc'] ); ?></p>
+					<a class="h168-btn h168-btn--sm h168-btn--outline c168-channel-card__btn" href="<?php echo esc_url( $channel['url'] ); ?>" <?php echo ( strpos( $channel['url'], 'http' ) === 0 ) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo esc_html( $channel['btn'] ); ?></a>
+				</div>
 			</article>
 			<?php endforeach; ?>
 		</div>

@@ -35,7 +35,11 @@
 .a168-hero__inner {
 	position: relative;
 	z-index: 1;
-	padding: clamp(100px, 12vw, 140px) 0 clamp(80px, 10vw, 100px);
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: clamp(88px, 11vw, 128px);
+	padding-bottom: clamp(80px, 10vw, 100px);
+	/* Không dùng padding shorthand — tránh ghi đè padding ngang của .container-168 */
 }
 
 .a168-hero__content {
@@ -249,7 +253,7 @@
 	border-radius: var(--radius-md);
 	color: var(--main-color);
 	font-size: 1.35rem;
-	margin-bottom: 18px;
+	margin: 0 auto 18px;
 }
 
 .a168-value-card h3 {
@@ -257,6 +261,7 @@
 	font-weight: 800;
 	color: var(--main-color);
 	margin: 0 0 12px;
+	text-align: center;
 }
 
 .a168-value-card p {
@@ -807,8 +812,17 @@
 }
 
 @media (max-width: 768px) {
+	.a168-hero {
+		min-height: auto;
+	}
+
+	.a168-hero__content {
+		max-width: 100%;
+	}
+
 	.a168-hero__stats {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-width: 100%;
 	}
 
 	.a168-hero__actions {
@@ -837,6 +851,33 @@
 
 	.a168-ops__grid {
 		grid-template-columns: 1fr;
+	}
+
+	.a168-dept-card {
+		display: grid;
+		grid-template-columns: 44px 1fr;
+		grid-template-rows: auto auto;
+		gap: 0 14px;
+		align-items: start;
+		padding: 16px 18px;
+	}
+
+	.a168-dept-card__icon {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+		align-self: center;
+		margin-bottom: 0;
+	}
+
+	.a168-dept-card h3 {
+		grid-column: 2;
+		grid-row: 1;
+		margin: 0 0 6px;
+	}
+
+	.a168-dept-card p {
+		grid-column: 2;
+		grid-row: 2;
 	}
 
 	.a168-ops__stats {

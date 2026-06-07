@@ -105,6 +105,10 @@ foreach ( $elements as $element ) {
 	// Price.
 	if ( 'price-rating' === $element ) {
 
+		if ( $use_custom_card ) {
+			continue;
+		}
+
 		do_action( 'ocean_before_archive_product_inner' );
 
 		if ( false === $ocean_woo_cond || $show_woo_cond ) {
@@ -162,9 +166,19 @@ foreach ( $elements as $element ) {
 	if ( 'button' === $element ) {
 
 		if ( $use_custom_card ) {
-			echo '<li class="nuocda-product-card__footer">';
+			echo '<li class="nuocda-product-card__actions">';
+
+			if ( false === $ocean_woo_cond || $show_woo_cond ) {
+				if ( function_exists( 'nuocda_168_product_needs_zalo_quote' ) && nuocda_168_product_needs_zalo_quote( $product ) ) {
+					echo nuocda_168_get_zalo_quote_html( 'compact' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				} elseif ( $price_html = $product->get_price_html() ) {
+					echo '<span class="nuocda-product-card__price price">' . $price_html . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				}
+			}
+
 			echo '<a href="' . esc_url( get_the_permalink() ) . '" class="nuocda-product-card__link">';
-			esc_html_e( 'Xem chi tiết', 'oceanwp' );
+			esc_html_e( 'Chi tiết', 'oceanwp' );
+			echo '<i class="fas fa-arrow-right" aria-hidden="true"></i>';
 			echo '</a>';
 			echo '</li>';
 			continue;

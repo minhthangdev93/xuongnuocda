@@ -786,6 +786,53 @@
 		grid-template-columns: 1fr;
 	}
 
+	.h168-why-card {
+		text-align: center;
+		padding: 28px 22px;
+	}
+
+	.h168-why-card__icon {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.h168-why-card h3 {
+		text-align: center;
+	}
+
+	.h168-stores__grid {
+		gap: 12px;
+	}
+
+	.h168-store-card {
+		display: grid;
+		grid-template-columns: 42px 1fr;
+		grid-template-rows: auto auto;
+		gap: 0 14px;
+		align-items: start;
+		padding: 16px 18px;
+	}
+
+	.h168-store-card__icon {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+		align-self: center;
+		margin-bottom: 0;
+		width: 40px;
+		height: 40px;
+	}
+
+	.h168-store-card h3 {
+		grid-column: 2;
+		grid-row: 1;
+		margin: 0 0 6px;
+	}
+
+	.h168-store-card p {
+		grid-column: 2;
+		grid-row: 2;
+	}
+
 	.h168-stats__grid {
 		grid-template-columns: 1fr 1fr;
 	}

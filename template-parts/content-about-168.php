@@ -101,7 +101,7 @@ $commitments = array(
 $products = array( 'Đá mi', 'Đá viên bốn', 'Đá tám', 'Đá xay nhuyễn', 'Đá bi', 'Đá tấm' );
 ?>
 
-<div class="a168-page h168-page">
+<div class="landing-168-wrapper a168-page h168-page">
 
 <!-- 1. Hero -->
 <section class="a168-hero" style="--a168-hero-bg: url('<?php echo esc_url( $hero_bg ); ?>')">

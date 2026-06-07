@@ -3,9 +3,23 @@
  */
 
 .container-168 {
+	width: 100%;
 	max-width: var(--container-default);
 	margin: 0 auto;
-	padding: 0 var(--space-md);
+	padding-left: var(--page-gutter, var(--space-md));
+	padding-right: var(--page-gutter, var(--space-md));
+}
+
+/* Landing templates — gutter chống hero/nội dung dính mép màn hình */
+.landing-168-wrapper,
+.a168-page,
+.c168-page {
+	--page-gutter: clamp(18px, 4.5vw, 28px);
+}
+
+#main > .landing-168-wrapper {
+	width: 100%;
+	max-width: 100%;
 }
 
 .section-168 {

@@ -25,17 +25,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	// phpcs:disable WordPress.Security
 	if ( 1 === intval( $total ) ) {
-		_e( 'Showing the single result', 'woocommerce' );
+		echo 'Hiển thị 1 sản phẩm';
 	} elseif ( $total <= $per_page || -1 === $per_page ) {
-		$orderedby_placeholder = empty( $orderedby ) ? '%2$s' : '<span class="screen-reader-text">%2$s</span>';
-		/* translators: 1: total results 2: sorted by */
-		printf( _n( 'Showing all %1$d result', 'Showing all %1$d results', $total, 'woocommerce' ) . $orderedby_placeholder, $total, esc_html( $orderedby ) );
+		printf(
+			'Hiển thị tất cả %1$d sản phẩm%2$s',
+			intval( $total ),
+			empty( $orderedby ) ? '' : '<span class="screen-reader-text">' . esc_html( $orderedby ) . '</span>'
+		);
 	} else {
-		$first                 = ( $per_page * $current ) - $per_page + 1;
-		$last                  = min( $total, $per_page * $current );
-		$orderedby_placeholder = empty( $orderedby ) ? '%4$s' : '<span class="screen-reader-text">%4$s</span>';
-		/* translators: 1: first result 2: last result 3: total results 4: sorted by */
-		printf( _nx( 'Showing %1$d&ndash;%2$d of %3$d result', 'Showing %1$d&ndash;%2$d of %3$d results', $total, 'with first and last result', 'woocommerce' ) . $orderedby_placeholder, $first, $last, $total, esc_html( $orderedby ) );
+		$first = ( $per_page * $current ) - $per_page + 1;
+		$last  = min( $total, $per_page * $current );
+		printf(
+			'Hiển thị %1$d&ndash;%2$d trong tổng %3$d sản phẩm%4$s',
+			intval( $first ),
+			intval( $last ),
+			intval( $total ),
+			empty( $orderedby ) ? '' : '<span class="screen-reader-text">' . esc_html( $orderedby ) . '</span>'
+		);
 	}
 	// phpcs:enable WordPress.Security
 	?>

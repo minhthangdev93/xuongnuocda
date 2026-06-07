@@ -1,6 +1,39 @@
 /**
- * Sticky header — Nước Đá 168
+ * Sticky header & header CTA — Nước Đá 168
  */
+
+/* CTA nằm trong #site-navigation-wrap — bên phải menu, không cạnh logo */
+#site-navigation-wrap {
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+#site-navigation-wrap #site-navigation {
+	float: none;
+}
+
+.nuocda-header-cta {
+	display: flex;
+	align-items: center;
+	margin-left: 12px;
+	flex-shrink: 0;
+}
+
+.nuocda-header-cta__btn {
+	white-space: nowrap;
+	box-shadow: 0 4px 14px rgba(0, 104, 255, 0.28);
+}
+
+.nuocda-header-cta__btn i {
+	font-size: 0.95em;
+}
+
+@media (max-width: 959px) {
+	.nuocda-header-cta {
+		display: none;
+	}
+}
 
 #site-header {
 	transition: transform 0.3s ease, background-color 0.3s ease;
