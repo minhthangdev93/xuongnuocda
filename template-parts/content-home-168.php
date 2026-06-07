@@ -145,20 +145,7 @@ $faqs           = $s['faq']['items'];
 	</div>
 </section>
 
-<!-- 6. CTA -->
-<section class="h168-section h168-cta" style="--h168-cta-bg: url('<?php echo esc_url( $cta_bg ); ?>')">
-	<div class="h168-cta__overlay"></div>
-	<div class="container-168 h168-cta__inner">
-		<h2 class="h168-cta__title"><?php echo esc_html( $s['cta']['title'] ); ?></h2>
-		<p class="h168-cta__desc"><?php echo esc_html( $s['cta']['desc'] ); ?></p>
-		<div class="h168-cta__actions">
-			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $hotline ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi 0348 226 455</a>
-			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $zalo_url ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>
-		</div>
-	</div>
-</section>
-
-<!-- 7. CỬA HÀNG -->
+<!-- 6. CỬA HÀNG -->
 <section id="danh-sach-cua-hang" class="h168-section h168-section--alt h168-stores">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
@@ -178,7 +165,7 @@ $faqs           = $s['faq']['items'];
 	</div>
 </section>
 
-<!-- 8. BẢN ĐỒ -->
+<!-- 7. BẢN ĐỒ -->
 <section class="h168-section h168-map">
 	<div class="container-168">
 		<div class="h168-section-head">
@@ -196,7 +183,7 @@ $faqs           = $s['faq']['items'];
 	</div>
 </section>
 
-<!-- 9. ĐÁNH GIÁ -->
+<!-- 8. ĐÁNH GIÁ -->
 <section class="h168-section h168-section--alt h168-reviews">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
@@ -217,7 +204,7 @@ $faqs           = $s['faq']['items'];
 	</div>
 </section>
 
-<!-- 10. HÌNH ẢNH NHÀ MÁY & CHỨNG NHẬN -->
+<!-- 9. HÌNH ẢNH NHÀ MÁY & CHỨNG NHẬN -->
 <section class="h168-section h168-media" id="hinh-anh-nha-may">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
@@ -271,7 +258,7 @@ $faqs           = $s['faq']['items'];
 	</div>
 </section>
 
-<!-- 11. FAQ -->
+<!-- 10. FAQ -->
 <section class="h168-section h168-section--alt h168-faq">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
@@ -285,6 +272,19 @@ $faqs           = $s['faq']['items'];
 				<p><?php echo esc_html( $faq['a'] ); ?></p>
 			</details>
 			<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+
+<!-- 11. CTA -->
+<section class="h168-section h168-cta" style="--h168-cta-bg: url('<?php echo esc_url( $cta_bg ); ?>')">
+	<div class="h168-cta__overlay"></div>
+	<div class="container-168 h168-cta__inner">
+		<h2 class="h168-cta__title"><?php echo esc_html( $s['cta']['title'] ); ?></h2>
+		<p class="h168-cta__desc"><?php echo esc_html( $s['cta']['desc'] ); ?></p>
+		<div class="h168-cta__actions">
+			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $hotline ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi 0348 226 455</a>
+			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $zalo_url ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>
 		</div>
 	</div>
 </section>
