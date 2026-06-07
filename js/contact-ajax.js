@@ -1,165 +1,220 @@
-jQuery(document).ready(function($) {
-    const messages = nuocdaAjax.messages || {};
+(function () {
+	'use strict';
 
-    function normalizeVnPhone(phone) {
-        const cleaned = String(phone).replace(/[^\d+]/g, '');
+	var config = window.nuocdaAjax || {};
+	var messages = config.messages || {};
 
-        if (/^\+?84\d{9}$/.test(cleaned)) {
-            return '0' + cleaned.replace(/^\+?84/, '');
-        }
+	function normalizeVnPhone(phone) {
+		var cleaned = String(phone).replace(/[^\d+]/g, '');
 
-        if (/^0\d{9}$/.test(cleaned)) {
-            return cleaned;
-        }
+		if (/^\+?84\d{9}$/.test(cleaned)) {
+			return '0' + cleaned.replace(/^\+?84/, '');
+		}
 
-        return '';
-    }
+		if (/^0\d{9}$/.test(cleaned)) {
+			return cleaned;
+		}
 
-    function isValidVnPhone(phone) {
-        const normalized = normalizeVnPhone(phone);
-        return /^0(3|5|7|8|9)\d{8}$/.test(normalized);
-    }
+		return '';
+	}
 
-    function isValidEmail(email) {
-        if (!email || !String(email).trim()) {
-            return true;
-        }
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim());
-    }
+	function isValidVnPhone(phone) {
+		return /^0(3|5|7|8|9)\d{8}$/.test(normalizeVnPhone(phone));
+	}
 
-    function showMessage(form, text, isSuccess, submitButton) {
-        form.find('.form-message').remove();
+	function isValidEmail(email) {
+		if (!email || !String(email).trim()) {
+			return true;
+		}
+		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim());
+	}
 
-        const messageContainer = $('<div>')
-            .addClass('form-message')
-            .addClass(isSuccess ? 'form-message--success' : 'form-message--error')
-            .text(text);
+	function showMessage(form, text, isSuccess, submitButton) {
+		var existing = form.querySelector('.form-message');
+		if (existing) {
+			existing.remove();
+		}
 
-        if (submitButton && submitButton.length) {
-            submitButton.before(messageContainer);
-        } else {
-            form.append(messageContainer);
-        }
+		var messageContainer = document.createElement('div');
+		messageContainer.className = 'form-message ' + (isSuccess ? 'form-message--success' : 'form-message--error');
+		messageContainer.textContent = text;
 
-        if (isSuccess && messageContainer[0]) {
-            messageContainer[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }
+		if (submitButton) {
+			submitButton.parentNode.insertBefore(messageContainer, submitButton);
+		} else {
+			form.appendChild(messageContainer);
+		}
 
-    function submitAjaxForm(form, action, submitButton, originalButtonText) {
-        const formData = new FormData(form[0]);
-        formData.append('action', action);
-        formData.append('nonce', nuocdaAjax.nonce);
+		if (isSuccess) {
+			messageContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		}
+	}
 
-        submitButton.prop('disabled', true);
-        if (submitButton.is('button')) {
-            submitButton.text(messages.sending || 'Đang gửi...');
-        } else {
-            submitButton.html(messages.sending || 'Đang gửi...');
-        }
+	function setButtonLoading(button, loadingText) {
+		button.disabled = true;
+		button.dataset.nuocdaOriginalText = button.textContent;
+		button.textContent = loadingText;
+	}
 
-        $.ajax({
-            url: nuocdaAjax.ajaxurl,
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function(response) {
-                const isSuccess = response.success;
-                const message = response.data && response.data.message ? response.data.message : '';
+	function resetButton(button, originalText) {
+		button.disabled = false;
+		button.textContent = originalText || button.dataset.nuocdaOriginalText || '';
+	}
 
-                if (isSuccess) {
-                    form[0].reset();
-                    form.find('.c168-field-error, .footer-168__field-error').removeClass('c168-field-error footer-168__field-error');
-                }
+	function submitAjaxForm(form, action, submitButton, originalButtonText) {
+		var formData = new FormData(form);
+		formData.append('action', action);
+		formData.append('nonce', config.nonce);
 
-                showMessage(form, message, isSuccess, submitButton);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                showMessage(form, messages.network_error || 'Lỗi kết nối hoặc lỗi máy chủ. Vui lòng thử lại.', false, submitButton);
-                console.error('AJAX Error:', textStatus, errorThrown);
-            },
-            complete: function() {
-                submitButton.prop('disabled', false);
-                if (submitButton.is('button')) {
-                    submitButton.text(originalButtonText);
-                } else {
-                    submitButton.html(originalButtonText);
-                }
-            }
-        });
-    }
+		setButtonLoading(submitButton, messages.sending || 'Đang gửi...');
 
-    $('.contact-form').on('submit', function(e) {
-        e.preventDefault();
+		fetch(config.ajaxurl, {
+			method: 'POST',
+			body: formData,
+			credentials: 'same-origin'
+		})
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (response) {
+				var isSuccess = !!response.success;
+				var message = response.data && response.data.message ? response.data.message : '';
 
-        const form = $(this);
-        const submitButton = form.find('.contact-submit-btn');
-        const originalButtonText = submitButton.text() || submitButton.html();
-        const nameInput = form.find('input[name="name"]');
-        const phoneInput = form.find('input[name="phone"]');
-        const emailInput = form.find('input[name="email"]');
+				if (isSuccess) {
+					form.reset();
+					form.querySelectorAll('.c168-field-error, .footer-168__field-error').forEach(function (el) {
+						el.classList.remove('c168-field-error', 'footer-168__field-error');
+					});
+				}
 
-        form.find('.form-message').remove();
-        form.find('.c168-field-error').removeClass('c168-field-error');
+				showMessage(form, message, isSuccess, submitButton);
+			})
+			.catch(function () {
+				showMessage(form, messages.network_error || 'Lỗi kết nối hoặc lỗi máy chủ. Vui lòng thử lại.', false, submitButton);
+			})
+			.finally(function () {
+				resetButton(submitButton, originalButtonText);
+			});
+	}
 
-        if (!nameInput.val() || !String(nameInput.val()).trim()) {
-            showMessage(form, 'Vui lòng nhập họ và tên.', false, submitButton);
-            nameInput.addClass('c168-field-error').focus();
-            return;
-        }
+	function handleContactSubmit(event) {
+		event.preventDefault();
 
-        if (!phoneInput.val() || !String(phoneInput.val()).trim()) {
-            showMessage(form, messages.phone_required || 'Vui lòng nhập số điện thoại.', false, submitButton);
-            phoneInput.addClass('c168-field-error').focus();
-            return;
-        }
+		var form = event.currentTarget;
+		var submitButton = form.querySelector('.contact-submit-btn');
+		var originalButtonText = submitButton ? submitButton.textContent : '';
+		var nameInput = form.querySelector('input[name="name"]');
+		var phoneInput = form.querySelector('input[name="phone"]');
+		var emailInput = form.querySelector('input[name="email"]');
 
-        if (!isValidVnPhone(phoneInput.val())) {
-            showMessage(form, messages.phone_invalid || 'Số điện thoại không hợp lệ.', false, submitButton);
-            phoneInput.addClass('c168-field-error').focus();
-            return;
-        }
+		form.querySelectorAll('.form-message').forEach(function (el) {
+			el.remove();
+		});
+		form.querySelectorAll('.c168-field-error').forEach(function (el) {
+			el.classList.remove('c168-field-error');
+		});
 
-        if (emailInput.length && !isValidEmail(emailInput.val())) {
-            showMessage(form, 'Email không hợp lệ. Vui lòng kiểm tra lại.', false, submitButton);
-            emailInput.addClass('c168-field-error').focus();
-            return;
-        }
+		if (!nameInput || !nameInput.value.trim()) {
+			showMessage(form, 'Vui lòng nhập họ và tên.', false, submitButton);
+			if (nameInput) {
+				nameInput.classList.add('c168-field-error');
+				nameInput.focus();
+			}
+			return;
+		}
 
-        submitAjaxForm(form, 'nuocda_168_contact', submitButton, originalButtonText);
-    });
+		if (!phoneInput || !phoneInput.value.trim()) {
+			showMessage(form, messages.phone_required || 'Vui lòng nhập số điện thoại.', false, submitButton);
+			if (phoneInput) {
+				phoneInput.classList.add('c168-field-error');
+				phoneInput.focus();
+			}
+			return;
+		}
 
-    $('.footer-168__form').on('submit', function(e) {
-        e.preventDefault();
+		if (!isValidVnPhone(phoneInput.value)) {
+			showMessage(form, messages.phone_invalid || 'Số điện thoại không hợp lệ.', false, submitButton);
+			phoneInput.classList.add('c168-field-error');
+			phoneInput.focus();
+			return;
+		}
 
-        const form = $(this);
-        const submitButton = form.find('button[type="submit"]');
-        const originalButtonText = submitButton.text();
-        const phoneInput = form.find('input[name="phone"]');
-        const phoneValue = phoneInput.val();
+		if (emailInput && !isValidEmail(emailInput.value)) {
+			showMessage(form, 'Email không hợp lệ. Vui lòng kiểm tra lại.', false, submitButton);
+			emailInput.classList.add('c168-field-error');
+			emailInput.focus();
+			return;
+		}
 
-        form.find('.form-message').remove();
-        phoneInput.removeClass('footer-168__field-error');
+		submitAjaxForm(form, 'nuocda_168_contact', submitButton, originalButtonText);
+	}
 
-        if (!phoneValue || !String(phoneValue).trim()) {
-            showMessage(form, messages.phone_required || 'Vui lòng nhập số điện thoại.', false, submitButton);
-            phoneInput.addClass('footer-168__field-error').focus();
-            return;
-        }
+	function handleFooterSubmit(event) {
+		event.preventDefault();
 
-        if (!isValidVnPhone(phoneValue)) {
-            showMessage(form, messages.phone_invalid || 'Số điện thoại không hợp lệ.', false, submitButton);
-            phoneInput.addClass('footer-168__field-error').focus();
-            return;
-        }
+		var form = event.currentTarget;
+		var submitButton = form.querySelector('button[type="submit"]');
+		var originalButtonText = submitButton ? submitButton.textContent : '';
+		var phoneInput = form.querySelector('input[name="phone"]');
+		var phoneValue = phoneInput ? phoneInput.value : '';
 
-        submitAjaxForm(form, 'nuocda_168_footer_quote', submitButton, originalButtonText);
-    });
+		form.querySelectorAll('.form-message').forEach(function (el) {
+			el.remove();
+		});
 
-    $('.footer-168__form input[name="phone"], .c168-form input, .c168-form select, .c168-form textarea').on('input change', function() {
-        $(this).removeClass('c168-field-error footer-168__field-error');
-        $(this).closest('form').find('.form-message').remove();
-    });
-});
+		if (phoneInput) {
+			phoneInput.classList.remove('footer-168__field-error');
+		}
+
+		if (!phoneValue.trim()) {
+			showMessage(form, messages.phone_required || 'Vui lòng nhập số điện thoại.', false, submitButton);
+			if (phoneInput) {
+				phoneInput.classList.add('footer-168__field-error');
+				phoneInput.focus();
+			}
+			return;
+		}
+
+		if (!isValidVnPhone(phoneValue)) {
+			showMessage(form, messages.phone_invalid || 'Số điện thoại không hợp lệ.', false, submitButton);
+			if (phoneInput) {
+				phoneInput.classList.add('footer-168__field-error');
+				phoneInput.focus();
+			}
+			return;
+		}
+
+		submitAjaxForm(form, 'nuocda_168_footer_quote', submitButton, originalButtonText);
+	}
+
+	function clearFieldError(event) {
+		event.currentTarget.classList.remove('c168-field-error', 'footer-168__field-error');
+		var form = event.currentTarget.closest('form');
+		if (form) {
+			form.querySelectorAll('.form-message').forEach(function (el) {
+				el.remove();
+			});
+		}
+	}
+
+	function init() {
+		document.querySelectorAll('.contact-form').forEach(function (form) {
+			form.addEventListener('submit', handleContactSubmit);
+		});
+
+		document.querySelectorAll('.footer-168__form').forEach(function (form) {
+			form.addEventListener('submit', handleFooterSubmit);
+		});
+
+		document.querySelectorAll('.footer-168__form input[name="phone"], .c168-form input, .c168-form select, .c168-form textarea').forEach(function (field) {
+			field.addEventListener('input', clearFieldError);
+			field.addEventListener('change', clearFieldError);
+		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', init);
+	} else {
+		init();
+	}
+})();

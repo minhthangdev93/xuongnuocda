@@ -52,16 +52,16 @@ function nuocda_168_needs_woocommerce_assets() {
 
 /**
  * CSS modules theo ngữ cảnh trang — giảm render-blocking
+ *
+ * Lưu ý: 02-global.css gộp từ 02-layout + 03-components + 04-footer + 10-sticky-header.
+ * Khi sửa các file nguồn, cần build lại bundle (xem script trong README hoặc chạy lại merge).
  */
 function nuocda_168_get_css_modules() {
 	$css_dir = get_stylesheet_directory_uri() . '/assets/css/';
 
 	$modules = array(
 		'nuocda-design-system' => $css_dir . '01-design-system.css',
-		'nuocda-layout'        => $css_dir . '02-layout.css',
-		'nuocda-components'    => $css_dir . '03-components.css',
-		'nuocda-footer'        => $css_dir . '04-footer.css',
-		'nuocda-sticky-header' => $css_dir . '10-sticky-header.css',
+		'nuocda-global'        => $css_dir . '02-global.css',
 	);
 
 	if ( is_front_page() || is_page_template( 'templates/page-trang-chu-168.php' ) ) {
@@ -94,7 +94,7 @@ function nuocda_168_enqueue_conditional_styles() {
 	$theme    = wp_get_theme();
 	$version  = $theme->get( 'Version' );
 	$modules  = nuocda_168_get_css_modules();
-	$previous = array( 'oceanwp-style' );
+	$previous = array( 'nuocda-local-fonts' );
 
 	foreach ( $modules as $handle => $url ) {
 		wp_enqueue_style( $handle, $url, $previous, $version );
@@ -104,29 +104,6 @@ function nuocda_168_enqueue_conditional_styles() {
 	wp_enqueue_style( 'child-style', get_stylesheet_uri(), $previous, $version );
 }
 add_action( 'wp_enqueue_scripts', 'nuocda_168_enqueue_conditional_styles', 20 );
-
-/**
- * Font fallback — tránh rơi về serif khi Google Font chưa tải xong
- */
-function nuocda_168_typography_fallback() {
-	$fallback = 'var(--font-sans-fallback)';
-	$body     = get_theme_mod( 'body_typography', array() );
-	$headings = get_theme_mod( 'headings_typography', array() );
-
-	$body_font = ! empty( $body['font-family'] ) ? $body['font-family'] : '';
-	$head_font = ! empty( $headings['font-family'] ) ? $headings['font-family'] : $body_font;
-
-	$css  = 'body, .c168-page, .h168-page, .a168-page, .footer-168, .nuocda-page-header { font-family: ';
-	$css .= $body_font ? '"' . esc_attr( $body_font ) . '", ' . $fallback : $fallback;
-	$css .= '; }';
-
-	$css .= 'h1, h2, h3, h4, h5, h6 { font-family: ';
-	$css .= $head_font ? '"' . esc_attr( $head_font ) . '", ' . $fallback : 'inherit';
-	$css .= '; }';
-
-	wp_add_inline_style( 'nuocda-design-system', $css );
-}
-add_action( 'wp_enqueue_scripts', 'nuocda_168_typography_fallback', 25 );
 
 /**
  * Tắt tính năng OceanWP không dùng trên landing pages
@@ -305,7 +282,6 @@ function nuocda_168_defer_scripts( $tag, $handle, $src ) {
 	$defer_exact = array(
 		'jquery',
 		'jquery-core',
-		'nuocda-168-contact-js',
 		'nuocda-h168-lightbox',
 		'nuocda-home-media-tabs',
 		'nuocda-sticky-header',
@@ -352,14 +328,32 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 		return $html;
 	}
 
+	$blocking_handles = array();
+
+	if ( is_front_page() || is_page_template( 'templates/page-trang-chu-168.php' ) ) {
+		$blocking_handles[] = 'nuocda-home';
+	}
+
+	if ( is_page_template( 'templates/page-gioi-thieu-168.php' ) ) {
+		$blocking_handles[] = 'nuocda-about';
+	}
+
+	if ( is_page_template( 'templates/page-lien-he-168.php' ) ) {
+		$blocking_handles[] = 'nuocda-contact';
+	}
+
+	if ( nuocda_168_needs_woocommerce_assets() ) {
+		$blocking_handles[] = 'nuocda-woocommerce';
+	}
+
+	if ( in_array( $handle, $blocking_handles, true ) ) {
+		return $html;
+	}
+
 	$async_handles = array(
 		'oceanwp-style',
 		'font-awesome',
 		'simple-line-icons',
-		'nuocda-layout',
-		'nuocda-components',
-		'nuocda-footer',
-		'nuocda-sticky-header',
 		'nuocda-home',
 		'nuocda-about',
 		'nuocda-contact',
@@ -394,11 +388,20 @@ function nuocda_168_critical_css() {
 	if ( is_admin() || nuocda_168_skip_frontend_optimizations() ) {
 		return;
 	}
+
+	$is_home = is_front_page() || is_page_template( 'templates/page-trang-chu-168.php' );
 	?>
 	<style id="nuocda-critical-css">
-		body{margin:0;background:#fff;color:#333}
+		body{margin:0;background:#fff;color:#333;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
 		#site-header,.oceanwp-mobile-menu-icon,#site-navigation-wrap{visibility:visible}
 		.container-168{box-sizing:border-box;width:100%;max-width:1280px;margin:0 auto;padding-left:clamp(18px,4.5vw,28px);padding-right:clamp(18px,4.5vw,28px)}
+		<?php if ( $is_home ) : ?>
+		.h168-hero{position:relative;min-height:clamp(520px,88vh,760px);display:flex;align-items:center;background:#021b42;overflow:hidden}
+		.h168-hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+		.h168-hero__overlay{position:absolute;inset:0;background:linear-gradient(115deg,rgba(2,27,66,.92),rgba(2,27,66,.72) 45%,rgba(0,80,130,.55));z-index:1}
+		.h168-hero__inner{position:relative;z-index:2;width:100%;padding:40px 0 80px}
+		.h168-hero__title{font-size:clamp(1.5rem,3.2vw,2.5rem);font-weight:800;line-height:1.15;color:#fff;margin:0 0 20px}
+		<?php endif; ?>
 	</style>
 	<?php
 }
@@ -438,19 +441,7 @@ remove_action( 'wp_head', 'wp_shortlink_wp_head', 10 );
  * Resource hints — preconnect / dns-prefetch
  */
 function nuocda_168_resource_hints( $urls, $relation_type ) {
-	if ( 'preconnect' === $relation_type ) {
-		$urls[] = array(
-			'href' => 'https://fonts.googleapis.com',
-		);
-		$urls[] = array(
-			'href'        => 'https://fonts.gstatic.com',
-			'crossorigin' => 'anonymous',
-		);
-	}
-
 	if ( 'dns-prefetch' === $relation_type ) {
-		$urls[] = 'https://fonts.googleapis.com';
-		$urls[] = 'https://fonts.gstatic.com';
 		$urls[] = 'https://www.googletagmanager.com';
 		$urls[] = 'https://www.google-analytics.com';
 	}
@@ -467,24 +458,17 @@ function nuocda_168_preload_lcp_image() {
 		return;
 	}
 
-	$hero = 'https://xuongnuocda.com/wp-content/uploads/2025/12/nha-may-san-xuat-nuoc-da-168_yyTfY0SS.webp';
-	echo '<link rel="preload" as="image" href="' . esc_url( $hero ) . '" fetchpriority="high" type="image/webp">' . "\n";
-}
-add_action( 'wp_head', 'nuocda_168_preload_lcp_image', 2 );
+	$settings = nuocda_168_get_landing_settings( 'home' );
+	$hero     = ! empty( $settings['hero']['bg'] ) ? $settings['hero']['bg'] : '';
 
-/**
- * Preload Font Awesome — tránh icon flash khi CSS async
- */
-function nuocda_168_preload_fontawesome() {
-	$fa = get_template_directory_uri() . '/assets/fonts/fontawesome/css/all.min.css';
-
-	if ( get_theme_mod( 'ocean_performance_fontawesome', 'enabled' ) === 'disabled' ) {
+	if ( ! $hero ) {
 		return;
 	}
 
-	echo '<link rel="preload" as="style" href="' . esc_url( $fa ) . '">' . "\n";
+	$type = false !== strpos( $hero, '.webp' ) ? 'image/webp' : 'image/jpeg';
+	echo '<link rel="preload" as="image" href="' . esc_url( $hero ) . '" fetchpriority="high" type="' . esc_attr( $type ) . '">' . "\n";
 }
-add_action( 'wp_head', 'nuocda_168_preload_fontawesome', 3 );
+add_action( 'wp_head', 'nuocda_168_preload_lcp_image', 2 );
 
 /**
  * Ảnh: decoding async; lazy cho ảnh không phải LCP
@@ -492,6 +476,17 @@ add_action( 'wp_head', 'nuocda_168_preload_fontawesome', 3 );
 function nuocda_168_optimize_image_attributes( $attr, $attachment, $size ) {
 	if ( empty( $attr['decoding'] ) ) {
 		$attr['decoding'] = 'async';
+	}
+
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		static $product_lcp_done = false;
+
+		if ( ! $product_lcp_done && in_array( $size, array( 'woocommerce_single', 'full', 'large' ), true ) ) {
+			$product_lcp_done        = true;
+			$attr['loading']         = 'eager';
+			$attr['fetchpriority']   = 'high';
+			return $attr;
+		}
 	}
 
 	if ( empty( $attr['loading'] ) ) {
@@ -539,10 +534,10 @@ function nuocda_168_deferred_analytics() {
 		}
 
 		if ('requestIdleCallback' in window) {
-			requestIdleCallback(loadAnalytics, { timeout: 3500 });
+			requestIdleCallback(loadAnalytics, { timeout: 5000 });
 		} else {
 			window.addEventListener('load', function () {
-				setTimeout(loadAnalytics, 2000);
+				setTimeout(loadAnalytics, 4000);
 			});
 		}
 	})();
@@ -562,7 +557,7 @@ function nuocda_168_enqueue_sticky_header() {
 	$theme   = wp_get_theme();
 	$version = $theme->get( 'Version' );
 
-	wp_enqueue_script(
+	wp_register_script(
 		'nuocda-sticky-header',
 		get_stylesheet_directory_uri() . '/js/sticky-header.js',
 		array(),
@@ -571,3 +566,106 @@ function nuocda_168_enqueue_sticky_header() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'nuocda_168_enqueue_sticky_header' );
+
+/**
+ * Tải script nhẹ sau khi trang ổn định — giảm main-thread lúc load
+ */
+function nuocda_168_deferred_frontend_scripts() {
+	if ( is_admin() || nuocda_168_skip_frontend_optimizations() ) {
+		return;
+	}
+
+	$theme_version = wp_get_theme()->get( 'Version' );
+	$scripts       = array(
+		get_stylesheet_directory_uri() . '/js/sticky-header.js?ver=' . rawurlencode( $theme_version ),
+	);
+
+	$contact_config = wp_json_encode(
+		array(
+			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'nuocda-168-contact-nonce' ),
+			'messages' => array(
+				'phone_invalid'  => 'Số điện thoại không hợp lệ. Vui lòng nhập 10 số (bắt đầu 03, 05, 07, 08 hoặc 09).',
+				'phone_required' => 'Vui lòng nhập số điện thoại.',
+				'sending'        => 'Đang gửi...',
+				'network_error'  => 'Lỗi kết nối hoặc lỗi máy chủ. Vui lòng thử lại.',
+			),
+		)
+	);
+
+	$contact_src = get_stylesheet_directory_uri() . '/js/contact-ajax.js?ver=' . rawurlencode( $theme_version );
+	?>
+	<script>
+	(function () {
+		var deferredScripts = <?php echo wp_json_encode( $scripts ); ?>;
+		var contactSrc = <?php echo wp_json_encode( $contact_src ); ?>;
+		var contactLoaded = false;
+		var idleScriptsLoaded = false;
+
+		function loadScript(src) {
+			var s = document.createElement('script');
+			s.src = src;
+			s.defer = true;
+			document.body.appendChild(s);
+		}
+
+		function loadIdleScripts() {
+			if (idleScriptsLoaded) return;
+			idleScriptsLoaded = true;
+			deferredScripts.forEach(loadScript);
+		}
+
+		function loadContactScript() {
+			if (contactLoaded) return;
+			contactLoaded = true;
+			window.nuocdaAjax = <?php echo $contact_config; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			loadScript(contactSrc);
+		}
+
+		function watchContactForms() {
+			var forms = document.querySelectorAll('.footer-168__form, .contact-form');
+			if (!forms.length) return;
+
+			if (!('IntersectionObserver' in window)) {
+				loadContactScript();
+				return;
+			}
+
+			var observer = new IntersectionObserver(function (entries) {
+				entries.forEach(function (entry) {
+					if (entry.isIntersecting) {
+						loadContactScript();
+						observer.disconnect();
+					}
+				});
+			}, { rootMargin: '240px 0px' });
+
+			forms.forEach(function (form) {
+				observer.observe(form);
+			});
+		}
+
+		function scheduleIdleScripts() {
+			if ('requestIdleCallback' in window) {
+				requestIdleCallback(loadIdleScripts, { timeout: 2500 });
+			} else {
+				window.addEventListener('load', function () {
+					setTimeout(loadIdleScripts, 1500);
+				});
+			}
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', function () {
+				watchContactForms();
+				scheduleIdleScripts();
+			});
+		} else {
+			watchContactForms();
+			scheduleIdleScripts();
+		}
+	})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'nuocda_168_deferred_frontend_scripts', 4 );

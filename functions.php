@@ -24,6 +24,7 @@ require_once get_stylesheet_directory() . '/inc/security.php';
 require_once get_stylesheet_directory() . '/inc/schema.php';
 require_once get_stylesheet_directory() . '/inc/form-helpers.php';
 require_once get_stylesheet_directory() . '/inc/review-spam.php';
+require_once get_stylesheet_directory() . '/inc/local-fonts.php';
 require_once get_stylesheet_directory() . '/inc/performance.php';
 require_once get_stylesheet_directory() . '/inc/product-cat-editor.php';
 require_once get_stylesheet_directory() . '/inc/product-cat-seo.php';
@@ -469,32 +470,7 @@ function custom_change_checkout_placeholders_vi($fields)
  * =========================================================
  */
 
-// 1. Đăng ký và đưa script AJAX vào trang web
-function nuocda_168_enqueue_scripts() {
-	$version = wp_get_theme()->get( 'Version' );
-
-	wp_enqueue_script(
-		'nuocda-168-contact-js',
-		get_stylesheet_directory_uri() . '/js/contact-ajax.js',
-		array( 'jquery' ),
-		$version,
-		true
-	);
-
-    // Truyền dữ liệu cần thiết từ PHP sang JavaScript
-    wp_localize_script( 'nuocda-168-contact-js', 'nuocdaAjax', array(
-        'ajaxurl' => admin_url( 'admin-ajax.php' ),
-        'nonce'   => wp_create_nonce( 'nuocda-168-contact-nonce' ),
-        'messages' => array(
-            'phone_invalid'   => 'Số điện thoại không hợp lệ. Vui lòng nhập 10 số (bắt đầu 03, 05, 07, 08 hoặc 09).',
-            'phone_required'  => 'Vui lòng nhập số điện thoại.',
-            'sending'         => 'Đang gửi...',
-            'network_error'   => 'Lỗi kết nối hoặc lỗi máy chủ. Vui lòng thử lại.',
-        ),
-    ) );
-}
-add_action( 'wp_enqueue_scripts', 'nuocda_168_enqueue_scripts' );
-
+// 1. Form AJAX — script tải lazy trong inc/performance.php (nuocda_168_deferred_frontend_scripts)
 
 // 2. Hàm xử lý logic gửi email (PHP)
 function nuocda_168_handle_contact_form() {
