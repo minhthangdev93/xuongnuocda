@@ -546,6 +546,35 @@ function nuocda_168_remove_single_comments_section( $sections ) {
 add_filter( 'ocean_blog_single_elements_positioning', 'nuocda_168_remove_single_comments_section' );
 
 /**
+ * Tin tức: bỏ sidebar ở trang lưu trữ và chi tiết bài viết.
+ */
+function nuocda_168_is_blog_archive_context() {
+	return is_home()
+		|| is_category()
+		|| is_tag()
+		|| is_date()
+		|| is_author();
+}
+
+function nuocda_168_blog_full_width_layout( $class ) {
+	if ( is_singular( 'post' ) || nuocda_168_is_blog_archive_context() ) {
+		return 'full-width';
+	}
+
+	return $class;
+}
+add_filter( 'ocean_post_layout_class', 'nuocda_168_blog_full_width_layout' );
+
+function nuocda_168_blog_full_width_meta( $meta ) {
+	if ( is_singular( 'post' ) || nuocda_168_is_blog_archive_context() ) {
+		return 'full-width';
+	}
+
+	return $meta;
+}
+add_filter( 'ocean_post_layout_meta_value', 'nuocda_168_blog_full_width_meta' );
+
+/**
  * PHẦN 2: BẢO MẬT WEBSITE (SECURITY)
  * Các thiết lập an toàn cơ bản chống tấn công tự động
  */

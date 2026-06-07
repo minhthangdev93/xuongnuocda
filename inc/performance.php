@@ -10,6 +10,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Bỏ tối ưu frontend khi Customizer preview — tránh treo loading vòng tròn.
+ */
+function nuocda_168_skip_frontend_optimizations() {
+	if ( is_customize_preview() ) {
+		return true;
+	}
+
+	// Fallback: customize manager có thể chưa sẵn sàng ở hook init sớm.
+	if ( ! empty( $_GET['customize_preview'] ) || ! empty( $_POST['customize_preview'] ) ) {
+		return true;
+	}
+
+	if ( ! empty( $_REQUEST['customize_messenger_channel'] ) ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Trang dùng template full-width tùy chỉnh (không page header OceanWP)
  */
 function nuocda_168_is_custom_landing_template() {
@@ -158,7 +178,7 @@ function nuocda_168_dequeue_styles_by_src_fragment( $fragments ) {
  * Gỡ CSS/JS không cần trên frontend
  */
 function nuocda_168_dequeue_bloat() {
-	if ( is_admin() ) {
+	if ( is_admin() || nuocda_168_skip_frontend_optimizations() ) {
 		return;
 	}
 
@@ -245,7 +265,7 @@ add_action( 'wp_enqueue_scripts', 'nuocda_168_dequeue_bloat', 100000 );
  * jQuery xuống footer + defer — không chặn render
  */
 function nuocda_168_optimize_jquery() {
-	if ( is_admin() || ! wp_script_is( 'jquery', 'registered' ) ) {
+	if ( is_admin() || nuocda_168_skip_frontend_optimizations() || ! wp_script_is( 'jquery', 'registered' ) ) {
 		return;
 	}
 
@@ -258,7 +278,7 @@ add_action( 'wp_enqueue_scripts', 'nuocda_168_optimize_jquery', 1 );
  * Bỏ jquery-migrate — giảm blocking JS
  */
 function nuocda_168_remove_jquery_migrate( $scripts ) {
-	if ( is_admin() || ! isset( $scripts->registered['jquery'] ) ) {
+	if ( is_admin() || nuocda_168_skip_frontend_optimizations() || ! isset( $scripts->registered['jquery'] ) ) {
 		return;
 	}
 
@@ -274,6 +294,10 @@ add_action( 'wp_default_scripts', 'nuocda_168_remove_jquery_migrate' );
  * Defer script không chặn render
  */
 function nuocda_168_defer_scripts( $tag, $handle, $src ) {
+	if ( nuocda_168_skip_frontend_optimizations() ) {
+		return $tag;
+	}
+
 	if ( false !== strpos( $tag, ' defer' ) || false !== strpos( $tag, ' async' ) ) {
 		return $tag;
 	}
@@ -324,6 +348,10 @@ add_filter( 'script_loader_tag', 'nuocda_168_defer_scripts', 10, 3 );
  * CSS không critical — tải async (giảm render-blocking)
  */
 function nuocda_168_async_styles( $html, $handle, $href, $media ) {
+	if ( nuocda_168_skip_frontend_optimizations() ) {
+		return $html;
+	}
+
 	$async_handles = array(
 		'oceanwp-style',
 		'font-awesome',
@@ -363,7 +391,7 @@ add_filter( 'style_loader_tag', 'nuocda_168_async_styles', 10, 4 );
  * CSS critical tối thiểu — header/layout khi oceanwp-style async
  */
 function nuocda_168_critical_css() {
-	if ( is_admin() ) {
+	if ( is_admin() || nuocda_168_skip_frontend_optimizations() ) {
 		return;
 	}
 	?>
@@ -397,7 +425,7 @@ function nuocda_168_disable_wp_bloat() {
 add_action( 'init', 'nuocda_168_disable_wp_bloat' );
 
 add_action( 'init', function () {
-	if ( ! is_admin() ) {
+	if ( ! is_admin() && ! nuocda_168_skip_frontend_optimizations() ) {
 		wp_deregister_script( 'heartbeat' );
 	}
 }, 1 );
