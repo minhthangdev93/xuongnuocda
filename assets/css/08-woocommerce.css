@@ -2,6 +2,184 @@
  * Nước Đá 168 — WooCommerce (shop + related products + reviews)
  */
 
+/* Tiêu đề trang chi tiết sản phẩm */
+.woocommerce div.product .product_title {
+	font-size: 30px;
+	margin: 0 0 14px;
+}
+
+@media (max-width: 767px) {
+	.woocommerce div.product div.summary {
+		margin-top: 24px;
+	}
+}
+
+/* PhotoSwipe — nút đóng (X) khi phóng to ảnh SP */
+.pswp__button.pswp__button--close.nuocda-pswp-close {
+	background-image: none !important;
+	background-color: rgba(255, 255, 255, 0.96) !important;
+	border-radius: 50%;
+	width: 46px;
+	height: 46px;
+	opacity: 1 !important;
+	box-shadow: 0 4px 18px rgba(2, 27, 66, 0.28);
+	float: right;
+}
+
+.pswp__button.nuocda-pswp-close .nuocda-pswp-close__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	font-size: 30px;
+	font-weight: 400;
+	line-height: 1;
+	color: var(--main-color);
+}
+
+.pswp__ui--idle .pswp__button--close,
+.pswp__ui--hidden .pswp__button--close {
+	opacity: 1 !important;
+}
+
+@media (max-width: 767px) {
+	.pswp__top-bar {
+		opacity: 1 !important;
+	}
+
+	.pswp__button.pswp__button--close.nuocda-pswp-close {
+		position: fixed;
+		top: 12px;
+		right: 12px;
+		z-index: 1601;
+		float: none;
+	}
+}
+
+/* Tab Mô tả / Đánh giá — segmented control (ghi đè OceanWP) */
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs {
+	padding-top: 24px;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs {
+	display: flex !important;
+	flex-direction: row !important;
+	flex-wrap: nowrap !important;
+	align-items: stretch !important;
+	gap: 8px;
+	padding: 6px;
+	margin: 0 auto 20px !important;
+	background: var(--bg-light);
+	border: 1px solid var(--border-light) !important;
+	border-radius: var(--radius-pill);
+	text-align: center;
+	width: 100%;
+	max-width: 520px;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs::before,
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs::after {
+	display: none !important;
+	content: none !important;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li {
+	display: flex !important;
+	flex: 1 1 0 !important;
+	min-width: 0;
+	width: auto !important;
+	float: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+	background: none !important;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li::before,
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li::after {
+	display: none !important;
+	content: none !important;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li a {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	min-height: var(--btn-min-height-sm);
+	padding: 10px 16px !important;
+	margin: 0 !important;
+	border: none !important;
+	border-radius: var(--radius-pill);
+	font-size: var(--font-size-sm) !important;
+	font-weight: 700;
+	text-transform: none !important;
+	letter-spacing: 0;
+	color: var(--text-muted) !important;
+	background: transparent !important;
+	transition: background var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li.description_tab a::before,
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li.additional_information_tab a::before {
+	content: "\f15c";
+	font-family: "Font Awesome 6 Free", "Font Awesome 5 Free";
+	font-weight: 900;
+	font-size: 0.9em;
+	opacity: 0.85;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li.reviews_tab a::before {
+	content: "\f005";
+	font-family: "Font Awesome 6 Free", "Font Awesome 5 Free";
+	font-weight: 900;
+	font-size: 0.9em;
+	opacity: 0.85;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li a:hover {
+	color: var(--main-color) !important;
+	background: rgba(255, 255, 255, 0.65) !important;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li.active a,
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li.active a:hover {
+	color: #ffffff !important;
+	background: linear-gradient(135deg, var(--accent-color), var(--accent-hover)) !important;
+	box-shadow: var(--shadow-accent);
+	border: none !important;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li.active a::before {
+	opacity: 1;
+	color: #ffffff;
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs .panel {
+	margin: 0 !important;
+	padding: 24px 22px;
+	background: var(--white);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-sm);
+}
+
+.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs .panel h2:first-child {
+	margin-top: 0;
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: var(--main-color);
+}
+
+@media (min-width: 768px) {
+	.woocommerce div.product .woocommerce-tabs.nuocda-product-tabs ul.tabs li a {
+		padding: 12px 22px !important;
+		font-size: var(--font-size-base) !important;
+	}
+}
+
 /* Form đánh giá — honeypot ẩn */
 .nuocda-review-hp {
 	position: absolute !important;
@@ -190,6 +368,20 @@
 	font-weight: 700;
 	line-height: 1.2;
 	box-shadow: var(--shadow-sm);
+}
+
+/* Badge giảm giá — góc trái trên, không thụt vào ảnh (OceanWP mặc định left: 15%) */
+@media (max-width: 767px) {
+	.woocommerce span.onsale {
+		left: 12px !important;
+		top: 12px !important;
+		right: auto;
+	}
+
+	.woocommerce div.product span.onsale {
+		left: 12px !important;
+		top: 12px !important;
+	}
 }
 
 .woocommerce ul.products.nuocda-product-grid .title {

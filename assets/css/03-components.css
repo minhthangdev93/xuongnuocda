@@ -231,7 +231,7 @@
 
 .single-product .nuocda-single-cta {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	gap: 12px;
 	margin-top: 8px;
 }
@@ -249,8 +249,9 @@
 	font-size: var(--font-size-base);
 	text-decoration: none;
 	transition: background var(--transition-base), transform var(--transition-base);
-	flex: 1;
-	min-width: 200px;
+	flex: 1 1 0;
+	min-width: 0;
+	white-space: nowrap;
 }
 
 .single-product .nuocda-single-cta__zalo {
@@ -275,11 +276,22 @@
 	transform: translateY(-1px);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+	.single-product .nuocda-single-cta {
+		gap: 8px;
+	}
+
 	.single-product .nuocda-single-cta__zalo,
 	.single-product .nuocda-single-cta__phone {
-		width: 100%;
-		min-width: 0;
+		padding: 11px 12px;
+		font-size: 0.8125rem;
+		min-height: var(--btn-min-height-sm);
+		gap: 0;
+	}
+
+	.single-product .nuocda-single-cta__zalo i,
+	.single-product .nuocda-single-cta__phone i {
+		display: none;
 	}
 }
 

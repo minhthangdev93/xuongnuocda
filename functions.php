@@ -105,6 +105,11 @@ add_filter( 'theme_mod_ocean_woo_display_floating_bar', function () {
 } );
 
 /**
+ * Ẩn điều hướng Previous / Next Product trên trang chi tiết SP
+ */
+add_filter( 'theme_mod_ocean_woocommerce_display_navigation', '__return_false' );
+
+/**
  * Ẩn icon giỏ hàng trong header (desktop + mobile + dropdown)
  */
 add_filter( 'theme_mod_ocean_woo_menu_icon_visibility', function () {
