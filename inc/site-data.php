@@ -10,13 +10,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Email liên hệ chính — dùng thống nhất trên toàn site
+ */
+function nuocda_168_get_site_email() {
+	return 'nuocdasach168h@gmail.com';
+}
+
+/**
  * Thông tin liên hệ nhanh
  */
 function nuocda_168_get_contact() {
 	return array(
 		'hotline' => '0348226455',
 		'zalo'    => 'https://zalo.me/0348226455',
-		'email'   => '168@xuongnuocda.com',
+		'email'   => nuocda_168_get_site_email(),
 	);
 }
 

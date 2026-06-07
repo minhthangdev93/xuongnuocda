@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Email nhận thông báo từ form
  */
 function nuocda_168_get_notify_email() {
-	return 'nuocdasach168h@gmail.com';
+	return nuocda_168_get_site_email();
 }
 
 /**
@@ -91,9 +91,11 @@ function nuocda_168_form_security_check( $rate_key, $limit = 5 ) {
  * @return bool
  */
 function nuocda_168_send_notification_email( $subject, $body, $reply = '' ) {
+	$from_email = nuocda_168_get_site_email();
+
 	$headers = array(
 		'Content-Type: text/html; charset=UTF-8',
-		'From: "Website Nước Đá 168" <nuocdasach168h@gmail.com>',
+		'From: "Website Nước Đá 168" <' . $from_email . '>',
 	);
 
 	if ( is_email( $reply ) ) {

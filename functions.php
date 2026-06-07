@@ -168,6 +168,17 @@ add_filter( 'ocean_title', function ( $title ) {
 }, 20 );
 
 /**
+ * Email site thống nhất — form, WooCommerce, wp_mail
+ */
+add_filter( 'wp_mail_from', function () {
+	return nuocda_168_get_site_email();
+} );
+
+add_filter( 'woocommerce_email_from_address', function () {
+	return nuocda_168_get_site_email();
+} );
+
+/**
  * Sản phẩm không có giá (0 đ) — hiển thị CTA Zalo thay vì giá
  */
 function nuocda_168_product_needs_zalo_quote( $product ) {
