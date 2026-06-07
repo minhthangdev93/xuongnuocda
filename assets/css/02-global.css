@@ -1,5 +1,5 @@
 /**
- * Nu?c Ðá 168 — Global bundle (layout + components + footer + sticky header)
+ * Nu?c ï¿½ï¿½ 168 ï¿½ Global bundle (layout + components + footer + sticky header)
  * Auto-merged for fewer HTTP requests.
  */
 
@@ -1081,6 +1081,7 @@ label {
 	display: flex;
 	flex-direction: column;
 	min-height: 100%;
+	min-width: 0;
 }
 
 .footer-168__logo-text {
@@ -1273,29 +1274,40 @@ label {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+	width: 100%;
+	max-width: 100%;
+	position: relative;
 }
 
-.footer-168__form input {
+.footer-168__form > input[type="tel"] {
+	display: block;
 	width: 100%;
+	max-width: 100%;
+	margin: 0;
 	padding: 14px 18px;
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: var(--radius-md);
 	background: rgba(255, 255, 255, 0.06);
 	color: var(--white);
 	font-size: var(--font-size-sm);
+	box-sizing: border-box;
 	outline: none;
 	transition: border-color var(--transition-base);
 }
 
-.footer-168__form input:focus {
+.footer-168__form > input[type="tel"]:focus {
 	border-color: var(--accent-color);
 }
 
-.footer-168__form input::placeholder {
+.footer-168__form > input[type="tel"]::placeholder {
 	color: rgba(255, 255, 255, 0.45);
 }
 
-.footer-168__form button {
+.footer-168__form > button {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
 	min-height: var(--btn-min-height-sm);
 	padding: 14px 20px;
 	border: none;
@@ -1304,6 +1316,7 @@ label {
 	color: var(--white);
 	font-weight: 700;
 	font-size: var(--font-size-sm);
+	box-sizing: border-box;
 	cursor: pointer;
 	transition: background var(--transition-base);
 }
