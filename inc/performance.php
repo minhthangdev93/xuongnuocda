@@ -119,6 +119,7 @@ function nuocda_168_ocean_performance_mods( $value ) {
 add_filter( 'theme_mod_ocean_performance_lightbox', 'nuocda_168_ocean_performance_mods' );
 add_filter( 'theme_mod_ocean_performance_scroll_effect', 'nuocda_168_ocean_performance_mods' );
 add_filter( 'theme_mod_ocean_performance_custom_select', 'nuocda_168_ocean_performance_mods' );
+add_filter( 'ocean_menu_search_style', 'nuocda_168_ocean_performance_mods' );
 
 add_filter( 'ocean_display_scroll_up_button', function ( $show ) {
 	return nuocda_168_is_custom_landing_template() ? false : $show;

@@ -338,3 +338,14 @@
 		display: none !important;
 	}
 }
+
+/* OceanWP search — dự phòng khi không load oceanwp-style (mặc định visibility:hidden) */
+#searchform-header-replace,
+#searchform-overlay,
+#icon-searchform-overlay,
+#search-toggle,
+#site-header .search-toggle-li,
+#mobile-menu-search {
+	display: none !important;
+	visibility: hidden !important;
+}
