@@ -694,7 +694,7 @@ function nuocda_168_is_blog_archive_context() {
 }
 
 /**
- * Trang danh sách tin tức — hiển thị 3 bài mỗi trang.
+ * Trang danh sách tin tức — hiển thị 10 bài mỗi trang.
  */
 function nuocda_168_blog_posts_per_page( $query ) {
 	if ( is_admin() || ! $query->is_main_query() ) {
@@ -702,7 +702,7 @@ function nuocda_168_blog_posts_per_page( $query ) {
 	}
 
 	if ( nuocda_168_is_blog_archive_context() ) {
-		$query->set( 'posts_per_page', 3 );
+		$query->set( 'posts_per_page', 10 );
 	}
 }
 add_action( 'pre_get_posts', 'nuocda_168_blog_posts_per_page' );
