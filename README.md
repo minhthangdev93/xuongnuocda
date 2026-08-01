@@ -19,7 +19,7 @@ Child theme WordPress cho website **nuocdasach168** / **xuongnuocda.com**, xây 
 
 ```bash
 cd wp-content/themes
-git clone <URL_GITHUB> oceanwp-child-theme-master
+git clone <URL_GITHUB> xuongnuocda
 ```
 
 2. Vào **Giao diện → Giao diện** → kích hoạt **OceanWP Child Theme**.
@@ -77,7 +77,7 @@ Chỉnh sửa `inc/site-data.php`:
 ## Triển khai production
 
 1. **Backup** site trước khi deploy.
-2. Pull / upload theme lên `wp-content/themes/oceanwp-child-theme-master/`.
+2. Pull / upload theme lên `wp-content/themes/xuongnuocda/`.
 3. Xóa cache (plugin cache + CDN nếu có).
 4. Kiểm tra: trang chủ, shop, single product, form liên hệ, mobile menu.
 
