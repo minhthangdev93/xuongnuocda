@@ -403,23 +403,21 @@ function nuocda_168_critical_css() {
 		html{font-size:15px;-webkit-text-size-adjust:100%}
 		@media(min-width:768px){html{font-size:16px}}
 		body{margin:0;background:#fff;color:#333;font-family:"Inter",var(--font-sans-fallback);line-height:1.6}
-		#site-header{--nuocda-header-h:<?php echo (int) $header_h; ?>px;width:100%;background:#021b42;border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:9999}
+		#site-header{--nuocda-header-h:<?php echo (int) $header_h; ?>px;width:100%;background:#021b42;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:9999}
 		#site-header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1280px;height:var(--nuocda-header-h);margin:0 auto;padding:0 clamp(18px,4.5vw,28px)}
 		#site-logo,#site-logo #site-logo-inner{height:var(--nuocda-header-h);display:flex;align-items:center}
 		#site-logo img{max-height:var(--nuocda-header-h);width:auto;height:auto}
 		#site-navigation-wrap{display:none}
 		.oceanwp-mobile-menu-icon{display:flex;align-items:center}
 		.container-168{box-sizing:border-box;width:100%;max-width:1280px;margin:0 auto;padding-left:clamp(18px,4.5vw,28px);padding-right:clamp(18px,4.5vw,28px)}
-		#sticky-header-placeholder{width:100%;display:none}
 		<?php if ( $is_home ) : ?>
-		#site-header{position:sticky;top:0;z-index:9999;background:#021b42}
-		.h168-hero{position:relative;min-height:clamp(520px,88vh,760px);display:flex;align-items:center;background:#021b42;overflow:hidden}
+		.h168-hero{position:relative;min-height:clamp(520px,88vh,760px);display:flex;align-items:flex-start;background:#021b42;overflow:hidden}
 		.h168-hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
 		.h168-hero__overlay{position:absolute;inset:0;background:linear-gradient(115deg,rgba(2,27,66,.92),rgba(2,27,66,.72) 45%,rgba(0,80,130,.55));z-index:1}
-		.h168-hero__inner{position:relative;z-index:2;width:100%;padding:40px 0 80px}
-		.h168-hero__content{max-width:720px}
-		.h168-hero__title{font-family:"Montserrat",system-ui,sans-serif;font-size:clamp(1.5rem,3.2vw,2.5rem);font-weight:800;line-height:1.15;color:#fff;margin:0 0 20px}
-		.h168-hero__title-main{display:block;white-space:nowrap}
+		.h168-hero__inner{position:relative;z-index:2;width:100%;padding:clamp(56px,10vh,100px) 0 80px}
+		.h168-hero__content{max-width:720px;min-height:11.5rem}
+		.h168-hero__title{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:clamp(1.5rem,3.2vw,2.5rem);font-weight:800;line-height:1.15;color:#fff;margin:0 0 20px}
+		.h168-hero__title-main{display:block;white-space:normal}
 		.h168-hero__title-accent{display:block;color:#00c3ff;font-size:.92em;margin-top:6px}
 		.h168-hero__desc{font-size:clamp(1.0625rem,2.5vw,1.35rem);color:rgba(255,255,255,.9);line-height:1.75;margin:0 0 32px;max-width:580px}
 		.h168-hero__actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
@@ -427,7 +425,7 @@ function nuocda_168_critical_css() {
 		.h168-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;border:2px solid transparent}
 		.h168-btn--primary{background:#00c3ff;color:#fff;box-shadow:0 4px 14px rgba(0,195,255,.35)}
 		.h168-btn--ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.45)}
-		@media(max-width:768px){.h168-hero{min-height:520px;min-height:100svh;text-align:center}.h168-hero__title-main{white-space:normal}.h168-hero__content,.h168-hero__desc{margin-left:auto;margin-right:auto}.h168-hero__actions{flex-direction:column}}
+		@media(max-width:768px){.h168-hero{min-height:520px;min-height:100svh;text-align:center}.h168-hero__content,.h168-hero__desc{margin-left:auto;margin-right:auto}.h168-hero__actions{flex-direction:column}}
 		@media(min-width:960px){#site-navigation-wrap{display:flex;align-items:center;flex:1;justify-content:flex-end}.oceanwp-mobile-menu-icon{display:none}}
 		<?php endif; ?>
 	</style>

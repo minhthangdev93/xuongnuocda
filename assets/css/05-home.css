@@ -2,12 +2,12 @@
  * Trang chủ — Redesign Nước Đá 168
  */
 
-/* 1. Hero */
+/* 1. Hero — flex-start (không center): tránh CLS khi font/text đổi chiều cao. */
 .h168-hero {
 	position: relative;
 	min-height: clamp(520px, 88vh, 760px);
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	background: var(--main-color);
 	overflow: hidden;
 }
@@ -33,15 +33,20 @@
 	position: relative;
 	z-index: 2;
 	width: 100%;
-	padding-top: 40px;
+	/* Padding cố định thay vì căn giữa theo chiều cao nội dung. */
+	padding-top: clamp(56px, 10vh, 100px);
 	padding-bottom: 80px;
 }
 
 .h168-hero__content {
 	max-width: 720px;
+	/* Giữ chỗ tiêu đề — giảm nhảy khi webfont optional kịp/không kịp load. */
+	min-height: 11.5rem;
 }
 
 .h168-hero__title {
+	/* System font cho H1 LCP — hết nhảy metric khi Montserrat load. */
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	font-size: clamp(1.5rem, 3.2vw, 2.5rem);
 	font-weight: 800;
 	line-height: 1.15;
@@ -51,7 +56,7 @@
 
 .h168-hero__title-main {
 	display: block;
-	white-space: nowrap;
+	white-space: normal;
 }
 
 .h168-hero__title-accent {
