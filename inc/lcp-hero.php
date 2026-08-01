@@ -205,16 +205,17 @@ function nuocda_168_get_hero_image_data( $url ) {
 	$tablet_url  = $tablet ? $tablet['url'] : $mobile_url;
 	$desktop_url = $desktop ? $desktop['url'] : $tablet_url;
 
+	// Srcset phải chứa đúng URL preload (mobile/tablet/desktop) — tránh cảnh báo "preloaded but not used".
 	$srcset_map = array();
 	foreach ( array( $mobile, $tablet, $desktop ) as $candidate ) {
 		if ( ! $candidate || empty( $candidate['url'] ) || empty( $candidate['width'] ) ) {
 			continue;
 		}
-		// Bỏ size > 1400 — không cần cho LCP mobile/desktop thường.
-		if ( (int) $candidate['width'] > 1400 ) {
+		$w = (int) $candidate['width'];
+		if ( $w <= 0 || $w > 1920 ) {
 			continue;
 		}
-		$srcset_map[ (int) $candidate['width'] ] = esc_url( $candidate['url'] ) . ' ' . (int) $candidate['width'] . 'w';
+		$srcset_map[ $w ] = esc_url( $candidate['url'] ) . ' ' . $w . 'w';
 	}
 
 	ksort( $srcset_map );

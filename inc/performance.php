@@ -556,15 +556,17 @@ function nuocda_168_preload_lcp_image() {
 
 		if ( $hero_url && function_exists( 'nuocda_168_get_hero_image_data' ) ) {
 			$hero = nuocda_168_get_hero_image_data( $hero_url );
-			$type = $hero['type'];
 
-			if ( ! empty( $hero['mobile'] ) ) {
-				echo '<link rel="preload" as="image" href="' . esc_url( $hero['mobile'] ) . '" fetchpriority="high" media="(max-width: 767px)" type="' . esc_attr( $type ) . '">' . "\n";
-			}
-
-			$desktop = ! empty( $hero['desktop'] ) ? $hero['desktop'] : $hero['mobile'];
-			if ( $desktop ) {
-				echo '<link rel="preload" as="image" href="' . esc_url( $desktop ) . '" fetchpriority="high" media="(min-width: 768px)" type="' . esc_attr( $type ) . '">' . "\n";
+			// Một preload imagesrcset = cùng srcset với <img> → browser chọn đúng 1 URL, hết cảnh báo unused.
+			if ( ! empty( $hero['src'] ) && ! empty( $hero['srcset'] ) ) {
+				nuocda_168_echo_lcp_preload(
+					$hero['src'],
+					$hero['srcset'],
+					! empty( $hero['sizes'] ) ? $hero['sizes'] : '100vw',
+					! empty( $hero['type'] ) ? $hero['type'] : ''
+				);
+			} elseif ( ! empty( $hero['src'] ) ) {
+				nuocda_168_echo_lcp_preload( $hero['src'], '', '', ! empty( $hero['type'] ) ? $hero['type'] : '' );
 			}
 		}
 		return;
