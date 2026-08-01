@@ -44,7 +44,7 @@ $subtitle  = $s['bottom']['subtitle'] ?: $s['company']['trade_name'];
 						<span><?php echo esc_html( $s['contact']['zalo_label'] ); ?></span>
 					</a>
 				</div>
-				<h4 class="footer-168__title footer-168__title--sub"><?php echo esc_html( $s['links']['title'] ); ?></h4>
+				<p class="footer-168__title footer-168__title--sub"><?php echo esc_html( $s['links']['title'] ); ?></p>
 				<ul class="footer-168__menu footer-168__menu--grid">
 					<?php foreach ( $s['links']['items'] as $link ) : ?>
 					<li><a href="<?php echo esc_url( $link['url'] ); ?>"><?php echo esc_html( $link['label'] ); ?></a></li>
@@ -53,7 +53,7 @@ $subtitle  = $s['bottom']['subtitle'] ?: $s['company']['trade_name'];
 			</div>
 
 			<div class="footer-168__col footer-168__legal">
-				<h4 class="footer-168__title"><?php echo esc_html( $s['company']['title'] ); ?></h4>
+				<p class="footer-168__title"><?php echo esc_html( $s['company']['title'] ); ?></p>
 				<dl class="footer-168__legal-list">
 					<div class="footer-168__legal-row">
 						<dt>Tên công ty</dt>
@@ -85,7 +85,7 @@ $subtitle  = $s['bottom']['subtitle'] ?: $s['company']['trade_name'];
 			</div>
 
 			<div class="footer-168__col footer-168__contact">
-				<h4 class="footer-168__title"><?php echo esc_html( $s['contact']['title'] ); ?></h4>
+				<p class="footer-168__title"><?php echo esc_html( $s['contact']['title'] ); ?></p>
 				<ul class="footer-168__list">
 					<li>
 						<i class="fas fa-envelope" aria-hidden="true"></i>
@@ -108,7 +108,7 @@ $subtitle  = $s['bottom']['subtitle'] ?: $s['company']['trade_name'];
 
 			<div class="footer-168__col footer-168__quote">
 				<div class="footer-168__quote-card">
-					<h4 class="footer-168__title"><?php echo esc_html( $s['quote']['title'] ); ?></h4>
+					<p class="footer-168__title"><?php echo esc_html( $s['quote']['title'] ); ?></p>
 					<p><?php echo esc_html( $s['quote']['desc'] ); ?></p>
 					<form class="footer-168__form" method="post" novalidate>
 						<div class="nuocda-form-hp" aria-hidden="true">
@@ -135,7 +135,7 @@ $subtitle  = $s['bottom']['subtitle'] ?: $s['company']['trade_name'];
 		<!-- Hàng 2: Cửa hàng -->
 		<div class="footer-168__stores">
 			<div class="footer-168__stores-head">
-				<h4 class="footer-168__title"><?php echo esc_html( $s['stores']['heading'] ); ?></h4>
+				<p class="footer-168__title"><?php echo esc_html( $s['stores']['heading'] ); ?></p>
 				<p><?php echo esc_html( $s['stores']['desc'] ); ?></p>
 			</div>
 			<div class="footer-168__stores-grid">

@@ -200,7 +200,7 @@ $faqs           = $s['faq']['items'];
 		<div class="h168-reviews__grid">
 			<?php foreach ( $testimonials as $review ) : ?>
 			<blockquote class="h168-review-card">
-				<div class="h168-review-card__stars" aria-label="<?php echo esc_attr( $review['stars'] . ' sao' ); ?>">
+				<div class="h168-review-card__stars" role="img" aria-label="<?php echo esc_attr( $review['stars'] . ' sao' ); ?>">
 					<?php for ( $i = 0; $i < $review['stars']; $i++ ) : ?><i class="fas fa-star" aria-hidden="true"></i><?php endfor; ?>
 				</div>
 				<p>&ldquo;<?php echo esc_html( $review['text'] ); ?>&rdquo;</p>

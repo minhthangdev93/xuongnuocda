@@ -326,38 +326,25 @@ add_filter( 'script_loader_tag', 'nuocda_168_defer_scripts', 10, 3 );
  * CSS không critical — tải async (giảm render-blocking)
  */
 function nuocda_168_async_styles( $html, $handle, $href, $media ) {
-	if ( nuocda_168_skip_frontend_optimizations() ) {
+	if ( nuocda_168_skip_frontend_optimizations() || ! $href ) {
 		return $html;
 	}
 
-	$blocking_handles = array( 'nuocda-header-lite', 'nuocda-local-fonts', 'nuocda-design-system' );
-
-	if ( is_page_template( 'templates/page-gioi-thieu-168.php' ) ) {
-		$blocking_handles[] = 'nuocda-about';
-	}
-
-	if ( is_page_template( 'templates/page-lien-he-168.php' ) ) {
-		$blocking_handles[] = 'nuocda-contact';
-	}
-
-	if ( nuocda_168_needs_woocommerce_assets() ) {
-		$blocking_handles[] = 'nuocda-woocommerce';
-	}
-
-	if ( in_array( $handle, $blocking_handles, true ) ) {
-		return $html;
-	}
-
-	$async_handles = array(
-		'oceanwp-style',
-		'font-awesome',
-		'simple-line-icons',
+	// Plugin contact bar + CSS theme không còn cần blocking (đã có critical CSS).
+	$always_async_handles = array(
+		'nuocda-design-system',
+		'nuocda-header-lite',
+		'nuocda-local-fonts',
 		'nuocda-home',
 		'nuocda-about',
 		'nuocda-contact',
 		'nuocda-woocommerce',
 		'nuocda-page-header',
+		'nuocda-global',
 		'child-style',
+		'oceanwp-style',
+		'font-awesome',
+		'simple-line-icons',
 		'woocommerce-general',
 		'woocommerce-layout',
 		'woocommerce-smallscreen',
@@ -368,15 +355,33 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 		'elementor-global',
 	);
 
-	if ( function_exists( 'nuocda_168_is_home_landing' ) && nuocda_168_is_home_landing() ) {
-		$async_handles[] = 'nuocda-global';
+	$async_by_prefix = array(
+		'mt-contact',
+		'contact-bar',
+		'oceanwp-google-font-',
+	);
+
+	$should_async = in_array( $handle, $always_async_handles, true );
+
+	if ( ! $should_async ) {
+		foreach ( $async_by_prefix as $prefix ) {
+			if ( 0 === strpos( $handle, $prefix ) || false !== strpos( $handle, $prefix ) ) {
+				$should_async = true;
+				break;
+			}
+		}
 	}
 
-	if ( ! in_array( $handle, $async_handles, true ) && 0 !== strpos( $handle, 'oceanwp-google-font-' ) ) {
+	// Fallback: bắt CSS contact-bar theo URL.
+	if ( ! $should_async && is_string( $href ) && false !== strpos( $href, 'contact-bar' ) ) {
+		$should_async = true;
+	}
+
+	if ( ! $should_async ) {
 		return $html;
 	}
 
-	$async = '<link rel="stylesheet" id="' . esc_attr( $handle ) . '-css" href="' . esc_url( $href ) . '" media="print" onload="this.media=\'all\'">' . "\n";
+	$async  = '<link rel="stylesheet" id="' . esc_attr( $handle ) . '-css" href="' . esc_url( $href ) . '" media="print" onload="this.media=\'all\'">' . "\n";
 	$async .= '<noscript><link rel="stylesheet" href="' . esc_url( $href ) . '"></noscript>';
 
 	return $async;
@@ -384,20 +389,30 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 add_filter( 'style_loader_tag', 'nuocda_168_async_styles', 10, 4 );
 
 /**
- * CSS critical tối thiểu — header/layout khi oceanwp-style async
+ * CSS critical tối thiểu — header/layout khi CSS chính async
  */
 function nuocda_168_critical_css() {
 	if ( is_admin() || nuocda_168_skip_frontend_optimizations() ) {
 		return;
 	}
 
-	$is_home = function_exists( 'nuocda_168_is_home_landing' ) && nuocda_168_is_home_landing();
+	$is_home   = function_exists( 'nuocda_168_is_home_landing' ) && nuocda_168_is_home_landing();
+	$header_h  = absint( get_theme_mod( 'ocean_header_height', 74 ) );
+	$header_h  = $header_h >= 50 ? $header_h : 74;
 	?>
 	<style id="nuocda-critical-css">
-		:root{--main-color:#021b42;--accent-color:#00c3ff;--accent-hover:#009acd;--white:#fff;--radius-pill:50px;--btn-min-height:52px;--shadow-accent:0 4px 14px rgba(0,195,255,.35)}
-		body{margin:0;background:#fff;color:#333;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-		#site-header,.oceanwp-mobile-menu-icon,#site-navigation-wrap{visibility:visible}
+		:root{--main-color:#021b42;--accent-color:#00c3ff;--accent-hover:#009acd;--white:#fff;--text-color:#333;--bg-light:#f4f8fb;--radius-pill:50px;--btn-min-height:52px;--shadow-accent:0 4px 14px rgba(0,195,255,.35);--nuocda-header-h:<?php echo (int) $header_h; ?>px;--font-sans-fallback:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+		html{font-size:15px;-webkit-text-size-adjust:100%}
+		@media(min-width:768px){html{font-size:16px}}
+		body{margin:0;background:#fff;color:#333;font-family:"Inter",var(--font-sans-fallback);line-height:1.6}
+		#site-header{--nuocda-header-h:<?php echo (int) $header_h; ?>px;width:100%;background:#021b42;border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:9999}
+		#site-header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1280px;height:var(--nuocda-header-h);margin:0 auto;padding:0 clamp(18px,4.5vw,28px)}
+		#site-logo,#site-logo #site-logo-inner{height:var(--nuocda-header-h);display:flex;align-items:center}
+		#site-logo img{max-height:var(--nuocda-header-h);width:auto;height:auto}
+		#site-navigation-wrap{display:none}
+		.oceanwp-mobile-menu-icon{display:flex;align-items:center}
 		.container-168{box-sizing:border-box;width:100%;max-width:1280px;margin:0 auto;padding-left:clamp(18px,4.5vw,28px);padding-right:clamp(18px,4.5vw,28px)}
+		#sticky-header-placeholder{width:100%;display:none}
 		<?php if ( $is_home ) : ?>
 		.h168-hero{position:relative;min-height:clamp(520px,88vh,760px);display:flex;align-items:center;background:#021b42;overflow:hidden}
 		.h168-hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
@@ -413,6 +428,7 @@ function nuocda_168_critical_css() {
 		.h168-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;border:2px solid transparent}
 		.h168-btn--primary{background:#00c3ff;color:#fff;box-shadow:0 4px 14px rgba(0,195,255,.35)}
 		.h168-btn--ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.45)}
+		@media(min-width:960px){#site-navigation-wrap{display:flex;align-items:center;flex:1;justify-content:flex-end}.oceanwp-mobile-menu-icon{display:none}}
 		<?php endif; ?>
 	</style>
 	<?php

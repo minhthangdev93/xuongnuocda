@@ -1,5 +1,6 @@
 /**
  * Sticky header OceanWP — Nước Đá 168
+ * Tránh forced reflow: đọc geometry 1 lần, ghi DOM trong rAF.
  */
 (function () {
 	'use strict';
@@ -11,26 +12,77 @@
 			return;
 		}
 
-		var stickyPoint = header.offsetTop + header.offsetHeight;
+		var stickyPoint = 0;
+		var headerHeight = 0;
+		var isStuck = false;
+		var ticking = false;
 		var placeholder = document.createElement('div');
 		placeholder.id = 'sticky-header-placeholder';
+		placeholder.setAttribute('aria-hidden', 'true');
+		placeholder.style.display = 'none';
+		placeholder.style.width = '100%';
+		placeholder.style.pointerEvents = 'none';
 
+		if (header.parentNode) {
+			header.parentNode.insertBefore(placeholder, header);
+		}
+
+		function measure() {
+			var rect = header.getBoundingClientRect();
+			headerHeight = Math.round(rect.height) || header.offsetHeight || 74;
+			stickyPoint = Math.round(window.scrollY + rect.top + headerHeight);
+			placeholder.style.height = headerHeight + 'px';
+		}
+
+		function applySticky(shouldStick) {
+			if (shouldStick === isStuck) {
+				return;
+			}
+			isStuck = shouldStick;
+			if (shouldStick) {
+				header.classList.add('my-sticky-active');
+				placeholder.style.display = 'block';
+			} else {
+				header.classList.remove('my-sticky-active');
+				placeholder.style.display = 'none';
+			}
+		}
+
+		function onScroll() {
+			if (ticking) {
+				return;
+			}
+			ticking = true;
+			requestAnimationFrame(function () {
+				ticking = false;
+				applySticky(window.scrollY > stickyPoint);
+			});
+		}
+
+		requestAnimationFrame(function () {
+			measure();
+			applySticky(window.scrollY > stickyPoint);
+		});
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+
+		var resizeTimer;
 		window.addEventListener(
-			'scroll',
+			'resize',
 			function () {
-				if (window.scrollY > stickyPoint) {
-					if (!header.classList.contains('my-sticky-active')) {
-						header.classList.add('my-sticky-active');
-						placeholder.style.height = header.offsetHeight + 'px';
-						header.parentNode.insertBefore(placeholder, header);
+				clearTimeout(resizeTimer);
+				resizeTimer = setTimeout(function () {
+					var wasStuck = isStuck;
+					if (wasStuck) {
+						header.classList.remove('my-sticky-active');
+						placeholder.style.display = 'none';
+						isStuck = false;
 					}
-				} else {
-					header.classList.remove('my-sticky-active');
-					var existing = document.getElementById('sticky-header-placeholder');
-					if (existing) {
-						existing.remove();
-					}
-				}
+					requestAnimationFrame(function () {
+						measure();
+						applySticky(window.scrollY > stickyPoint);
+					});
+				}, 120);
 			},
 			{ passive: true }
 		);
