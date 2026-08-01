@@ -463,52 +463,252 @@ function nuocda_168_resource_hints( $urls, $relation_type ) {
 add_filter( 'wp_resource_hints', 'nuocda_168_resource_hints', 10, 2 );
 
 /**
- * Preload LCP — ảnh hero mobile/desktop (ưu tiên cao nhất)
+ * Đánh dấu thuộc tính ảnh LCP — eager + high priority, bỏ qua LiteSpeed lazy.
+ *
+ * @param array $attr Thuộc tính img.
+ * @return array
+ */
+function nuocda_168_mark_lcp_image_attr( $attr ) {
+	$attr['loading']       = 'eager';
+	$attr['fetchpriority'] = 'high';
+	$attr['decoding']      = isset( $attr['decoding'] ) ? $attr['decoding'] : 'async';
+	$attr['data-no-lazy']  = '1';
+	$attr['data-skip-lazy'] = '1';
+
+	$class = isset( $attr['class'] ) ? $attr['class'] : '';
+	foreach ( array( 'no-lazy', 'skip-lazy', 'litespeed-no-lazy' ) as $skip_class ) {
+		if ( false === strpos( ' ' . $class . ' ', ' ' . $skip_class . ' ' ) ) {
+			$class = trim( $class . ' ' . $skip_class );
+		}
+	}
+	$attr['class'] = $class;
+
+	return $attr;
+}
+
+/**
+ * Preload một ảnh LCP (responsive nếu có srcset).
+ *
+ * @param string $src    URL ảnh.
+ * @param string $srcset Srcset (tuỳ chọn).
+ * @param string $sizes  Sizes (tuỳ chọn).
+ * @param string $type   MIME type (tuỳ chọn).
+ */
+function nuocda_168_echo_lcp_preload( $src, $srcset = '', $sizes = '', $type = '' ) {
+	if ( ! $src ) {
+		return;
+	}
+
+	$attrs = array(
+		'rel'            => 'preload',
+		'as'             => 'image',
+		'href'           => esc_url( $src ),
+		'fetchpriority'  => 'high',
+	);
+
+	if ( $srcset ) {
+		$attrs['imagesrcset'] = $srcset;
+	}
+	if ( $sizes ) {
+		$attrs['imagesizes'] = $sizes;
+	}
+	if ( $type ) {
+		$attrs['type'] = $type;
+	}
+
+	$html = '<link';
+	foreach ( $attrs as $key => $value ) {
+		$html .= ' ' . $key . '="' . esc_attr( $value ) . '"';
+	}
+	$html .= '>' . "\n";
+
+	echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+/**
+ * Preload LCP — hero / sản phẩm / bài viết / archive.
  */
 function nuocda_168_preload_lcp_image() {
-	if ( ! function_exists( 'nuocda_168_is_home_landing' ) || ! nuocda_168_is_home_landing() ) {
+	if ( is_admin() || nuocda_168_skip_frontend_optimizations() ) {
 		return;
 	}
 
-	$settings = nuocda_168_get_landing_settings( 'home' );
-	$hero_url = ! empty( $settings['hero']['bg'] ) ? $settings['hero']['bg'] : '';
+	// 1) Trang chủ — hero responsive (mobile/desktop tách preload).
+	if ( function_exists( 'nuocda_168_is_home_landing' ) && nuocda_168_is_home_landing() ) {
+		$settings = nuocda_168_get_landing_settings( 'home' );
+		$hero_url = ! empty( $settings['hero']['bg'] ) ? $settings['hero']['bg'] : '';
 
-	if ( ! $hero_url || ! function_exists( 'nuocda_168_get_hero_image_data' ) ) {
+		if ( $hero_url && function_exists( 'nuocda_168_get_hero_image_data' ) ) {
+			$hero = nuocda_168_get_hero_image_data( $hero_url );
+			$type = $hero['type'];
+
+			if ( ! empty( $hero['mobile'] ) ) {
+				echo '<link rel="preload" as="image" href="' . esc_url( $hero['mobile'] ) . '" fetchpriority="high" media="(max-width: 767px)" type="' . esc_attr( $type ) . '">' . "\n";
+			}
+
+			$desktop = ! empty( $hero['desktop'] ) ? $hero['desktop'] : $hero['mobile'];
+			if ( $desktop ) {
+				echo '<link rel="preload" as="image" href="' . esc_url( $desktop ) . '" fetchpriority="high" media="(min-width: 768px)" type="' . esc_attr( $type ) . '">' . "\n";
+			}
+		}
 		return;
 	}
 
-	$hero = nuocda_168_get_hero_image_data( $hero_url );
-	$type = $hero['type'];
-
-	if ( ! empty( $hero['mobile'] ) ) {
-		echo '<link rel="preload" as="image" href="' . esc_url( $hero['mobile'] ) . '" fetchpriority="high" media="(max-width: 767px)" type="' . esc_attr( $type ) . '">' . "\n";
+	// 2) Single product — ảnh chính.
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		$product = wc_get_product( get_the_ID() );
+		if ( $product ) {
+			$image_id = $product->get_image_id();
+			if ( $image_id ) {
+				$src = wp_get_attachment_image_url( $image_id, 'woocommerce_single' );
+				if ( ! $src ) {
+					$src = wp_get_attachment_image_url( $image_id, 'medium_large' );
+				}
+				$srcset = wp_get_attachment_image_srcset( $image_id, 'woocommerce_single' );
+				$sizes  = wp_get_attachment_image_sizes( $image_id, 'woocommerce_single' );
+				if ( $src ) {
+					nuocda_168_echo_lcp_preload( $src, $srcset ? $srcset : '', $sizes ? $sizes : '(max-width: 600px) 100vw, 600px' );
+				}
+			}
+		}
+		return;
 	}
 
-	if ( ! empty( $hero['desktop'] ) && $hero['desktop'] !== $hero['mobile'] ) {
-		echo '<link rel="preload" as="image" href="' . esc_url( $hero['desktop'] ) . '" fetchpriority="high" media="(min-width: 768px)" type="' . esc_attr( $type ) . '">' . "\n";
-	} elseif ( ! empty( $hero['mobile'] ) ) {
-		echo '<link rel="preload" as="image" href="' . esc_url( $hero['mobile'] ) . '" fetchpriority="high" media="(min-width: 768px)" type="' . esc_attr( $type ) . '">' . "\n";
+	// 3) Single post — ảnh đại diện (medium_large).
+	if ( is_singular( 'post' ) && has_post_thumbnail() ) {
+		$image_id = get_post_thumbnail_id();
+		$src      = wp_get_attachment_image_url( $image_id, 'medium_large' );
+		$srcset   = wp_get_attachment_image_srcset( $image_id, 'medium_large' );
+		$sizes    = '(max-width: 768px) 100vw, 768px';
+		if ( $src ) {
+			nuocda_168_echo_lcp_preload( $src, $srcset ? $srcset : '', $sizes );
+		}
+		return;
+	}
+
+	// 4) Blog / category archive — ảnh đại diện bài đầu tiên.
+	if ( ( is_home() || is_category() || is_tag() ) && have_posts() ) {
+		global $wp_query;
+		foreach ( $wp_query->posts as $post_obj ) {
+			$image_id = get_post_thumbnail_id( $post_obj );
+			if ( ! $image_id ) {
+				continue;
+			}
+			$src    = wp_get_attachment_image_url( $image_id, 'medium_large' );
+			$srcset = wp_get_attachment_image_srcset( $image_id, 'medium_large' );
+			$sizes  = '(max-width: 768px) 100vw, 768px';
+			if ( $src ) {
+				nuocda_168_echo_lcp_preload( $src, $srcset ? $srcset : '', $sizes );
+			}
+			break;
+		}
 	}
 }
 add_action( 'wp_head', 'nuocda_168_preload_lcp_image', 0 );
 
 /**
- * Ảnh: decoding async; lazy cho ảnh không phải LCP
+ * Archive / single blog — dùng medium_large thay vì full (giảm LCP mobile).
+ */
+function nuocda_168_blog_entry_images_size( $size ) {
+	if ( in_array( $size, array( 'full', 'large' ), true ) ) {
+		return 'medium_large';
+	}
+	return $size;
+}
+add_filter( 'ocean_blog_entry_images_size', 'nuocda_168_blog_entry_images_size' );
+
+/**
+ * the_post_thumbnail( 'full' ) → medium_large trên blog.
+ */
+function nuocda_168_post_thumbnail_size( $size ) {
+	if ( is_admin() ) {
+		return $size;
+	}
+
+	if ( 'full' !== $size && 'large' !== $size ) {
+		return $size;
+	}
+
+	if ( is_singular( 'post' ) || is_home() || is_category() || is_tag() || is_date() || is_author() ) {
+		return 'medium_large';
+	}
+
+	return $size;
+}
+add_filter( 'post_thumbnail_size', 'nuocda_168_post_thumbnail_size' );
+
+/**
+ * Ảnh: decoding async; LCP = eager (không lazy); còn lại lazy.
  */
 function nuocda_168_optimize_image_attributes( $attr, $attachment, $size ) {
 	if ( empty( $attr['decoding'] ) ) {
 		$attr['decoding'] = 'async';
 	}
 
-	if ( function_exists( 'is_product' ) && is_product() ) {
+	$attachment_id = is_object( $attachment ) ? (int) $attachment->ID : (int) $attachment;
+	$is_lcp        = false;
+	$size_key      = is_array( $size ) ? 'custom' : (string) $size;
+	$class         = isset( $attr['class'] ) ? (string) $attr['class'] : '';
+
+	// Logo header không phải LCP nội dung — không chiếm fetchpriority.
+	if ( false !== strpos( $class, 'custom-logo' ) ) {
+		unset( $attr['fetchpriority'] );
+		if ( empty( $attr['loading'] ) ) {
+			$attr['loading'] = 'eager';
+		}
+		return $attr;
+	}
+
+	// WP core / plugin đã đánh dấu LCP.
+	if ( ! empty( $attr['fetchpriority'] ) && 'high' === $attr['fetchpriority'] ) {
+		$is_lcp = true;
+	}
+
+	// Single product — ảnh gallery đầu.
+	if ( ! $is_lcp && function_exists( 'is_product' ) && is_product() ) {
 		static $product_lcp_done = false;
 
-		if ( ! $product_lcp_done && in_array( $size, array( 'woocommerce_single', 'full', 'large' ), true ) ) {
-			$product_lcp_done        = true;
-			$attr['loading']         = 'eager';
-			$attr['fetchpriority']   = 'high';
-			return $attr;
+		if ( ! $product_lcp_done && $attachment_id > 0 ) {
+			$product = wc_get_product( get_the_ID() );
+			if ( $product && (int) $product->get_image_id() === $attachment_id ) {
+				$product_lcp_done = true;
+				$is_lcp           = true;
+			} elseif ( in_array( $size_key, array( 'woocommerce_single', 'full', 'large', 'medium_large' ), true ) ) {
+				$product_lcp_done = true;
+				$is_lcp           = true;
+			}
 		}
+	}
+
+	// Shop / category sản phẩm — thumbnail sản phẩm đầu tiên (không phải logo).
+	if ( ! $is_lcp && function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
+		static $shop_lcp_done = false;
+		if ( ! $shop_lcp_done && in_array( $size_key, array( 'woocommerce_thumbnail', 'shop_catalog', 'woocommerce_single' ), true ) ) {
+			$shop_lcp_done = true;
+			$is_lcp        = true;
+		}
+	}
+
+	// Blog archive — ảnh đại diện đầu tiên trong loop chính.
+	if ( ! $is_lcp && ( is_home() || is_category() || is_tag() || is_date() || is_author() ) ) {
+		static $archive_lcp_done = false;
+		if ( ! $archive_lcp_done && in_the_loop() && is_main_query() && $attachment_id > 0 && (int) get_post_thumbnail_id() === $attachment_id ) {
+			$archive_lcp_done = true;
+			$is_lcp           = true;
+		}
+	}
+
+	// Single post — ảnh đại diện.
+	if ( ! $is_lcp && is_singular( 'post' ) ) {
+		static $post_lcp_done = false;
+		if ( ! $post_lcp_done && $attachment_id > 0 && (int) get_post_thumbnail_id() === $attachment_id ) {
+			$post_lcp_done = true;
+			$is_lcp        = true;
+		}
+	}
+
+	if ( $is_lcp ) {
+		return nuocda_168_mark_lcp_image_attr( $attr );
 	}
 
 	if ( empty( $attr['loading'] ) ) {
@@ -517,7 +717,44 @@ function nuocda_168_optimize_image_attributes( $attr, $attachment, $size ) {
 
 	return $attr;
 }
-add_filter( 'wp_get_attachment_image_attributes', 'nuocda_168_optimize_image_attributes', 10, 3 );
+add_filter( 'wp_get_attachment_image_attributes', 'nuocda_168_optimize_image_attributes', 20, 3 );
+
+/**
+ * Không để WP/core gắn lazy lên ảnh đã fetchpriority=high.
+ */
+function nuocda_168_img_tag_loading_attr( $value, $image ) {
+	if ( is_string( $image ) && ( false !== strpos( $image, 'fetchpriority="high"' ) || false !== strpos( $image, "fetchpriority='high'" ) ) ) {
+		return false;
+	}
+	return $value;
+}
+add_filter( 'wp_img_tag_add_loading_attr', 'nuocda_168_img_tag_loading_attr', 20, 2 );
+
+/**
+ * Sửa HTML ảnh: bỏ lazy nếu đang là LCP (chống LiteSpeed/plugin ghi đè).
+ */
+function nuocda_168_fix_lcp_img_html( $html ) {
+	if ( ! is_string( $html ) || '' === $html ) {
+		return $html;
+	}
+
+	if ( false === strpos( $html, 'fetchpriority="high"' ) && false === strpos( $html, "fetchpriority='high'" ) ) {
+		return $html;
+	}
+
+	$html = preg_replace( '/\sloading=(["\'])lazy\1/i', ' loading="eager"', $html );
+	if ( false === strpos( $html, 'data-no-lazy' ) ) {
+		$html = preg_replace( '/<img\b/i', '<img data-no-lazy="1" data-skip-lazy="1"', $html, 1 );
+	}
+	if ( false === strpos( $html, 'no-lazy' ) ) {
+		$html = preg_replace( '/\bclass=(["\'])([^"\']*)\1/i', 'class=$1$2 no-lazy skip-lazy$1', $html, 1 );
+	}
+
+	return $html;
+}
+add_filter( 'wp_get_attachment_image', 'nuocda_168_fix_lcp_img_html', 20 );
+add_filter( 'post_thumbnail_html', 'nuocda_168_fix_lcp_img_html', 20 );
+add_filter( 'woocommerce_single_product_image_thumbnail_html', 'nuocda_168_fix_lcp_img_html', 20 );
 
 /**
  * Analytics tải sau khi trang sẵn sàng — không chặn LCP

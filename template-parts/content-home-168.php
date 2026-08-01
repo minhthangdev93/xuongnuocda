@@ -33,7 +33,7 @@ $faqs           = $s['faq']['items'];
 <!-- 1. HERO -->
 <section class="h168-hero">
 	<img
-		class="h168-hero__bg"
+		class="h168-hero__bg no-lazy skip-lazy litespeed-no-lazy"
 		src="<?php echo esc_url( $hero_img['src'] ); ?>"
 		<?php if ( ! empty( $hero_img['srcset'] ) ) : ?>
 		srcset="<?php echo esc_attr( $hero_img['srcset'] ); ?>"
@@ -45,6 +45,8 @@ $faqs           = $s['faq']['items'];
 		fetchpriority="high"
 		loading="eager"
 		decoding="sync"
+		data-no-lazy="1"
+		data-skip-lazy="1"
 	>
 	<div class="h168-hero__overlay"></div>
 	<div class="container-168 h168-hero__inner">
