@@ -138,6 +138,8 @@
 
 ["media-vpi_cron",false]
 
+["media-lazy_exc","h168-hero\nh168-hero__bg"]
+
 ["img_optm-auto",true]
 
 ["img_optm-ori",true]

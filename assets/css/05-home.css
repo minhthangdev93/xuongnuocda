@@ -710,8 +710,10 @@
 }
 
 @media (max-width: 768px) {
+	/* Khớp critical CSS — tránh CLS khi CSS async/đầy đủ áp dụng. */
 	.h168-hero {
-		min-height: auto;
+		min-height: 520px;
+		min-height: 100svh;
 		text-align: center;
 	}
 

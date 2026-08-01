@@ -1,91 +1,41 @@
 /**
- * Sticky header OceanWP — Nước Đá 168
- * Tránh forced reflow: đọc geometry 1 lần, ghi DOM trong rAF.
+ * Sticky header — chỉ gắn class bóng đổ, không đổi position (CSS sticky).
+ * Tránh forced reflow + CLS do fixed/placeholder.
  */
 (function () {
 	'use strict';
 
 	function initStickyHeader() {
 		var header = document.getElementById('site-header');
-
-		if (!header) {
+		if (!header || !('IntersectionObserver' in window)) {
 			return;
 		}
 
-		var stickyPoint = 0;
-		var headerHeight = 0;
-		var isStuck = false;
-		var ticking = false;
-		var placeholder = document.createElement('div');
-		placeholder.id = 'sticky-header-placeholder';
-		placeholder.setAttribute('aria-hidden', 'true');
-		placeholder.style.display = 'none';
-		placeholder.style.width = '100%';
-		placeholder.style.pointerEvents = 'none';
+		var sentinel = document.createElement('div');
+		sentinel.id = 'sticky-header-sentinel';
+		sentinel.setAttribute('aria-hidden', 'true');
+		sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;opacity:0;';
 
 		if (header.parentNode) {
-			header.parentNode.insertBefore(placeholder, header);
+			header.parentNode.insertBefore(sentinel, header);
 		}
 
-		function measure() {
-			var rect = header.getBoundingClientRect();
-			headerHeight = Math.round(rect.height) || header.offsetHeight || 74;
-			stickyPoint = Math.round(window.scrollY + rect.top + headerHeight);
-			placeholder.style.height = headerHeight + 'px';
-		}
-
-		function applySticky(shouldStick) {
-			if (shouldStick === isStuck) {
-				return;
-			}
-			isStuck = shouldStick;
-			if (shouldStick) {
-				header.classList.add('my-sticky-active');
-				placeholder.style.display = 'block';
-			} else {
-				header.classList.remove('my-sticky-active');
-				placeholder.style.display = 'none';
-			}
-		}
-
-		function onScroll() {
-			if (ticking) {
-				return;
-			}
-			ticking = true;
-			requestAnimationFrame(function () {
-				ticking = false;
-				applySticky(window.scrollY > stickyPoint);
-			});
-		}
-
-		requestAnimationFrame(function () {
-			measure();
-			applySticky(window.scrollY > stickyPoint);
-		});
-
-		window.addEventListener('scroll', onScroll, { passive: true });
-
-		var resizeTimer;
-		window.addEventListener(
-			'resize',
-			function () {
-				clearTimeout(resizeTimer);
-				resizeTimer = setTimeout(function () {
-					var wasStuck = isStuck;
-					if (wasStuck) {
-						header.classList.remove('my-sticky-active');
-						placeholder.style.display = 'none';
-						isStuck = false;
-					}
-					requestAnimationFrame(function () {
-						measure();
-						applySticky(window.scrollY > stickyPoint);
-					});
-				}, 120);
+		var observer = new IntersectionObserver(
+			function (entries) {
+				var entry = entries[0];
+				if (!entry) {
+					return;
+				}
+				if (entry.isIntersecting) {
+					header.classList.remove('is-stuck', 'my-sticky-active');
+				} else {
+					header.classList.add('is-stuck', 'my-sticky-active');
+				}
 			},
-			{ passive: true }
+			{ rootMargin: '-1px 0px 0px 0px', threshold: 0 }
 		);
+
+		observer.observe(sentinel);
 	}
 
 	if (document.readyState === 'loading') {

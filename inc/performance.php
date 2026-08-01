@@ -331,11 +331,10 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 	}
 
 	// Plugin contact bar + CSS theme không còn cần blocking (đã có critical CSS).
+	// nuocda-home / header-lite: KHÔNG async — lệch critical vs CSS đầy đủ gây CLS mobile (~1.0).
 	$always_async_handles = array(
 		'nuocda-design-system',
-		'nuocda-header-lite',
 		'nuocda-local-fonts',
-		'nuocda-home',
 		'nuocda-about',
 		'nuocda-contact',
 		'nuocda-woocommerce',
@@ -355,9 +354,8 @@ function nuocda_168_async_styles( $html, $handle, $href, $media ) {
 		'elementor-global',
 	);
 
+	// Contact bar CSS nhỏ — để blocking (fixed UI, tránh nhảy khi CSS tới muộn).
 	$async_by_prefix = array(
-		'mt-contact',
-		'contact-bar',
 		'oceanwp-google-font-',
 	);
 
@@ -414,6 +412,7 @@ function nuocda_168_critical_css() {
 		.container-168{box-sizing:border-box;width:100%;max-width:1280px;margin:0 auto;padding-left:clamp(18px,4.5vw,28px);padding-right:clamp(18px,4.5vw,28px)}
 		#sticky-header-placeholder{width:100%;display:none}
 		<?php if ( $is_home ) : ?>
+		#site-header{position:sticky;top:0;z-index:9999;background:#021b42}
 		.h168-hero{position:relative;min-height:clamp(520px,88vh,760px);display:flex;align-items:center;background:#021b42;overflow:hidden}
 		.h168-hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
 		.h168-hero__overlay{position:absolute;inset:0;background:linear-gradient(115deg,rgba(2,27,66,.92),rgba(2,27,66,.72) 45%,rgba(0,80,130,.55));z-index:1}
@@ -428,6 +427,7 @@ function nuocda_168_critical_css() {
 		.h168-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;border:2px solid transparent}
 		.h168-btn--primary{background:#00c3ff;color:#fff;box-shadow:0 4px 14px rgba(0,195,255,.35)}
 		.h168-btn--ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.45)}
+		@media(max-width:768px){.h168-hero{min-height:520px;min-height:100svh;text-align:center}.h168-hero__title-main{white-space:normal}.h168-hero__content,.h168-hero__desc{margin-left:auto;margin-right:auto}.h168-hero__actions{flex-direction:column}}
 		@media(min-width:960px){#site-navigation-wrap{display:flex;align-items:center;flex:1;justify-content:flex-end}.oceanwp-mobile-menu-icon{display:none}}
 		<?php endif; ?>
 	</style>

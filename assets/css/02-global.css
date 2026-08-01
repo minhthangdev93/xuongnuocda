@@ -1535,36 +1535,27 @@ label {
 	}
 }
 
+/* CSS sticky — không fixed + placeholder (tránh CLS khi Lighthouse scroll). */
 #site-header {
-	transition: transform 0.3s ease, background-color 0.3s ease;
+	position: sticky;
+	top: 0;
 	width: 100%;
 	z-index: 9999;
+	background-color: var(--main-color, #021b42);
+	transition: box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
+#site-header.is-stuck,
 #site-header.my-sticky-active {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-	animation: nuocda-slide-down 0.3s ease-in-out;
 }
 
-@keyframes nuocda-slide-down {
-	from {
-		transform: translateY(-100%);
-	}
-	to {
-		transform: translateY(0);
-	}
-}
-
-body.admin-bar #site-header.my-sticky-active {
+body.admin-bar #site-header {
 	top: 32px;
 }
 
 @media screen and (max-width: 782px) {
-	body.admin-bar #site-header.my-sticky-active {
+	body.admin-bar #site-header {
 		top: 46px;
 	}
 }

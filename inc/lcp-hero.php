@@ -193,7 +193,8 @@ function nuocda_168_get_hero_image_data( $url ) {
 		return $data;
 	}
 
-	$mobile  = nuocda_168_pick_attachment_size( $attachment_id, 640 );
+	// Mobile LCP: ưu tiên ~640–768w (nhẹ hơn 1536 trên 4G).
+	$mobile  = nuocda_168_pick_attachment_size( $attachment_id, 768 );
 	$tablet  = nuocda_168_pick_attachment_size( $attachment_id, 1024 );
 	$desktop = nuocda_168_pick_attachment_size( $attachment_id, 1280 );
 
