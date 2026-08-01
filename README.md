@@ -38,7 +38,7 @@ git clone <URL_GITHUB> xuongnuocda
 ## Cấu trúc thư mục
 
 ```
-oceanwp-child-theme-master/
+xuongnuocda/
 ├── assets/css/          # CSS modules (01–10)
 ├── inc/
 │   ├── site-data.php    # Hotline, cửa hàng, gallery
