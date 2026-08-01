@@ -1,10 +1,12 @@
 ---
-# Deploy child theme lên cPanel (WordPress trong public_html)
-# Tài khoản: /home/lajkpxfb
-# Thư mục theme: xuongnuocda (khớp tên repo GitHub)
-# Repo chỉ chứa child theme — KHÔNG deploy vào gốc public_html.
+# cPanel Git deploy — Nước Đá Sạch 168
+#
+# Repo clone:  /home/lajkpxfb/repositories/xuongnuocda
+# Theme live:  /home/lajkpxfb/public_html/wp-content/themes/oceanwp-child-theme-master
+#
+# Không deploy vào gốc public_html (tránh ghi đè WordPress core).
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/lajkpxfb/public_html/wp-content/themes/xuongnuocda
+    - export DEPLOYPATH=/home/lajkpxfb/public_html/wp-content/themes/oceanwp-child-theme-master
     - /bin/mkdir -p "$DEPLOYPATH"
     - /bin/cp -Rf * "$DEPLOYPATH"
