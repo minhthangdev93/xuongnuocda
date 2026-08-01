@@ -416,7 +416,7 @@ function nuocda_168_critical_css() {
 		.h168-hero__overlay{position:absolute;inset:0;background:linear-gradient(115deg,rgba(2,27,66,.92),rgba(2,27,66,.72) 45%,rgba(0,80,130,.55));z-index:1}
 		.h168-hero__inner{position:relative;z-index:2;width:100%;padding:clamp(56px,10vh,100px) 0 80px}
 		.h168-hero__content{max-width:720px;min-height:11.5rem}
-		.h168-hero__title{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:clamp(1.5rem,3.2vw,2.5rem);font-weight:800;line-height:1.15;color:#fff;margin:0 0 20px}
+		.h168-hero__title{font-family:"Montserrat",system-ui,sans-serif;font-size:clamp(1.5rem,3.2vw,2.5rem);font-weight:800;line-height:1.15;color:#fff;margin:0 0 20px}
 		.h168-hero__title-main{display:block;white-space:normal}
 		.h168-hero__title-accent{display:block;color:#00c3ff;font-size:.92em;margin-top:6px}
 		.h168-hero__desc{font-size:clamp(1.0625rem,2.5vw,1.35rem);color:rgba(255,255,255,.9);line-height:1.75;margin:0 0 32px;max-width:580px}
