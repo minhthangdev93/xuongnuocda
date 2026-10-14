@@ -104,11 +104,22 @@ function nuocda_168_get_landing_settings( $page = 'home' ) {
 		$saved = array();
 	}
 
-	$merged = nuocda_168_landing_array_merge( $defaults, $saved );
-	$merged = nuocda_168_landing_restore_empty_lists( $merged, $defaults );
-	$merged = nuocda_168_landing_restore_empty_scalars( $merged, $defaults );
+	return nuocda_168_landing_finalize_settings(
+		nuocda_168_landing_array_merge( $defaults, $saved ),
+		$defaults
+	);
+}
 
-	return $merged;
+/**
+ * Sau merge: khôi phục list rỗng + chuỗi text rỗng từ defaults.
+ *
+ * @param array $merged   Settings đã merge.
+ * @param array $defaults Defaults gốc.
+ * @return array
+ */
+function nuocda_168_landing_finalize_settings( $merged, $defaults ) {
+	$merged = nuocda_168_landing_restore_empty_lists( $merged, $defaults );
+	return nuocda_168_landing_restore_empty_scalars( $merged, $defaults );
 }
 
 /**
@@ -438,7 +449,7 @@ function nuocda_168_landing_sanitize_home( $input ) {
 		),
 	);
 
-	return nuocda_168_landing_restore_empty_lists(
+	return nuocda_168_landing_finalize_settings(
 		nuocda_168_landing_array_merge( $defaults, $out ),
 		$defaults
 	);
@@ -563,7 +574,7 @@ function nuocda_168_landing_sanitize_about( $input ) {
 		),
 	);
 
-	return nuocda_168_landing_restore_empty_lists(
+	return nuocda_168_landing_finalize_settings(
 		nuocda_168_landing_array_merge( $defaults, $out ),
 		$defaults
 	);
@@ -781,7 +792,7 @@ function nuocda_168_landing_sanitize_contact( $input ) {
 		),
 	);
 
-	return nuocda_168_landing_restore_empty_lists(
+	return nuocda_168_landing_finalize_settings(
 		nuocda_168_landing_array_merge( $defaults, $out ),
 		$defaults
 	);
@@ -853,7 +864,7 @@ function nuocda_168_landing_sanitize_agents( $input ) {
 		'items' => nuocda_168_landing_sanitize_store_items( $input['items'] ?? array() ),
 	);
 
-	return nuocda_168_landing_restore_empty_lists(
+	return nuocda_168_landing_finalize_settings(
 		nuocda_168_landing_array_merge( $defaults, $out ),
 		$defaults
 	);
@@ -911,7 +922,10 @@ function nuocda_168_landing_sanitize_footer( $input ) {
 		),
 	);
 
-	return nuocda_168_landing_array_merge( $defaults, $out );
+	return nuocda_168_landing_finalize_settings(
+		nuocda_168_landing_array_merge( $defaults, $out ),
+		$defaults
+	);
 }
 
 /**
