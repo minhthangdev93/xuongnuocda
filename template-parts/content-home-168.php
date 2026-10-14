@@ -100,7 +100,16 @@ $about_image_alt    = $s['about_quick']['image_alt'] ?? ( $defaults['about_quick
 	<div class="container-168 h168-about__grid">
 		<div class="h168-about__media">
 			<img src="<?php echo esc_url( $s['about_quick']['image'] ); ?>" alt="<?php echo esc_attr( $about_image_alt ); ?>" loading="lazy" />
-			<div class="h168-about__badge"><span class="h168-about__badge-num"><?php echo esc_html( $s['about_quick']['badge_num'] ); ?></span><span class="h168-about__badge-text"><?php echo esc_html( $s['about_quick']['badge_text'] ); ?></span></div>
+			<?php if ( ! empty( $s['about_quick']['badge_num'] ) || ! empty( $s['about_quick']['badge_text'] ) ) : ?>
+			<div class="h168-about__badge">
+				<?php if ( ! empty( $s['about_quick']['badge_num'] ) ) : ?>
+				<span class="h168-about__badge-num"><?php echo esc_html( $s['about_quick']['badge_num'] ); ?></span>
+				<?php endif; ?>
+				<?php if ( ! empty( $s['about_quick']['badge_text'] ) ) : ?>
+				<span class="h168-about__badge-text"><?php echo esc_html( $s['about_quick']['badge_text'] ); ?></span>
+				<?php endif; ?>
+			</div>
+			<?php endif; ?>
 		</div>
 		<div class="h168-about__content">
 			<span class="h168-label"><?php echo esc_html( $s['about_quick']['label'] ); ?></span>
@@ -111,7 +120,9 @@ $about_image_alt    = $s['about_quick']['image_alt'] ?? ( $defaults['about_quick
 				<li><i class="fas <?php echo esc_attr( $item['icon'] ?? 'fa-check' ); ?>" aria-hidden="true"></i><div><strong><?php echo esc_html( $item['title'] ?? '' ); ?></strong><span><?php echo esc_html( $item['desc'] ?? '' ); ?></span></div></li>
 				<?php endforeach; ?>
 			</ul>
+			<?php if ( ! empty( $s['about_quick']['link_url'] ) ) : ?>
 			<a class="h168-link" href="<?php echo esc_url( $s['about_quick']['link_url'] ); ?>"><?php echo esc_html( $s['about_quick']['link_text'] ); ?> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+			<?php endif; ?>
 		</div>
 	</div>
 </section>

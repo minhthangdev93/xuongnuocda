@@ -104,10 +104,11 @@ function nuocda_168_get_landing_settings( $page = 'home' ) {
 		$saved = array();
 	}
 
-	return nuocda_168_landing_restore_empty_lists(
-		nuocda_168_landing_array_merge( $defaults, $saved ),
-		$defaults
-	);
+	$merged = nuocda_168_landing_array_merge( $defaults, $saved );
+	$merged = nuocda_168_landing_restore_empty_lists( $merged, $defaults );
+	$merged = nuocda_168_landing_restore_empty_scalars( $merged, $defaults );
+
+	return $merged;
 }
 
 /**
@@ -142,6 +143,39 @@ function nuocda_168_landing_restore_empty_lists( $merged, $defaults ) {
 
 		if ( nuocda_168_landing_is_assoc( $default_value ) && nuocda_168_landing_is_assoc( $merged[ $key ] ) ) {
 			$merged[ $key ] = nuocda_168_landing_restore_empty_lists( $merged[ $key ], $default_value );
+		}
+	}
+
+	return $merged;
+}
+
+/**
+ * Chuỗi text bị lưu rỗng trong option → lấy lại defaults (vd. badge 10+, "Tìm hiểu thêm").
+ * Không đụng URL/field defaults vốn là chuỗi rỗng (vd. hero btn_primary_url = Zalo).
+ *
+ * @param array $merged   Settings đã merge.
+ * @param array $defaults Defaults gốc.
+ * @return array
+ */
+function nuocda_168_landing_restore_empty_scalars( $merged, $defaults ) {
+	if ( ! is_array( $merged ) || ! is_array( $defaults ) ) {
+		return $merged;
+	}
+
+	foreach ( $defaults as $key => $default_value ) {
+		if ( is_array( $default_value ) ) {
+			if ( isset( $merged[ $key ] ) && is_array( $merged[ $key ] ) && nuocda_168_landing_is_assoc( $default_value ) && nuocda_168_landing_is_assoc( $merged[ $key ] ) ) {
+				$merged[ $key ] = nuocda_168_landing_restore_empty_scalars( $merged[ $key ], $default_value );
+			}
+			continue;
+		}
+
+		if ( ! is_string( $default_value ) || '' === $default_value ) {
+			continue;
+		}
+
+		if ( ! isset( $merged[ $key ] ) || ! is_string( $merged[ $key ] ) || '' === trim( $merged[ $key ] ) ) {
+			$merged[ $key ] = $default_value;
 		}
 	}
 
