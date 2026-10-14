@@ -714,20 +714,37 @@
 	width: 100%;
 	padding: 0;
 	border: none;
-	background: none;
+	background: var(--bg-light, #f3f5f7);
 	cursor: pointer;
 	position: relative;
 	border-radius: var(--radius-md);
 	overflow: hidden;
 	box-shadow: var(--shadow-sm);
+	/* Ratio trên khung — không gắn trên img (LiteSpeed lazy hay phá tỉ lệ img) */
+	aspect-ratio: 4 / 3;
 }
 
 .a168-factory-card__btn img {
 	display: block;
 	width: 100%;
-	aspect-ratio: 4 / 3;
+	height: 100%;
+	max-width: none;
+	aspect-ratio: unset;
 	object-fit: cover;
+	object-position: center;
 	transition: transform var(--transition-base);
+}
+
+/* LiteSpeed / plugin lazy: placeholder + width/height inline không được phá khung 4:3 */
+.a168-factory-card__btn img[data-lazyloaded],
+.a168-factory-card__btn img.lazyloaded,
+.a168-factory-card__btn img.lazyload,
+.a168-factory-card__btn img[data-src],
+.a168-factory-card__btn noscript + img {
+	width: 100% !important;
+	height: 100% !important;
+	max-height: none !important;
+	object-fit: cover !important;
 }
 
 .a168-factory-card__overlay {

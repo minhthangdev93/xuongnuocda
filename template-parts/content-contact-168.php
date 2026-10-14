@@ -9,83 +9,71 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$s           = nuocda_168_get_landing_settings( 'contact' );
-$contact     = nuocda_168_get_contact();
-$company     = nuocda_168_get_company();
-$stores      = nuocda_168_get_stores();
+$s         = nuocda_168_get_landing_settings( 'contact' );
+$defaults  = nuocda_168_landing_defaults_contact();
+$contact   = nuocda_168_get_contact();
+$company   = nuocda_168_get_company();
+$stores    = nuocda_168_get_stores();
 
 $hero_bg     = $s['hero']['bg'];
-$hotline_fmt = '0348 226 455';
+$hotline_fmt = $contact['hotline_display'];
 $map_embed   = $s['map']['embed'];
 $map_dir     = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode( $company['address'] );
-$service_areas = $s['areas']['tags'];
-$faqs          = $s['faq']['items'];
+$service_areas = ! empty( $s['areas']['tags'] ) ? $s['areas']['tags'] : ( $defaults['areas']['tags'] ?? array() );
+$faqs          = ! empty( $s['faq']['items'] ) ? $s['faq']['items'] : ( $defaults['faq']['items'] ?? array() );
+$order_steps   = ! empty( $s['process']['items'] ) ? $s['process']['items'] : ( $defaults['process']['items'] ?? array() );
 
-$quick_channels = array(
-	array(
-		'icon'  => 'fa-phone-alt',
-		'title' => 'Hotline 24/7',
-		'value' => $hotline_fmt,
-		'desc'  => 'Gọi nhanh để đặt nước đá hoặc cần giao gấp',
-		'btn'   => 'Gọi ngay',
-		'url'   => 'tel:' . $contact['hotline'],
-		'class' => 'c168-channel-card--phone',
-	),
-	array(
-		'icon'  => 'fa-comment-dots',
-		'title' => 'Zalo đặt hàng',
-		'value' => $hotline_fmt,
-		'desc'  => 'Gửi vị trí, loại đá và số lượng qua Zalo',
-		'btn'   => 'Nhắn Zalo',
-		'url'   => $contact['zalo'],
-		'class' => 'c168-channel-card--zalo',
-	),
-	array(
-		'icon'  => 'fa-envelope',
-		'title' => 'Email hợp tác',
-		'value' => $contact['email'],
-		'desc'  => 'Dành cho khách sỉ, doanh nghiệp, đối tác đại lý',
-		'btn'   => 'Gửi email',
-		'url'   => 'mailto:' . $contact['email'],
-		'class' => 'c168-channel-card--email',
-	),
-	array(
-		'icon'  => 'fa-file-invoice',
-		'title' => 'Hỗ trợ báo giá',
-		'value' => 'Nhận báo giá nhanh',
-		'desc'  => 'Tư vấn loại đá phù hợp theo nhu cầu sử dụng',
-		'btn'   => 'Gửi yêu cầu',
-		'url'   => '#c168-form',
-		'class' => 'c168-channel-card--quote',
-	),
+$customer_types = ! empty( $s['form']['customer_types'] ) ? $s['form']['customer_types'] : ( $defaults['form']['customer_types'] ?? array() );
+$ice_types      = ! empty( $s['form']['ice_types'] ) ? $s['form']['ice_types'] : ( $defaults['form']['ice_types'] ?? array() );
+
+$channel_items = ! empty( $s['channels']['items'] ) ? $s['channels']['items'] : ( $defaults['channels']['items'] ?? array() );
+$quick_channels = array();
+foreach ( $channel_items as $item ) {
+	$type  = $item['type'] ?? 'custom';
+	$title = $item['title'] ?? '';
+	$value = $item['value'] ?? '';
+	$btn   = $item['btn'] ?? '';
+	$url   = $item['url'] ?? '';
+
+	switch ( $type ) {
+		case 'phone':
+			$title = $title ? $title : ( $contact['hotline_label'] ?? '' );
+			$value = $value ? $value : $hotline_fmt;
+			$url   = $url ? $url : ( 'tel:' . $contact['hotline'] );
+			break;
+		case 'zalo':
+			$value = $value ? $value : $hotline_fmt;
+			$url   = $url ? $url : $contact['zalo'];
+			$btn   = $btn ? $btn : ( $contact['zalo_label'] ?? '' );
+			break;
+		case 'email':
+			$value = $value ? $value : $contact['email'];
+			$url   = $url ? $url : ( 'mailto:' . $contact['email'] );
+			break;
+		case 'quote':
+			$url = $url ? $url : '#c168-form';
+			break;
+	}
+
+	$quick_channels[] = array(
+		'icon'  => $item['icon'] ?? 'fa-check',
+		'title' => $title,
+		'value' => $value,
+		'desc'  => $item['desc'] ?? '',
+		'btn'   => $btn,
+		'url'   => $url,
+		'class' => $item['class'] ?? '',
+	);
+}
+
+$form_url = trim( (string) ( $s['hero']['btn_form_url'] ?? '#c168-form' ) );
+$form_href = ( $form_url && '#' === $form_url[0] ) ? esc_attr( $form_url ) : esc_url( $form_url );
+
+$phone_placeholder = str_replace(
+	'{hotline}',
+	$contact['hotline'],
+	(string) ( $s['form']['phone_placeholder'] ?? '' )
 );
-
-$customer_types = array(
-	'ca-nhan'     => 'Cá nhân',
-	'cafe'        => 'Quán cafe',
-	'nha-hang'    => 'Nhà hàng',
-	'khach-san'   => 'Khách sạn',
-	'doanh-nghiep' => 'Doanh nghiệp',
-	'dai-ly'      => 'Đại lý',
-);
-
-$ice_types = array(
-	'da-mi'       => 'Đá mi',
-	'da-vien-bon' => 'Đá viên bốn',
-	'da-tam'      => 'Đá tám',
-	'da-xay'      => 'Đá xay nhuyễn',
-	'da-bi'       => 'Đá bi',
-	'da-tam-sheet' => 'Đá tấm',
-	'tu-van'      => 'Chưa rõ — cần tư vấn',
-);
-
-$order_steps = array(
-	array( 'icon' => 'fa-phone-alt', 'title' => 'Liên hệ hotline / Zalo', 'desc' => 'Gửi nhu cầu, loại đá, số lượng và địa chỉ giao.' ),
-	array( 'icon' => 'fa-comments', 'title' => 'Tư vấn & báo giá', 'desc' => 'Xác nhận sản phẩm phù hợp, chi phí và thời gian giao.' ),
-	array( 'icon' => 'fa-route', 'title' => 'Điều phối đơn hàng', 'desc' => 'Sắp xếp điểm giao / xe giao phù hợp với khu vực.' ),
-	array( 'icon' => 'fa-truck', 'title' => 'Giao nước đá tận nơi', 'desc' => 'Giao đúng địa chỉ, đúng thời gian đã xác nhận.' ),
-);
-
 ?>
 
 <div class="landing-168-wrapper c168-page h168-page">
@@ -99,9 +87,9 @@ $order_steps = array(
 			<h1 class="c168-hero__title"><?php echo esc_html( $s['hero']['title'] ); ?></h1>
 			<p class="c168-hero__desc"><?php echo esc_html( $s['hero']['desc'] ); ?></p>
 			<div class="c168-hero__actions">
-				<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi ngay: <?php echo esc_html( $hotline_fmt ); ?></a>
-				<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>
-				<a class="h168-btn h168-btn--ghost" href="#c168-form"><i class="fas fa-file-alt" aria-hidden="true"></i> Gửi yêu cầu báo giá</a>
+				<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( trim( ( $s['hero']['btn_phone_prefix'] ?? '' ) . ' ' . $hotline_fmt ) ); ?></a>
+				<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> <?php echo esc_html( $s['hero']['btn_zalo_text'] ?? '' ); ?></a>
+				<a class="h168-btn h168-btn--ghost" href="<?php echo $form_href; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><i class="fas fa-file-alt" aria-hidden="true"></i> <?php echo esc_html( $s['hero']['btn_form_text'] ?? '' ); ?></a>
 			</div>
 		</div>
 	</div>
@@ -121,7 +109,11 @@ $order_steps = array(
 					<h2 class="c168-channel-card__title"><?php echo esc_html( $channel['title'] ); ?></h2>
 					<p class="c168-channel-card__value"><?php echo esc_html( $channel['value'] ); ?></p>
 					<p class="c168-channel-card__desc"><?php echo esc_html( $channel['desc'] ); ?></p>
-					<a class="h168-btn h168-btn--sm h168-btn--outline c168-channel-card__btn" href="<?php echo esc_url( $channel['url'] ); ?>" <?php echo ( strpos( $channel['url'], 'http' ) === 0 ) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo esc_html( $channel['btn'] ); ?></a>
+					<?php
+					$ch_url  = $channel['url'];
+					$ch_href = ( $ch_url && '#' === $ch_url[0] ) ? esc_attr( $ch_url ) : esc_url( $ch_url );
+					?>
+					<a class="h168-btn h168-btn--sm h168-btn--outline c168-channel-card__btn" href="<?php echo $ch_href; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" <?php echo ( strpos( $ch_url, 'http' ) === 0 ) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>><?php echo esc_html( $channel['btn'] ); ?></a>
 				</div>
 			</article>
 			<?php endforeach; ?>
@@ -138,12 +130,12 @@ $order_steps = array(
 				<h2 class="h168-heading"><?php echo esc_html( $s['form']['heading'] ); ?></h2>
 				<p class="h168-section-desc"><?php echo esc_html( $s['form']['desc'] ); ?></p>
 				<ul class="c168-form-intro__list">
-					<?php foreach ( $s['form']['bullets'] as $bullet ) : ?>
+					<?php foreach ( (array) ( $s['form']['bullets'] ?? array() ) as $bullet ) : ?>
 					<li><i class="fas fa-check-circle" aria-hidden="true"></i> <?php echo esc_html( $bullet ); ?></li>
 					<?php endforeach; ?>
 				</ul>
 				<div class="c168-form-intro__cta">
-					<p>Ưu tiên gọi nhanh:</p>
+					<p><?php echo esc_html( $s['form']['priority_text'] ?? '' ); ?></p>
 					<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>" class="c168-form-intro__phone"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( $hotline_fmt ); ?></a>
 				</div>
 			</div>
@@ -155,42 +147,42 @@ $order_steps = array(
 					</div>
 
 					<div class="c168-form__group">
-						<label for="c168-name">Họ và tên <span>*</span></label>
-						<input type="text" id="c168-name" name="name" placeholder="Nhập họ tên người liên hệ" required />
+						<label for="c168-name"><?php echo esc_html( $s['form']['name_label'] ?? '' ); ?> <span>*</span></label>
+						<input type="text" id="c168-name" name="name" placeholder="<?php echo esc_attr( $s['form']['name_placeholder'] ?? '' ); ?>" required />
 					</div>
 
 					<div class="c168-form__group c168-form__group--highlight">
-						<label for="c168-phone">Số điện thoại <span>*</span></label>
-						<input type="tel" id="c168-phone" name="phone" placeholder="Nhập số điện thoại để tư vấn nhanh (VD: 0348226455)" inputmode="numeric" maxlength="15" required />
+						<label for="c168-phone"><?php echo esc_html( $s['form']['phone_label'] ?? '' ); ?> <span>*</span></label>
+						<input type="tel" id="c168-phone" name="phone" placeholder="<?php echo esc_attr( $phone_placeholder ); ?>" inputmode="numeric" maxlength="15" required />
 					</div>
 
 					<div class="c168-form__row">
 						<div class="c168-form__group">
-							<label for="c168-address">Khu vực / địa chỉ giao hàng</label>
-							<input type="text" id="c168-address" name="address" placeholder="VD: Quận 7, đường Nguyễn Văn Linh" />
+							<label for="c168-address"><?php echo esc_html( $s['form']['address_label'] ?? '' ); ?></label>
+							<input type="text" id="c168-address" name="address" placeholder="<?php echo esc_attr( $s['form']['address_placeholder'] ?? '' ); ?>" />
 						</div>
 						<div class="c168-form__group">
-							<label for="c168-email">Email (nếu có)</label>
-							<input type="email" id="c168-email" name="email" placeholder="Email doanh nghiệp / đại lý" />
+							<label for="c168-email"><?php echo esc_html( $s['form']['email_label'] ?? '' ); ?></label>
+							<input type="email" id="c168-email" name="email" placeholder="<?php echo esc_attr( $s['form']['email_placeholder'] ?? '' ); ?>" />
 						</div>
 					</div>
 
 					<div class="c168-form__row">
 						<div class="c168-form__group">
-							<label for="c168-customer-type">Loại khách hàng</label>
+							<label for="c168-customer-type"><?php echo esc_html( $s['form']['customer_type_label'] ?? '' ); ?></label>
 							<select id="c168-customer-type" name="customer_type">
-								<option value="">— Chọn loại khách hàng —</option>
-								<?php foreach ( $customer_types as $value => $label ) : ?>
-								<option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></option>
+								<option value=""><?php echo esc_html( $s['form']['customer_type_placeholder'] ?? '' ); ?></option>
+								<?php foreach ( $customer_types as $opt ) : ?>
+								<option value="<?php echo esc_attr( $opt['value'] ?? '' ); ?>"><?php echo esc_html( $opt['label'] ?? '' ); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
 						<div class="c168-form__group">
-							<label for="c168-ice-type">Loại đá cần đặt</label>
+							<label for="c168-ice-type"><?php echo esc_html( $s['form']['ice_type_label'] ?? '' ); ?></label>
 							<select id="c168-ice-type" name="ice_type">
-								<option value="">— Chọn loại đá —</option>
-								<?php foreach ( $ice_types as $value => $label ) : ?>
-								<option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></option>
+								<option value=""><?php echo esc_html( $s['form']['ice_type_placeholder'] ?? '' ); ?></option>
+								<?php foreach ( $ice_types as $opt ) : ?>
+								<option value="<?php echo esc_attr( $opt['value'] ?? '' ); ?>"><?php echo esc_html( $opt['label'] ?? '' ); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
@@ -198,22 +190,22 @@ $order_steps = array(
 
 					<div class="c168-form__row">
 						<div class="c168-form__group">
-							<label for="c168-quantity">Số lượng dự kiến</label>
-							<input type="text" id="c168-quantity" name="quantity" placeholder="VD: 50 bao / ngày, 2 tấn / tuần" />
+							<label for="c168-quantity"><?php echo esc_html( $s['form']['quantity_label'] ?? '' ); ?></label>
+							<input type="text" id="c168-quantity" name="quantity" placeholder="<?php echo esc_attr( $s['form']['quantity_placeholder'] ?? '' ); ?>" />
 						</div>
 						<div class="c168-form__group">
-							<label for="c168-delivery-time">Thời gian cần giao</label>
-							<input type="text" id="c168-delivery-time" name="delivery_time" placeholder="VD: Giao sáng 6h hằng ngày, gấp tối nay" />
+							<label for="c168-delivery-time"><?php echo esc_html( $s['form']['delivery_label'] ?? '' ); ?></label>
+							<input type="text" id="c168-delivery-time" name="delivery_time" placeholder="<?php echo esc_attr( $s['form']['delivery_placeholder'] ?? '' ); ?>" />
 						</div>
 					</div>
 
 					<div class="c168-form__group">
-						<label for="c168-message">Nội dung ghi chú</label>
-						<textarea id="c168-message" name="message" rows="4" placeholder="Ghi chú thêm về nhu cầu, lịch giao, hợp tác đại lý…"></textarea>
+						<label for="c168-message"><?php echo esc_html( $s['form']['message_label'] ?? '' ); ?></label>
+						<textarea id="c168-message" name="message" rows="4" placeholder="<?php echo esc_attr( $s['form']['message_placeholder'] ?? '' ); ?>"></textarea>
 					</div>
 
 					<div class="c168-form__feedback" aria-live="polite"></div>
-					<button type="submit" class="h168-btn h168-btn--primary contact-submit-btn c168-form__submit">Gửi yêu cầu báo giá</button>
+					<button type="submit" class="h168-btn h168-btn--primary contact-submit-btn c168-form__submit"><?php echo esc_html( $s['form']['submit_text'] ?? '' ); ?></button>
 				</form>
 			</div>
 		</div>
@@ -228,7 +220,7 @@ $order_steps = array(
 				<span class="h168-label"><?php echo esc_html( $s['areas']['label'] ); ?></span>
 				<h2 class="h168-heading"><?php echo esc_html( $s['areas']['heading'] ); ?></h2>
 				<p class="h168-section-desc"><?php echo esc_html( $s['areas']['desc'] ); ?></p>
-				<a class="h168-btn h168-btn--outline h168-btn--sm" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-map-marked-alt" aria-hidden="true"></i> Kiểm tra khu vực giao hàng</a>
+				<a class="h168-btn h168-btn--outline h168-btn--sm" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-map-marked-alt" aria-hidden="true"></i> <?php echo esc_html( $s['areas']['btn_text'] ?? '' ); ?></a>
 			</div>
 			<div class="c168-areas__tags">
 				<?php foreach ( $service_areas as $area ) : ?>
@@ -257,8 +249,8 @@ $order_steps = array(
 					<h3><?php echo esc_html( $store['name'] ); ?></h3>
 					<p><?php echo esc_html( $store['address'] ); ?></p>
 					<div class="c168-store-card__actions">
-						<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>" class="c168-store-card__link"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi đặt hàng</a>
-						<a href="<?php echo esc_url( $maps_url ); ?>" target="_blank" rel="noopener noreferrer" class="c168-store-card__link"><i class="fas fa-directions" aria-hidden="true"></i> Chỉ đường</a>
+						<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>" class="c168-store-card__link"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( $s['stores']['btn_call'] ?? '' ); ?></a>
+						<a href="<?php echo esc_url( $maps_url ); ?>" target="_blank" rel="noopener noreferrer" class="c168-store-card__link"><i class="fas fa-directions" aria-hidden="true"></i> <?php echo esc_html( $s['stores']['btn_dir'] ?? '' ); ?></a>
 					</div>
 				</div>
 			</article>
@@ -275,14 +267,14 @@ $order_steps = array(
 				<span class="h168-label"><?php echo esc_html( $s['map']['label'] ); ?></span>
 				<h2 class="h168-heading"><?php echo esc_html( $s['map']['heading'] ); ?></h2>
 				<p class="h168-section-desc"><?php echo esc_html( $s['map']['desc'] ); ?></p>
-				<p class="c168-map__address"><i class="fas fa-building" aria-hidden="true"></i> Trụ sở: <?php echo esc_html( $company['address'] ); ?></p>
+				<p class="c168-map__address"><i class="fas fa-building" aria-hidden="true"></i> <?php echo esc_html( trim( ( $s['map']['hq_prefix'] ?? '' ) . ' ' . $company['address'] ) ); ?></p>
 				<div class="c168-map__actions">
-					<a class="h168-btn h168-btn--primary h168-btn--sm" href="<?php echo esc_url( $map_dir ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-directions" aria-hidden="true"></i> Xem chỉ đường</a>
-					<a class="h168-btn h168-btn--outline h168-btn--sm" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Liên hệ điểm giao gần nhất</a>
+					<a class="h168-btn h168-btn--primary h168-btn--sm" href="<?php echo esc_url( $map_dir ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-directions" aria-hidden="true"></i> <?php echo esc_html( $s['map']['btn_dir'] ?? '' ); ?></a>
+					<a class="h168-btn h168-btn--outline h168-btn--sm" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( $s['map']['btn_call'] ?? '' ); ?></a>
 				</div>
 			</div>
 			<div class="c168-map__embed">
-				<iframe src="<?php echo esc_url( $map_embed ); ?>" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ Nước Đá Sạch 168"></iframe>
+				<iframe src="<?php echo esc_url( $map_embed ); ?>" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="<?php echo esc_attr( $s['map']['title'] ?? '' ); ?>"></iframe>
 			</div>
 		</div>
 	</div>
@@ -292,16 +284,16 @@ $order_steps = array(
 <section class="h168-section h168-section--alt c168-process">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Quy trình</span>
-			<h2 class="h168-heading">Quy trình đặt nước đá nhanh chóng</h2>
+			<span class="h168-label"><?php echo esc_html( $s['process']['label'] ?? '' ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['process']['heading'] ?? '' ); ?></h2>
 		</div>
 		<div class="c168-process__steps">
 			<?php foreach ( $order_steps as $index => $step ) : ?>
 			<article class="c168-process__step">
 				<div class="c168-process__step-num"><?php echo esc_html( $index + 1 ); ?></div>
-				<div class="c168-process__step-icon"><i class="fas <?php echo esc_attr( $step['icon'] ); ?>" aria-hidden="true"></i></div>
-				<h3><?php echo esc_html( $step['title'] ); ?></h3>
-				<p><?php echo esc_html( $step['desc'] ); ?></p>
+				<div class="c168-process__step-icon"><i class="fas <?php echo esc_attr( $step['icon'] ?? 'fa-check' ); ?>" aria-hidden="true"></i></div>
+				<h3><?php echo esc_html( $step['title'] ?? '' ); ?></h3>
+				<p><?php echo esc_html( $step['desc'] ?? '' ); ?></p>
 			</article>
 			<?php endforeach; ?>
 		</div>
@@ -333,17 +325,17 @@ $order_steps = array(
 		<h2 class="h168-cta__title"><?php echo esc_html( $s['cta']['title'] ); ?></h2>
 		<p class="h168-cta__desc"><?php echo esc_html( $s['cta']['desc'] ); ?></p>
 		<div class="h168-cta__actions">
-			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi ngay: <?php echo esc_html( $hotline_fmt ); ?></a>
-			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>
+			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( trim( ( $s['cta']['btn_phone_prefix'] ?? '' ) . ' ' . $hotline_fmt ) ); ?></a>
+			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> <?php echo esc_html( $s['cta']['btn_zalo_text'] ?? '' ); ?></a>
 		</div>
 	</div>
 </section>
 
 <?php if ( ! function_exists( 'nuocda_168_mt_contact_bar_active' ) || ! nuocda_168_mt_contact_bar_active() ) : ?>
 <!-- Mobile sticky CTA (ẩn khi Minh Thắng Contact Bar đang bật) -->
-<div class="c168-mobile-bar" aria-label="Liên hệ nhanh">
-	<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>" class="c168-mobile-bar__call"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi ngay</a>
-	<a href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer" class="c168-mobile-bar__zalo"><i class="fas fa-comment-dots" aria-hidden="true"></i> Zalo</a>
+<div class="c168-mobile-bar" aria-label="<?php echo esc_attr( $s['mobile']['aria'] ?? '' ); ?>">
+	<a href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>" class="c168-mobile-bar__call"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( $s['mobile']['btn_call'] ?? '' ); ?></a>
+	<a href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer" class="c168-mobile-bar__zalo"><i class="fas fa-comment-dots" aria-hidden="true"></i> <?php echo esc_html( $s['mobile']['btn_zalo'] ?? '' ); ?></a>
 </div>
 <?php endif; ?>
 

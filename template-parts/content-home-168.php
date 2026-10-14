@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $s       = nuocda_168_get_landing_settings( 'home' );
+$defaults = nuocda_168_landing_defaults_home();
 $contact = nuocda_168_get_contact();
 $zalo_url  = $contact['zalo'];
 $hotline   = $contact['hotline'];
@@ -17,15 +18,36 @@ $hotline   = $contact['hotline'];
 $hero_bg   = $s['hero']['bg'];
 $hero_img  = nuocda_168_get_hero_image_data( $hero_bg );
 $cta_bg    = $s['cta']['bg'];
-$products  = $s['products']['items'];
-$why_us    = $s['why']['items'];
-$stats     = $s['stats'];
+$products  = ! empty( $s['products']['items'] ) ? $s['products']['items'] : ( $defaults['products']['items'] ?? array() );
+$why_us    = ! empty( $s['why']['items'] ) ? $s['why']['items'] : ( $defaults['why']['items'] ?? array() );
+$stats     = ! empty( $s['stats'] ) ? $s['stats'] : ( $defaults['stats'] ?? array() );
 $stores    = nuocda_168_get_stores();
-$testimonials = $s['reviews']['items'];
+$testimonials = ! empty( $s['reviews']['items'] ) ? $s['reviews']['items'] : ( $defaults['reviews']['items'] ?? array() );
+$highlights   = ! empty( $s['about_quick']['highlights'] ) ? $s['about_quick']['highlights'] : ( $defaults['about_quick']['highlights'] ?? array() );
 
 $factory_images = nuocda_168_get_factory_images();
 $cert_images    = nuocda_168_get_cert_images();
-$faqs           = $s['faq']['items'];
+$faqs           = ! empty( $s['faq']['items'] ) ? $s['faq']['items'] : ( $defaults['faq']['items'] ?? array() );
+
+$hero_primary_text = $s['hero']['btn_primary_text'] ?? ( $defaults['hero']['btn_primary_text'] ?? '' );
+$hero_primary_url  = trim( (string) ( $s['hero']['btn_primary_url'] ?? '' ) );
+if ( ! $hero_primary_url ) {
+	$hero_primary_url = $zalo_url;
+}
+$hero_secondary_text = $s['hero']['btn_secondary_text'] ?? ( $defaults['hero']['btn_secondary_text'] ?? '' );
+$hero_secondary_url  = trim( (string) ( $s['hero']['btn_secondary_url'] ?? ( $defaults['hero']['btn_secondary_url'] ?? '#xem-san-pham' ) ) );
+$hero_secondary_href = ( $hero_secondary_url && '#' === $hero_secondary_url[0] )
+	? esc_attr( $hero_secondary_url )
+	: esc_url( $hero_secondary_url );
+
+$product_link_label = $s['products']['link_label'] ?? ( $defaults['products']['link_label'] ?? '' );
+$cta_phone_prefix   = $s['cta']['btn_phone_prefix'] ?? ( $defaults['cta']['btn_phone_prefix'] ?? '' );
+$cta_zalo_text      = $s['cta']['btn_zalo_text'] ?? ( $defaults['cta']['btn_zalo_text'] ?? '' );
+$map_title          = $s['map']['title'] ?? ( $defaults['map']['title'] ?? '' );
+$media_tab_factory  = $s['media']['tab_factory'] ?? ( $defaults['media']['tab_factory'] ?? '' );
+$media_tab_cert     = $s['media']['tab_cert'] ?? ( $defaults['media']['tab_cert'] ?? '' );
+$media_tabs_aria    = $s['media']['tabs_aria'] ?? ( $defaults['media']['tabs_aria'] ?? '' );
+$about_image_alt    = $s['about_quick']['image_alt'] ?? ( $defaults['about_quick']['image_alt'] ?? '' );
 ?>
 
 <div class="landing-168-wrapper h168-page">
@@ -58,11 +80,11 @@ $faqs           = $s['faq']['items'];
 			</h1>
 			<p class="h168-hero__desc"><?php echo esc_html( $s['hero']['desc'] ); ?></p>
 			<div class="h168-hero__actions">
-				<a class="h168-btn h168-btn--primary" href="<?php echo esc_url( $zalo_url ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-shopping-bag" aria-hidden="true"></i> Đặt hàng ngay</a>
-				<a class="h168-btn h168-btn--ghost" href="#xem-san-pham"><i class="fas fa-cubes" aria-hidden="true"></i> Xem sản phẩm</a>
+				<a class="h168-btn h168-btn--primary" href="<?php echo esc_url( $hero_primary_url ); ?>"<?php echo ( $hero_primary_url === $zalo_url ) ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>><i class="fas fa-shopping-bag" aria-hidden="true"></i> <?php echo esc_html( $hero_primary_text ); ?></a>
+				<a class="h168-btn h168-btn--ghost" href="<?php echo $hero_secondary_href; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped above ?>"><i class="fas fa-cubes" aria-hidden="true"></i> <?php echo esc_html( $hero_secondary_text ); ?></a>
 			</div>
 			<div class="h168-hero__stats">
-				<?php foreach ( $s['hero']['stats'] as $stat ) : ?>
+				<?php foreach ( ! empty( $s['hero']['stats'] ) ? $s['hero']['stats'] : ( $defaults['hero']['stats'] ?? array() ) as $stat ) : ?>
 				<div class="h168-hero__stat"><strong><?php echo esc_html( $stat['num'] ); ?></strong><span><?php echo esc_html( $stat['label'] ); ?></span></div>
 				<?php endforeach; ?>
 			</div>
@@ -77,7 +99,7 @@ $faqs           = $s['faq']['items'];
 <section class="h168-section h168-about">
 	<div class="container-168 h168-about__grid">
 		<div class="h168-about__media">
-			<img src="<?php echo esc_url( $s['about_quick']['image'] ); ?>" alt="Nhà máy Nước Đá Sạch 168" loading="lazy" />
+			<img src="<?php echo esc_url( $s['about_quick']['image'] ); ?>" alt="<?php echo esc_attr( $about_image_alt ); ?>" loading="lazy" />
 			<div class="h168-about__badge"><span class="h168-about__badge-num"><?php echo esc_html( $s['about_quick']['badge_num'] ); ?></span><span class="h168-about__badge-text"><?php echo esc_html( $s['about_quick']['badge_text'] ); ?></span></div>
 		</div>
 		<div class="h168-about__content">
@@ -85,9 +107,9 @@ $faqs           = $s['faq']['items'];
 			<h2 class="h168-heading"><?php echo esc_html( $s['about_quick']['heading'] ); ?></h2>
 			<p class="h168-lead"><?php echo esc_html( $s['about_quick']['lead'] ); ?></p>
 			<ul class="h168-commit-list">
-				<li><i class="fas fa-tint" aria-hidden="true"></i><div><strong>Nước tinh khiết</strong><span>Nguồn nước xử lý kỹ, đá trong và sạch.</span></div></li>
-				<li><i class="fas fa-box-open" aria-hidden="true"></i><div><strong>Đóng gói khép kín</strong><span>Không tiếp xúc tay trần, đạt chuẩn VSATTP.</span></div></li>
-				<li><i class="fas fa-clock" aria-hidden="true"></i><div><strong>Giao hàng đúng hẹn</strong><span>Xe lạnh GPS, cam kết thời gian giao.</span></div></li>
+				<?php foreach ( $highlights as $item ) : ?>
+				<li><i class="fas <?php echo esc_attr( $item['icon'] ?? 'fa-check' ); ?>" aria-hidden="true"></i><div><strong><?php echo esc_html( $item['title'] ?? '' ); ?></strong><span><?php echo esc_html( $item['desc'] ?? '' ); ?></span></div></li>
+				<?php endforeach; ?>
 			</ul>
 			<a class="h168-link" href="<?php echo esc_url( $s['about_quick']['link_url'] ); ?>"><?php echo esc_html( $s['about_quick']['link_text'] ); ?> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 		</div>
@@ -111,7 +133,7 @@ $faqs           = $s['faq']['items'];
 				<div class="h168-product-card__body">
 					<h3><?php echo esc_html( $product['name'] ); ?></h3>
 					<p><?php echo esc_html( $product['desc'] ); ?></p>
-					<a class="h168-btn h168-btn--sm h168-btn--outline" href="<?php echo esc_url( $product['link'] ); ?>">Xem chi tiết</a>
+					<a class="h168-btn h168-btn--sm h168-btn--outline" href="<?php echo esc_url( $product['link'] ); ?>"><?php echo esc_html( $product_link_label ); ?></a>
 				</div>
 			</article>
 			<?php endforeach; ?>
@@ -185,7 +207,7 @@ $faqs           = $s['faq']['items'];
 				src="<?php echo esc_url( $s['map']['embed'] ); ?>"
 				width="100%" height="420" style="border:0;" allowfullscreen="" loading="lazy"
 				referrerpolicy="no-referrer-when-downgrade"
-				title="Bản đồ Nước Đá Sạch 168"></iframe>
+				title="<?php echo esc_attr( $map_title ); ?>"></iframe>
 		</div>
 	</div>
 </section>
@@ -220,9 +242,9 @@ $faqs           = $s['faq']['items'];
 			<p class="h168-section-desc"><?php echo esc_html( $s['media']['desc'] ); ?></p>
 		</div>
 
-		<div class="h168-media__tabs" role="tablist" aria-label="Hình ảnh nhà máy và chứng nhận">
-			<button type="button" class="h168-media-tab is-active" role="tab" id="tab-factory" aria-selected="true" aria-controls="panel-factory" data-tab="factory">Nhà máy</button>
-			<button type="button" class="h168-media-tab" role="tab" id="tab-cert" aria-selected="false" aria-controls="panel-cert" data-tab="cert">Chứng nhận</button>
+		<div class="h168-media__tabs" role="tablist" aria-label="<?php echo esc_attr( $media_tabs_aria ); ?>">
+			<button type="button" class="h168-media-tab is-active" role="tab" id="tab-factory" aria-selected="true" aria-controls="panel-factory" data-tab="factory"><?php echo esc_html( $media_tab_factory ); ?></button>
+			<button type="button" class="h168-media-tab" role="tab" id="tab-cert" aria-selected="false" aria-controls="panel-cert" data-tab="cert"><?php echo esc_html( $media_tab_cert ); ?></button>
 		</div>
 
 		<div class="h168-media__panels">
@@ -231,7 +253,14 @@ $faqs           = $s['faq']['items'];
 					<?php foreach ( $factory_images as $item ) : ?>
 					<figure class="h168-factory-item">
 						<button type="button" class="h168-factory-item__btn" data-lightbox-src="<?php echo esc_url( $item['src'] ); ?>" data-lightbox-alt="<?php echo esc_attr( $item['alt'] ); ?>">
-							<img src="<?php echo esc_url( $item['src'] ); ?>" alt="<?php echo esc_attr( $item['alt'] ); ?>" loading="lazy" />
+							<img
+								src="<?php echo esc_url( $item['src'] ); ?>"
+								alt="<?php echo esc_attr( $item['alt'] ); ?>"
+								width="<?php echo absint( $item['width'] ?? 1280 ); ?>"
+								height="<?php echo absint( $item['height'] ?? 960 ); ?>"
+								loading="lazy"
+								decoding="async"
+							/>
 							<span class="h168-factory-item__overlay" aria-hidden="true"><i class="fas fa-search-plus"></i></span>
 						</button>
 					</figure>
@@ -290,8 +319,8 @@ $faqs           = $s['faq']['items'];
 		<h2 class="h168-cta__title"><?php echo esc_html( $s['cta']['title'] ); ?></h2>
 		<p class="h168-cta__desc"><?php echo esc_html( $s['cta']['desc'] ); ?></p>
 		<div class="h168-cta__actions">
-			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $hotline ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi 0348 226 455</a>
-			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $zalo_url ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Nhắn Zalo</a>
+			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $hotline ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( trim( $cta_phone_prefix . ' ' . $contact['hotline_display'] ) ); ?></a>
+			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $zalo_url ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> <?php echo esc_html( $cta_zalo_text ); ?></a>
 		</div>
 	</div>
 </section>

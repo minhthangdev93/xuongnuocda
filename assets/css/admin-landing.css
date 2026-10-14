@@ -7,20 +7,120 @@
 	margin-top: 16px;
 }
 
+.nuocda-accordion-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px 16px;
+	margin: 0 0 16px;
+}
+
+.nuocda-accordion-toolbar__left {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+}
+
+.nuocda-accordion-toolbar .description {
+	margin: 0;
+}
+
+.nuocda-accordion-toolbar .button-primary {
+	margin: 0;
+}
+
+.nuocda-sticky-save {
+	position: sticky;
+	bottom: 0;
+	z-index: 100;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 12px;
+	margin: 24px 0 0;
+	padding: 12px 16px;
+	background: rgba(255, 255, 255, 0.96);
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.08);
+	backdrop-filter: blur(4px);
+}
+
+.nuocda-sticky-save .submit,
+.nuocda-sticky-save p.submit {
+	margin: 0;
+	padding: 0;
+}
+
+.nuocda-sticky-save .button-primary {
+	margin: 0;
+	min-width: 140px;
+}
+
 .nuocda-admin-section {
 	background: #fff;
 	border: 1px solid #dcdcde;
 	border-radius: 8px;
-	padding: 20px 24px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	overflow: hidden;
 }
 
-.nuocda-admin-section h2 {
-	margin: 0 0 16px;
-	padding: 0 0 12px;
+.nuocda-admin-section__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	width: 100%;
+	margin: 0;
+	padding: 14px 18px;
+	border: 0;
+	background: #f6f7f7;
+	cursor: pointer;
+	text-align: left;
+	color: #1d2327;
+}
+
+.nuocda-admin-section__toggle:hover {
+	background: #eef1f3;
+}
+
+.nuocda-admin-section.is-open .nuocda-admin-section__toggle {
+	background: #fff;
 	border-bottom: 1px solid #eee;
-	font-size: 1.1rem;
+}
+
+.nuocda-admin-section__title {
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+.nuocda-admin-section__chevron {
+	flex: 0 0 auto;
+	width: 10px;
+	height: 10px;
+	border-right: 2px solid #646970;
+	border-bottom: 2px solid #646970;
+	transform: rotate(45deg);
+	transition: transform 0.15s ease;
+	margin-top: -4px;
+}
+
+.nuocda-admin-section.is-open .nuocda-admin-section__chevron {
+	transform: rotate(-135deg);
+	margin-top: 4px;
+}
+
+.nuocda-admin-section__body {
+	display: none;
+	padding: 16px 20px 20px;
+}
+
+.nuocda-admin-section.is-open .nuocda-admin-section__body {
+	display: block;
 }
 
 .nuocda-admin-section h3 {
@@ -69,4 +169,110 @@
 .nuocda-repeater-remove {
 	color: #b32d2e;
 	margin-top: 4px;
+}
+
+.nuocda-field--gallery {
+	margin: 0 0 22px;
+}
+
+.nuocda-gallery-size-hint {
+	margin: 4px 0 8px !important;
+	padding: 8px 10px;
+	border-left: 3px solid #2271b1;
+	background: #f0f6fc;
+	color: #1d2327;
+}
+
+.nuocda-gallery-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 10px 0 12px;
+	padding: 8px;
+	list-style: none;
+	min-height: 112px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 8px;
+	background: #fafafa;
+}
+
+.nuocda-gallery-item {
+	position: relative;
+	width: 96px;
+	height: 96px;
+	margin: 0;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #f6f7f7;
+	cursor: grab;
+}
+
+.nuocda-gallery-item.ui-sortable-helper {
+	cursor: grabbing;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+	z-index: 10;
+}
+
+.nuocda-gallery-placeholder {
+	width: 96px;
+	height: 96px;
+	margin: 0;
+	border: 2px dashed #2271b1;
+	border-radius: 8px;
+	background: #e8f1fb;
+}
+
+.nuocda-gallery-handle {
+	position: absolute;
+	left: 4px;
+	bottom: 4px;
+	z-index: 2;
+	padding: 1px 4px;
+	border-radius: 4px;
+	background: rgba(0, 0, 0, 0.55);
+	color: #fff;
+	font-size: 11px;
+	line-height: 1.2;
+	letter-spacing: -1px;
+	cursor: grab;
+	user-select: none;
+}
+
+.nuocda-gallery-item img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.nuocda-gallery-remove {
+	position: absolute;
+	top: 2px;
+	right: 4px;
+	z-index: 2;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.65);
+	color: #fff !important;
+	font-size: 16px;
+	line-height: 20px;
+	text-align: center;
+	text-decoration: none !important;
+}
+
+.nuocda-gallery-remove:hover {
+	background: #b32d2e;
+	color: #fff !important;
+}
+
+.nuocda-gallery-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+	margin: 0;
 }

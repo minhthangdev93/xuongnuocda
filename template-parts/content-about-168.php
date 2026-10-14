@@ -11,66 +11,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $s              = nuocda_168_get_landing_settings( 'about' );
 $contact        = nuocda_168_get_contact();
-$company        = nuocda_168_get_company();
 $factory_images = nuocda_168_get_factory_images();
 $cert_images    = nuocda_168_get_cert_images();
+$defaults       = nuocda_168_landing_defaults_about();
 
 $hero_bg    = $s['hero']['bg'];
 $about_img  = $s['intro']['image'];
 $tech_img   = $s['tech']['image'];
 $cta_bg     = $s['cta']['bg'];
-$hero_stats = $s['hero']['stats'];
-$highlights = $s['intro']['highlights'];
-$values     = $s['values']['items'];
+$hero_stats = ! empty( $s['hero']['stats'] ) ? $s['hero']['stats'] : ( $defaults['hero']['stats'] ?? array() );
+$highlights = ! empty( $s['intro']['highlights'] ) ? $s['intro']['highlights'] : ( $defaults['intro']['highlights'] ?? array() );
+$values     = ! empty( $s['values']['items'] ) ? $s['values']['items'] : ( $defaults['values']['items'] ?? array() );
+$tech_points = ! empty( $s['tech']['items'] ) ? $s['tech']['items'] : ( $defaults['tech']['items'] ?? array() );
+$process_steps = ! empty( $s['process']['items'] ) ? $s['process']['items'] : ( $defaults['process']['items'] ?? array() );
+$ops_stats     = ! empty( $s['ops']['stats'] ) ? $s['ops']['stats'] : ( $defaults['ops']['stats'] ?? array() );
+$departments   = ! empty( $s['ops']['departments'] ) ? $s['ops']['departments'] : ( $defaults['ops']['departments'] ?? array() );
+$service_areas = ! empty( $s['distribution']['areas'] ) ? $s['distribution']['areas'] : ( $defaults['distribution']['areas'] ?? array() );
+$commitments   = ! empty( $s['commit']['items'] ) ? $s['commit']['items'] : ( $defaults['commit']['items'] ?? array() );
+$products      = ! empty( $s['intro']['products'] ) ? $s['intro']['products'] : ( $defaults['intro']['products'] ?? array() );
 
-$tech_points = array(
-	array( 'icon' => 'fa-tint', 'title' => 'Lọc nước R.O', 'desc' => 'Nguồn nước đầu vào được xử lý qua hệ thống lọc R.O hiện đại trước khi làm đá.' ),
-	array( 'icon' => 'fa-sun', 'title' => 'Ozone & UV', 'desc' => 'Kết hợp xử lý Ozone và tia UV giúp kiểm soát chất lượng nước an toàn hơn.' ),
-	array( 'icon' => 'fa-cogs', 'title' => 'Dây chuyền tự động', 'desc' => 'Sản xuất và đóng gói trên dây chuyền tự động hóa, hạn chế tiếp xúc trực tiếp.' ),
-	array( 'icon' => 'fa-clipboard-check', 'title' => 'Kiểm soát từng công đoạn', 'desc' => 'QC theo dõi chất lượng xuyên suốt — phù hợp đơn hàng số lượng lớn, giao ổn định.' ),
-	array( 'icon' => 'fa-box', 'title' => 'Đóng gói & bảo quản', 'desc' => 'Quy trình bảo quản rõ ràng, sẵn sàng điều phối giao hàng theo khu vực.' ),
-	array( 'icon' => 'fa-shipping-fast', 'title' => 'Giao số lượng lớn', 'desc' => 'Hệ thống vận hành đáp ứng nhà hàng, khách sạn, sự kiện và đại lý sỉ.' ),
-);
+$hq_text = trim( (string) ( $s['distribution']['hq_text'] ?? '' ) );
+if ( '' === $hq_text && function_exists( 'nuocda_168_get_company' ) ) {
+	$hq_text = nuocda_168_get_company()['address'] ?? '';
+}
 
-$process_steps = array(
-	array( 'icon' => 'fa-filter', 'title' => 'Lọc và xử lý nguồn nước', 'desc' => 'Nước đầu vào qua R.O, Ozone, UV trước khi đưa vào sản xuất.' ),
-	array( 'icon' => 'fa-snowflake', 'title' => 'Làm đá hiện đại', 'desc' => 'Hệ thống làm đá tự động, đồng nhất chất lượng từng lô.' ),
-	array( 'icon' => 'fa-search', 'title' => 'Kiểm tra chất lượng', 'desc' => 'Bộ phận QC giám sát và kiểm tra theo quy trình nội bộ.' ),
-	array( 'icon' => 'fa-box-open', 'title' => 'Đóng gói & bảo quản', 'desc' => 'Đóng gói khép kín, bảo quản đúng chuẩn trước khi xuất kho.' ),
-	array( 'icon' => 'fa-route', 'title' => 'Điều phối giao hàng', 'desc' => 'ERP hỗ trợ điều phối — giao đến khách hàng và đại lý đúng hẹn.' ),
-);
-
-$departments = array(
-	array( 'icon' => 'fa-industry', 'name' => 'Sản xuất', 'desc' => 'Vận hành dây chuyền, đảm bảo sản lượng và chất lượng đồng nhất.' ),
-	array( 'icon' => 'fa-tools', 'name' => 'Kỹ thuật', 'desc' => 'Bảo trì thiết bị, tối ưu hệ thống lọc và làm đá.' ),
-	array( 'icon' => 'fa-microscope', 'name' => 'QC', 'desc' => 'Giám sát quy trình sản xuất và chất lượng sản phẩm độc lập.' ),
-	array( 'icon' => 'fa-handshake', 'name' => 'Kinh doanh', 'desc' => 'Tư vấn sản phẩm, báo giá và chăm sóc khách hàng sỉ & lẻ.' ),
-	array( 'icon' => 'fa-headset', 'name' => 'CSKH', 'desc' => 'Hỗ trợ đặt hàng, phản hồi nhanh qua hotline và Zalo.' ),
-	array( 'icon' => 'fa-calculator', 'name' => 'Kế toán', 'desc' => 'Quản lý đối soát, hỗ trợ đại lý và khách hàng doanh nghiệp.' ),
-	array( 'icon' => 'fa-truck', 'name' => 'Giao nhận', 'desc' => 'Lực lượng nòng cốt — giao 24/7 khắp TP.HCM và vùng lân cận.' ),
-);
-
-$ops_stats = array(
-	array( 'num' => '100+', 'label' => 'Nhân sự' ),
-	array( 'num' => '24/7', 'label' => 'Giao hàng' ),
-	array( 'num' => '30.000+', 'label' => 'Khách hàng tin dùng' ),
-);
-
-$service_areas = array(
-	'Quận 1, 3, 4, 5, 6, 7, 8',
-	'Quận 10, 11, Tân Bình, Tân Phú',
-	'Bình Thạnh, Gò Vấp, Phú Nhuận',
-	'Bình Tân, Thủ Đức, Bình Chánh',
-);
-
-$commitments = array(
-	array( 'icon' => 'fa-shield-alt', 'title' => 'Nước đá sạch, tinh khiết', 'desc' => 'Nguồn nước xử lý R.O — Ozone — UV, quy trình sản xuất khép kín.' ),
-	array( 'icon' => 'fa-clock', 'title' => 'Giao nhanh, đúng hẹn', 'desc' => 'Điều phối linh hoạt, hỗ trợ giao 24/7 cho F&B và khách sạn.' ),
-	array( 'icon' => 'fa-chart-line', 'title' => 'Nguồn cung ổn định', 'desc' => 'Đáp ứng khách sỉ, chuỗi cửa hàng và đơn hàng số lượng lớn.' ),
-	array( 'icon' => 'fa-users', 'title' => 'Đồng hành đại lý', 'desc' => 'Hỗ trợ nguồn hàng, quy trình vận hành và hợp tác lâu dài.' ),
-);
-
-$products = $s['intro']['products'];
+$hero_primary_url   = trim( (string) ( $s['hero']['btn_primary_url'] ?? '' ) );
+$hero_secondary_url = trim( (string) ( $s['hero']['btn_secondary_url'] ?? '' ) );
+$hero_primary_href  = ( $hero_primary_url && '#' === $hero_primary_url[0] ) ? esc_attr( $hero_primary_url ) : esc_url( $hero_primary_url );
+$hero_secondary_href = ( $hero_secondary_url && '#' === $hero_secondary_url[0] ) ? esc_attr( $hero_secondary_url ) : esc_url( $hero_secondary_url );
 ?>
 
 <div class="landing-168-wrapper a168-page h168-page">
@@ -84,8 +52,8 @@ $products = $s['intro']['products'];
 			<h1 class="a168-hero__title"><?php echo esc_html( $s['hero']['title'] ); ?></h1>
 			<p class="a168-hero__desc"><?php echo esc_html( $s['hero']['desc'] ); ?></p>
 			<div class="a168-hero__actions">
-				<a class="h168-btn h168-btn--primary" href="<?php echo esc_url( home_url( '/lien-he/' ) ); ?>"><i class="fas fa-envelope" aria-hidden="true"></i> Liên hệ đặt hàng</a>
-				<a class="h168-btn h168-btn--ghost" href="<?php echo esc_url( home_url( '/#xem-san-pham' ) ); ?>"><i class="fas fa-cubes" aria-hidden="true"></i> Xem sản phẩm</a>
+				<a class="h168-btn h168-btn--primary" href="<?php echo $hero_primary_href; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><i class="fas fa-envelope" aria-hidden="true"></i> <?php echo esc_html( $s['hero']['btn_primary_text'] ); ?></a>
+				<a class="h168-btn h168-btn--ghost" href="<?php echo $hero_secondary_href; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><i class="fas fa-cubes" aria-hidden="true"></i> <?php echo esc_html( $s['hero']['btn_secondary_text'] ); ?></a>
 			</div>
 			<div class="a168-hero__stats">
 				<?php foreach ( $hero_stats as $stat ) : ?>
@@ -106,8 +74,8 @@ $products = $s['intro']['products'];
 <section class="h168-section a168-intro">
 	<div class="container-168 a168-intro__grid">
 		<div class="a168-intro__media">
-			<img src="<?php echo esc_url( $about_img ); ?>" alt="Khu vực sản xuất Nước Đá Sạch 168" loading="lazy" width="640" height="480" />
-			<div class="a168-intro__badge"><span class="a168-intro__badge-num">ISO</span><span class="a168-intro__badge-text">9001:2015 &amp; HACCP</span></div>
+			<img src="<?php echo esc_url( $about_img ); ?>" alt="<?php echo esc_attr( $s['intro']['image_alt'] ); ?>" loading="lazy" width="640" height="480" />
+			<div class="a168-intro__badge"><span class="a168-intro__badge-num"><?php echo esc_html( $s['intro']['badge_num'] ); ?></span><span class="a168-intro__badge-text"><?php echo esc_html( $s['intro']['badge_text'] ); ?></span></div>
 		</div>
 		<div class="a168-intro__content">
 			<span class="h168-label"><?php echo esc_html( $s['intro']['label'] ); ?></span>
@@ -156,7 +124,7 @@ $products = $s['intro']['products'];
 <section class="h168-section a168-tech">
 	<div class="container-168 a168-tech__grid">
 		<div class="a168-tech__media">
-			<img src="<?php echo esc_url( $tech_img ); ?>" alt="Hệ thống sản xuất nước đá Nước Đá Sạch 168" loading="lazy" width="640" height="480" />
+			<img src="<?php echo esc_url( $tech_img ); ?>" alt="<?php echo esc_attr( $s['tech']['image_alt'] ); ?>" loading="lazy" width="640" height="480" />
 		</div>
 		<div class="a168-tech__content">
 			<span class="h168-label"><?php echo esc_html( $s['tech']['label'] ); ?></span>
@@ -181,9 +149,9 @@ $products = $s['intro']['products'];
 <section class="h168-section h168-section--alt a168-process">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Quy trình</span>
-			<h2 class="h168-heading">Kiểm soát chất lượng từng công đoạn</h2>
-			<p class="h168-section-desc">Mỗi viên đá trước khi đến tay khách hàng đều trải qua quy trình xử lý, sản xuất, kiểm tra và giao nhận rõ ràng.</p>
+			<span class="h168-label"><?php echo esc_html( $s['process']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['process']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['process']['desc'] ); ?></p>
 		</div>
 		<div class="a168-process__steps">
 			<?php foreach ( $process_steps as $index => $step ) : ?>
@@ -202,9 +170,9 @@ $products = $s['intro']['products'];
 <section class="h168-section a168-certs" id="chung-nhan">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Minh bạch</span>
-			<h2 class="h168-heading">Chứng nhận &amp; hồ sơ liên quan</h2>
-			<p class="h168-section-desc">Hồ sơ, chứng nhận và tài liệu liên quan đến hoạt động sản xuất, kiểm soát chất lượng — bao gồm HACCP Codex 2020, EFC International Certification và các hồ sơ công bố.</p>
+			<span class="h168-label"><?php echo esc_html( $s['certs']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['certs']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['certs']['desc'] ); ?></p>
 		</div>
 		<div class="a168-certs__grid">
 			<?php foreach ( $cert_images as $item ) : ?>
@@ -226,9 +194,9 @@ $products = $s['intro']['products'];
 	<div class="container-168">
 		<div class="a168-ops__head">
 			<div class="a168-ops__intro">
-				<span class="h168-label">Tổ chức &amp; vận hành</span>
-				<h2 class="h168-heading">Quy mô nhân sự &amp; hệ thống vận hành</h2>
-				<p class="h168-section-desc">Đằng sau mỗi đơn hàng giao đúng hẹn là sự phối hợp của đội ngũ hơn 100 nhân sự và hệ thống quản lý ERP — từ tiếp nhận đơn, điều phối sản xuất, tồn kho đến giao nhận.</p>
+				<span class="h168-label"><?php echo esc_html( $s['ops']['label'] ); ?></span>
+				<h2 class="h168-heading"><?php echo esc_html( $s['ops']['heading'] ); ?></h2>
+				<p class="h168-section-desc"><?php echo esc_html( $s['ops']['desc'] ); ?></p>
 			</div>
 			<div class="a168-ops__stats">
 				<?php foreach ( $ops_stats as $stat ) : ?>
@@ -243,7 +211,7 @@ $products = $s['intro']['products'];
 			<?php foreach ( $departments as $dept ) : ?>
 			<article class="a168-dept-card">
 				<div class="a168-dept-card__icon"><i class="fas <?php echo esc_attr( $dept['icon'] ); ?>" aria-hidden="true"></i></div>
-				<h3><?php echo esc_html( $dept['name'] ); ?></h3>
+				<h3><?php echo esc_html( $dept['title'] ); ?></h3>
 				<p><?php echo esc_html( $dept['desc'] ); ?></p>
 			</article>
 			<?php endforeach; ?>
@@ -251,8 +219,8 @@ $products = $s['intro']['products'];
 		<div class="a168-erp-banner">
 			<i class="fas fa-database" aria-hidden="true"></i>
 			<div>
-				<strong>Ứng dụng ERP trong vận hành</strong>
-				<p>Tiếp nhận đơn hàng, điều phối sản xuất, quản lý tồn kho và giao nhận được số hóa — nâng cao hiệu quả và giảm sai sót.</p>
+				<strong><?php echo esc_html( $s['ops']['erp_title'] ); ?></strong>
+				<p><?php echo esc_html( $s['ops']['erp_desc'] ); ?></p>
 			</div>
 		</div>
 	</div>
@@ -262,12 +230,14 @@ $products = $s['intro']['products'];
 <section class="h168-section a168-distribution">
 	<div class="container-168 a168-distribution__grid">
 		<div class="a168-distribution__content">
-			<span class="h168-label">Phân phối</span>
-			<h2 class="h168-heading">Hệ thống phân phối &amp; đại lý</h2>
-			<p class="h168-lead">Nước Đá Sạch 168 không ngừng mở rộng mạng lưới xưởng sản xuất, kho trung chuyển và đại lý nước đá tại nhiều khu vực trọng điểm. Hệ thống phân phối đa điểm giúp rút ngắn thời gian vận chuyển, đảm bảo nguồn cung ổn định cho khách hàng.</p>
-			<p class="a168-distribution__note">Trụ sở: <?php echo esc_html( $company['address'] ); ?></p>
+			<span class="h168-label"><?php echo esc_html( $s['distribution']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['distribution']['heading'] ); ?></h2>
+			<p class="h168-lead"><?php echo esc_html( $s['distribution']['lead'] ); ?></p>
+			<?php if ( $hq_text ) : ?>
+			<p class="a168-distribution__note"><?php echo esc_html( trim( $s['distribution']['hq_label'] . ' ' . $hq_text ) ); ?></p>
+			<?php endif; ?>
 			<div class="a168-areas">
-				<strong>Khu vực phục vụ chính tại TP.HCM:</strong>
+				<strong><?php echo esc_html( $s['distribution']['areas_heading'] ); ?></strong>
 				<ul>
 					<?php foreach ( $service_areas as $area ) : ?>
 					<li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <?php echo esc_html( $area ); ?></li>
@@ -275,15 +245,15 @@ $products = $s['intro']['products'];
 				</ul>
 			</div>
 			<div class="a168-distribution__actions">
-				<a class="h168-btn h168-btn--primary h168-btn--sm" href="<?php echo esc_url( home_url( '/#danh-sach-cua-hang' ) ); ?>"><i class="fas fa-store" aria-hidden="true"></i> Xem danh sách cửa hàng</a>
-				<a class="h168-btn h168-btn--outline h168-btn--sm" href="<?php echo esc_url( home_url( '/lien-he/' ) ); ?>"><i class="fas fa-user-plus" aria-hidden="true"></i> Đăng ký làm đại lý</a>
+				<a class="h168-btn h168-btn--primary h168-btn--sm" href="<?php echo esc_url( $s['distribution']['btn_stores_url'] ); ?>"><i class="fas fa-store" aria-hidden="true"></i> <?php echo esc_html( $s['distribution']['btn_stores_text'] ); ?></a>
+				<a class="h168-btn h168-btn--outline h168-btn--sm" href="<?php echo esc_url( $s['distribution']['btn_agent_url'] ); ?>"><i class="fas fa-user-plus" aria-hidden="true"></i> <?php echo esc_html( $s['distribution']['btn_agent_text'] ); ?></a>
 			</div>
 		</div>
 		<div class="a168-distribution__map">
 			<div class="a168-map-card">
-				<iframe title="Bản đồ Nước Đá Sạch 168" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.6705608821915!2d106.6669894!3d10.7719445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f1e2f7c7b8f%3A0x678a1f879d7d1e8c!2zSOG6m10gMTY4LzkgTMOuIEJpbmggS-G6o24gQywgUGjGsOG7nW5nIDQsIFF14bqtbiA4LCBUaMOgbmggcGjhu5EgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1701358823652!5m2!1svi!2s" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+				<iframe title="<?php echo esc_attr( $s['distribution']['heading'] ); ?>" src="<?php echo esc_url( $s['distribution']['map_embed'] ); ?>" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 			</div>
-			<p class="a168-map-caption">12 cửa hàng &amp; đại lý tại TP.HCM — xem đầy đủ tại trang chủ hoặc footer.</p>
+			<p class="a168-map-caption"><?php echo esc_html( $s['distribution']['map_caption'] ); ?></p>
 		</div>
 	</div>
 </section>
@@ -292,8 +262,8 @@ $products = $s['intro']['products'];
 <section class="h168-section h168-section--alt a168-commit">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Cam kết</span>
-			<h2 class="h168-heading">Cam kết với khách hàng &amp; đối tác</h2>
+			<span class="h168-label"><?php echo esc_html( $s['commit']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['commit']['heading'] ); ?></h2>
 		</div>
 		<div class="a168-commit__grid">
 			<?php foreach ( $commitments as $item ) : ?>
@@ -311,15 +281,22 @@ $products = $s['intro']['products'];
 <section class="h168-section a168-factory">
 	<div class="container-168">
 		<div class="h168-section-head h168-section-head--center">
-			<span class="h168-label">Thực tế</span>
-			<h2 class="h168-heading">Hình ảnh nhà máy &amp; vận hành</h2>
-			<p class="h168-section-desc">Hình ảnh thực tế khu vực sản xuất, dây chuyền và vận hành — minh bạch năng lực doanh nghiệp.</p>
+			<span class="h168-label"><?php echo esc_html( $s['factory']['label'] ); ?></span>
+			<h2 class="h168-heading"><?php echo esc_html( $s['factory']['heading'] ); ?></h2>
+			<p class="h168-section-desc"><?php echo esc_html( $s['factory']['desc'] ); ?></p>
 		</div>
 		<div class="a168-factory__grid">
 			<?php foreach ( $factory_images as $item ) : ?>
 			<figure class="a168-factory-card">
 				<button type="button" class="a168-factory-card__btn" data-lightbox-src="<?php echo esc_url( $item['src'] ); ?>" data-lightbox-alt="<?php echo esc_attr( $item['alt'] ); ?>">
-					<img src="<?php echo esc_url( $item['src'] ); ?>" alt="<?php echo esc_attr( $item['alt'] ); ?>" loading="lazy" />
+					<img
+						src="<?php echo esc_url( $item['src'] ); ?>"
+						alt="<?php echo esc_attr( $item['alt'] ); ?>"
+						width="<?php echo absint( $item['width'] ?? 1280 ); ?>"
+						height="<?php echo absint( $item['height'] ?? 960 ); ?>"
+						loading="lazy"
+						decoding="async"
+					/>
 					<span class="a168-factory-card__overlay" aria-hidden="true"><i class="fas fa-search-plus"></i></span>
 				</button>
 			</figure>
@@ -335,8 +312,8 @@ $products = $s['intro']['products'];
 		<h2 class="h168-cta__title"><?php echo esc_html( $s['cta']['title'] ); ?></h2>
 		<p class="h168-cta__desc"><?php echo esc_html( $s['cta']['desc'] ); ?></p>
 		<div class="h168-cta__actions">
-			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi ngay: 0348 226 455</a>
-			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> Liên hệ Zalo</a>
+			<a class="h168-btn h168-btn--primary h168-btn--lg" href="tel:<?php echo esc_attr( $contact['hotline'] ); ?>"><i class="fas fa-phone-alt" aria-hidden="true"></i> <?php echo esc_html( trim( $s['cta']['btn_phone_prefix'] . ' ' . $contact['hotline_display'] ) ); ?></a>
+			<a class="h168-btn h168-btn--zalo h168-btn--lg" href="<?php echo esc_url( $contact['zalo'] ); ?>" target="_blank" rel="noopener noreferrer"><i class="fas fa-comment-dots" aria-hidden="true"></i> <?php echo esc_html( $s['cta']['btn_zalo_text'] ); ?></a>
 		</div>
 	</div>
 </section>

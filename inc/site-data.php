@@ -10,10 +10,55 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Email liên hệ chính — dùng thống nhất trên toàn site
+ * Fallback liên hệ mặc định (không đọc option — tránh vòng lặp với defaults footer).
+ *
+ * @return array{hotline:string,zalo:string,email:string,hotline_label:string,zalo_label:string}
+ */
+function nuocda_168_get_contact_defaults() {
+	return array(
+		'hotline'       => '0348226455',
+		'zalo'          => 'https://zalo.me/0348226455',
+		'email'         => 'nuocdasach168h@gmail.com',
+		'hotline_label' => 'Hotline 24/7',
+		'zalo_label'    => 'Nhắn Zalo',
+	);
+}
+
+/**
+ * Chuẩn hóa số điện thoại (chỉ còn chữ số).
+ *
+ * @param string $phone Raw phone.
+ * @return string
+ */
+function nuocda_168_normalize_phone_digits( $phone ) {
+	return preg_replace( '/\D+/', '', (string) $phone );
+}
+
+/**
+ * Format SĐT hiển thị (VD: 0348 226 455).
+ *
+ * @param string $phone Phone digits or raw.
+ * @return string
+ */
+function nuocda_168_format_hotline_display( $phone ) {
+	$digits = nuocda_168_normalize_phone_digits( $phone );
+
+	if ( preg_match( '/^(0\d{3})(\d{3})(\d{3})$/', $digits, $matches ) ) {
+		return $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
+	}
+
+	if ( preg_match( '/^(0\d{2})(\d{3})(\d{4})$/', $digits, $matches ) ) {
+		return $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
+	}
+
+	return $digits ? $digits : (string) $phone;
+}
+
+/**
+ * Email liên hệ chính — dùng thống nhất trên toàn site (từ tab Footer).
  */
 function nuocda_168_get_site_email() {
-	return 'nuocdasach168h@gmail.com';
+	return nuocda_168_get_contact()['email'];
 }
 
 /**
@@ -51,6 +96,8 @@ function nuocda_168_get_home_faqs() {
 		}
 	}
 
+	$hotline_fmt = nuocda_168_get_contact()['hotline_display'];
+
 	return array(
 		array(
 			'q' => 'Nước đá Nước Đá Sạch 168 có sạch không?',
@@ -70,7 +117,7 @@ function nuocda_168_get_home_faqs() {
 		),
 		array(
 			'q' => 'Làm sao để đặt hàng nhanh nhất?',
-			'a' => 'Gọi hotline 0348 226 455 hoặc nhắn Zalo — đội ngũ sẽ điều phối điểm giao gần nhất.',
+			'a' => 'Gọi hotline ' . $hotline_fmt . ' hoặc nhắn Zalo — đội ngũ sẽ điều phối điểm giao gần nhất.',
 		),
 		array(
 			'q' => 'Có giao toàn TP.HCM không?',
@@ -91,7 +138,7 @@ function nuocda_168_get_contact_faqs() {
 	}
 
 	$contact     = nuocda_168_get_contact();
-	$hotline_fmt = '0348 226 455';
+	$hotline_fmt = $contact['hotline_display'];
 
 	return array(
 		array(
@@ -122,14 +169,55 @@ function nuocda_168_get_contact_faqs() {
 }
 
 /**
- * Thông tin liên hệ nhanh
+ * Thông tin liên hệ nhanh — ưu tiên tab Footer (Nước Đá 168 → Footer).
+ *
+ * @return array{hotline:string,hotline_display:string,zalo:string,email:string,hotline_label:string,zalo_label:string}
  */
 function nuocda_168_get_contact() {
-	return array(
-		'hotline' => '0348226455',
-		'zalo'    => 'https://zalo.me/0348226455',
-		'email'   => nuocda_168_get_site_email(),
-	);
+	$defaults = nuocda_168_get_contact_defaults();
+	$contact  = $defaults;
+
+	if ( function_exists( 'nuocda_168_get_landing_settings' ) ) {
+		$footer_contact = nuocda_168_get_landing_settings( 'footer' )['contact'] ?? array();
+
+		if ( is_array( $footer_contact ) ) {
+			if ( ! empty( $footer_contact['hotline'] ) ) {
+				$contact['hotline'] = nuocda_168_normalize_phone_digits( $footer_contact['hotline'] );
+			}
+
+			if ( ! empty( $footer_contact['zalo_url'] ) ) {
+				$contact['zalo'] = esc_url_raw( $footer_contact['zalo_url'] );
+			}
+
+			if ( ! empty( $footer_contact['email'] ) && is_email( $footer_contact['email'] ) ) {
+				$contact['email'] = sanitize_email( $footer_contact['email'] );
+			}
+
+			if ( ! empty( $footer_contact['hotline_label'] ) ) {
+				$contact['hotline_label'] = sanitize_text_field( $footer_contact['hotline_label'] );
+			}
+
+			if ( ! empty( $footer_contact['zalo_label'] ) ) {
+				$contact['zalo_label'] = sanitize_text_field( $footer_contact['zalo_label'] );
+			}
+		}
+	}
+
+	if ( '' === $contact['hotline'] ) {
+		$contact['hotline'] = $defaults['hotline'];
+	}
+
+	if ( '' === $contact['zalo'] ) {
+		$contact['zalo'] = $defaults['zalo'];
+	}
+
+	if ( '' === $contact['email'] ) {
+		$contact['email'] = $defaults['email'];
+	}
+
+	$contact['hotline_display'] = nuocda_168_format_hotline_display( $contact['hotline'] );
+
+	return $contact;
 }
 
 /**
@@ -147,23 +235,24 @@ function nuocda_168_get_company() {
 }
 
 /**
- * Danh sách cửa hàng & đại lý
+ * Danh sách cửa hàng & đại lý — lấy từ tab admin Đại lý (fallback defaults).
+ *
+ * @return array
  */
 function nuocda_168_get_stores() {
-	return array(
-		array( 'name' => 'Cửa Hàng Nước Đá 1', 'address' => '277 Nguyễn Văn Đậu, P. Bình Lợi Trung, TP. Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Nước Đá 2', 'address' => '551B Âu Cơ, P. Bảy Hiền, TP. Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Nước Đá 3', 'address' => '888/2 Đ. Tân Kỳ Tân Quý, P. Bình Hưng Hòa, TP. Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Nước Đá Số 4', 'address' => '7C Phan Huy Ích, P. Tân Sơn, Q. Tân Bình, TP. HCM' ),
-		array( 'name' => 'Cửa Hàng Nước Đá Sạch 168 Số 5', 'address' => '204 Nam Kỳ Khởi Nghĩa, P. Xuân Hòa, TP. Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Nước Đá Số 6', 'address' => '27/56B Đ. Vĩnh Khánh, P. Khánh Hội, TP. Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Nước Đá Tinh Khiết Số 7', 'address' => '280 Trịnh Quang Nghị, P. Bình Đông, Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Đá Lạnh Số 8', 'address' => '197 Tây Hòa, P. Phước Long, TP. Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Bán Và Mua Nước Đá Sạch Số 9', 'address' => '276/9 Đ. Thống Nhất, P. An Hội Đông, TP. Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Bán Sỉ Nước Đá Số 10', 'address' => '947 Đ. Nguyễn Ảnh Thủ, KP8, Trung Mỹ Tây, Hồ Chí Minh' ),
-		array( 'name' => 'Cửa Hàng Cung Cấp Nước Đá Số 11', 'address' => '326 Tân Phước, P. Diên Hồng, Hồ Chí Minh' ),
-		array( 'name' => 'Đại Lý Nước Đá Sạch', 'address' => '121 Nguyễn Đình Chiểu, Phường 4, Bàn Cờ, Hồ Chí Minh, Việt Nam' ),
-	);
+	if ( function_exists( 'nuocda_168_get_landing_settings' ) ) {
+		$settings = nuocda_168_get_landing_settings( 'agents' );
+		if ( ! empty( $settings['items'] ) && is_array( $settings['items'] ) ) {
+			return $settings['items'];
+		}
+	}
+
+	if ( function_exists( 'nuocda_168_landing_defaults_agents' ) ) {
+		$defaults = nuocda_168_landing_defaults_agents();
+		return $defaults['items'] ?? array();
+	}
+
+	return array();
 }
 
 /**
@@ -333,11 +422,26 @@ function nuocda_168_build_media_items( $definitions, $label_key = 'caption' ) {
 			continue;
 		}
 
+		$width  = 1280;
+		$height = 960;
+
+		if ( $id > 0 ) {
+			$meta = wp_get_attachment_metadata( $id );
+			if ( ! empty( $meta['width'] ) ) {
+				$width = absint( $meta['width'] );
+			}
+			if ( ! empty( $meta['height'] ) ) {
+				$height = absint( $meta['height'] );
+			}
+		}
+
 		$item = array(
-			'src'         => $src,
-			$label_key    => $definition[ $label_key ],
-			'file'        => $file,
-			'attachment'  => $id,
+			'src'        => $src,
+			$label_key   => $definition[ $label_key ],
+			'file'       => $file,
+			'attachment' => $id,
+			'width'      => $width,
+			'height'     => $height,
 		);
 
 		if ( isset( $definition['alt'] ) ) {
@@ -352,8 +456,23 @@ function nuocda_168_build_media_items( $definitions, $label_key = 'caption' ) {
 
 /**
  * Ảnh nhà máy (gallery)
+ *
+ * Ưu tiên danh sách chọn trong admin (Nước Đá 168 → Trang chủ / Giới thiệu).
+ * Nếu chưa chọn → fallback theo tên file trong Media Library.
  */
 function nuocda_168_get_factory_images() {
+	if ( function_exists( 'nuocda_168_get_landing_galleries' ) && function_exists( 'nuocda_168_landing_items_from_attachment_ids' ) ) {
+		$galleries = nuocda_168_get_landing_galleries();
+		$from_ids  = nuocda_168_landing_items_from_attachment_ids(
+			$galleries['factory_ids'],
+			'Hình ảnh nhà máy Nước Đá Sạch 168'
+		);
+
+		if ( $from_ids ) {
+			return $from_ids;
+		}
+	}
+
 	$definitions = array();
 
 	for ( $i = 1; $i <= 12; $i++ ) {
@@ -380,10 +499,21 @@ function nuocda_168_get_factory_images() {
 /**
  * Ảnh chứng nhận & hồ sơ
  *
- * Upload qua Thư viện Media — theme tự tìm theo tên file.
- * Có thể gán 'id' => 123 (ID attachment) nếu tên file khác hoàn toàn.
+ * Ưu tiên danh sách chọn trong admin. Chưa chọn → tìm theo tên file trong Media Library.
  */
 function nuocda_168_get_cert_images() {
+	if ( function_exists( 'nuocda_168_get_landing_galleries' ) && function_exists( 'nuocda_168_landing_items_from_attachment_ids' ) ) {
+		$galleries = nuocda_168_get_landing_galleries();
+		$from_ids  = nuocda_168_landing_items_from_attachment_ids(
+			$galleries['cert_ids'],
+			'Chứng nhận Nước Đá Sạch 168'
+		);
+
+		if ( $from_ids ) {
+			return $from_ids;
+		}
+	}
+
 	$definitions = array(
 		array( 'file' => 'chung-nhan-EFC.jpg', 'caption' => 'Chứng nhận EFC' ),
 		array( 'file' => 'efc-international-certification.jpg', 'caption' => 'EFC International Certification' ),
